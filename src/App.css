@@ -1,0 +1,218 @@
+/* App-specific styles */
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom cursor for interactive elements */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Work item hover effects */
+.work-item {
+  position: relative;
+}
+
+.work-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 61, 0, 0.5), transparent);
+  transform: scaleX(0);
+  transition: transform 0.5s ease;
+}
+
+.work-item:hover::before {
+  transform: scaleX(1);
+}
+
+/* Timeline item animations */
+.timeline-item {
+  position: relative;
+  padding-left: 0;
+  transition: padding-left 0.3s ease;
+}
+
+.timeline-item:hover {
+  padding-left: 8px;
+}
+
+/* Skill tag hover */
+.body-mono {
+  transition: all 0.3s ease;
+}
+
+/* Project card image placeholder animation */
+@keyframes placeholder-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.aspect-\[4\/3\] .section-label {
+  animation: placeholder-pulse 2s ease-in-out infinite;
+}
+
+/* Navigation link underline effect */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #FF3D00;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* Display text responsive adjustments */
+@media (max-width: 640px) {
+  .display-giant {
+    font-size: clamp(2.5rem, 15vw, 4rem);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #FF3D00;
+  outline-offset: 2px;
+}
+
+/* Selection color */
+::selection {
+  background: #FF3D00;
+  color: white;
+}
+
+/* Loading state for images */
+img {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+img[loading] {
+  opacity: 0;
+}
+
+/* ============================================
+   Bilibili Video Player - 响应式容器
+   ============================================ */
+
+/* 视频播放器外层容器 - 16:9 响应式 */
+.video-player-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 比例 */
+  height: 0;
+  overflow: hidden;
+  background: #1A1A1A;
+}
+
+/* iframe 绝对定位填充容器 */
+.video-player-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* 懒加载占位符 */
+.video-player-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%);
+}
+
+/* 加载动画容器 */
+.video-player-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 旋转加载动画 */
+.video-player-spinner {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(255, 61, 0, 0.2);
+  border-top-color: #FF3D00;
+  border-radius: 50%;
+  animation: video-player-spin 1s linear infinite;
+}
+
+@keyframes video-player-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 占位符文字 */
+.video-player-text {
+  font-size: 12px;
+  font-family: monospace;
+  color: #8A8A85;
+  letter-spacing: 0.05em;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .video-player-wrapper {
+    /* 保持 16:9 比例 */
+    padding-bottom: 56.25%;
+  }
+  
+  .video-player-spinner {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .video-player-text {
+    font-size: 10px;
+  }
+}
+
+/* 小屏幕手机适配 */
+@media (max-width: 480px) {
+  .video-player-wrapper {
+    padding-bottom: 56.25%;
+  }
+}

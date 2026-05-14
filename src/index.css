@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@100;200;300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Valiente Style - TA Portfolio */
+    --background: 60 6% 81%; /* #D1D1CB */
+    --foreground: 0 0% 12%;
+    --card: 60 6% 81%;
+    --card-foreground: 0 0% 12%;
+    --popover: 60 6% 81%;
+    --popover-foreground: 0 0% 12%;
+    --primary: 14 100% 50%; /* #FF3D00 荧光红 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 60 4% 75%;
+    --secondary-foreground: 0 0% 12%;
+    --muted: 60 4% 70%;
+    --muted-foreground: 0 0% 35%;
+    --accent: 14 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 60 4% 70%;
+    --input: 60 4% 70%;
+    --ring: 14 100% 50%;
+    --radius: 0.25rem;
+    
+    /* Custom Colors */
+    --valiente-bg: #D1D1CB;
+    --valiente-red: #FF3D00;
+    --valiente-dark: #1A1A1A;
+    --valiente-gray: #8A8A85;
+    --valiente-light: #E8E8E5;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    background-color: #D1D1CB;
+    color: #1A1A1A;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow-x: hidden;
+  }
+  
+  ::selection {
+    background: var(--valiente-red);
+    color: white;
+  }
+}
+
+@layer components {
+  /* Giant Display Text */
+  .display-giant {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(3rem, 10vw, 12rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--valiente-red);
+  }
+  
+  /* Monospace Body Text */
+  .body-mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 300;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+  }
+  
+  /* Section Label */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--valiente-gray);
+  }
+  
+  /* Work Index Number */
+  .work-index {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 200;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    color: var(--valiente-gray);
+  }
+  
+  /* Work Title */
+  .work-title {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(2rem, 6vw, 5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--valiente-dark);
+    transition: color 0.3s ease;
+  }
+  
+  .work-title:hover {
+    color: var(--valiente-red);
+  }
+  
+  /* Navigation Link */
+  .nav-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--valiente-gray);
+    transition: color 0.3s ease;
+  }
+  
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--valiente-red);
+  }
+  
+  /* Sticky Navigation Container */
+  .sticky-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(209, 209, 203, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(138, 138, 133, 0.2);
+  }
+  
+  /* Section Base */
+  .section-full {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+  }
+  
+  /* Text Reveal Animation */
+  .char-reveal {
+    display: inline-block;
+    overflow: hidden;
+  }
+  
+  .char-reveal .char {
+    display: inline-block;
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--valiente-bg);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--valiente-gray);
+    border-radius: 3px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--valiente-red);
+  }
+}
+
+@layer utilities {
+  .text-valiente-red {
+    color: var(--valiente-red);
+  }
+  
+  .bg-valiente {
+    background-color: var(--valiente-bg);
+  }
+  
+  .text-balance {
+    text-wrap: balance;
+  }
+}
