@@ -35,3 +35,7 @@ pnpm-debug.log*
 
 # Claude Code
 .claude/
+
+# Local backups (not for git)
+_videos_original/
+_*_backup/
