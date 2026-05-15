@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextScrambleWithHover } from '@/components/ui/text-scramble';
-import { VideoPlayer } from '@/components/ui/video-player';
 import { CodeWorksGrid } from '@/components/code/CodeWorksGrid';
 import { codeProjects } from '@/data/codeProjects';
+import { useLightbox } from '@/components/code/LightboxContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -26,10 +26,11 @@ interface Project {
   description: string;
   tools: string[];
   wide?: boolean;
-  modelUrl?: string;
-  videoUrl?: string;
-  bilibiliUrl?: string;
-  coverImage?: string;
+  modelUrl?: string;          // Sketchfab 3D 模型 iframe（保留原交互）
+  videoUrl?: string;          // 本地 mp4 — 用作 hover 预览
+  bilibiliEmbedUrl?: string;  // 点击 lightbox 嵌入的 Bilibili iframe URL（player.bilibili.com/...）
+  bilibiliUrl?: string;       // 跳转用外链（旧字段，C++游戏卡片）
+  coverImage?: string;        // 静态封面图；没有则用 video 第一帧
   textureMaps?: TextureMap[];
   awards?: Award[];
   stylizedImage?: { name: string; src: string };
@@ -202,9 +203,40 @@ function ProjectCard({
   onProjectClick?: (projectId: string) => void;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isInteracting, setIsInteracting] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
+  const { open: openLightbox } = useLightbox();
+
+  // 视频卡片：hover 播放、leave 暂停归零
+  const handleMediaEnter = () => {
+    setIsHovered(true);
+    const v = videoRef.current;
+    if (v) v.play().catch(() => {});
+  };
+  const handleMediaLeave = () => {
+    setIsHovered(false);
+    const v = videoRef.current;
+    if (v) {
+      v.pause();
+      v.currentTime = 0.1;
+    }
+  };
+  // 视频元素 metadata 加载后定位到 0.1s 作为"封面"
+  const handleVideoMeta = () => {
+    const v = videoRef.current;
+    if (v && v.paused) v.currentTime = 0.1;
+  };
+
+  // 视频卡片点击：优先 bilibili 嵌入，fallback 用本地视频 URL 作为 iframe src（浏览器原生播放）
+  const handleMediaClick = () => {
+    if (project.bilibiliEmbedUrl) {
+      openLightbox({ url: project.bilibiliEmbedUrl, title: project.title, id: project.id });
+    } else if (project.videoUrl) {
+      openLightbox({ url: project.videoUrl, title: project.title, id: project.id });
+    }
+  };
 
   useEffect(() => {
     const card = cardRef.current;
@@ -270,12 +302,15 @@ function ProjectCard({
 
         {/* Media container */}
         <div
-          className={`w-full bg-[#1A1A1A]/5 border border-[#8A8A85]/20 relative overflow-hidden ${mediaAspect}`}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+          className={`w-full bg-[#1A1A1A]/5 border border-[#8A8A85]/20 relative overflow-hidden ${mediaAspect}
+                      ${project.videoUrl ? 'cursor-pointer' : ''}`}
+          onMouseEnter={project.videoUrl ? handleMediaEnter : () => setIsHovered(true)}
+          onMouseLeave={project.videoUrl ? handleMediaLeave : () => setIsHovered(false)}
+          onClick={project.videoUrl ? handleMediaClick : undefined}
+          data-cursor={project.videoUrl ? 'view' : undefined}
         >
           {project.bilibiliUrl ? (
-            /* B站封面 + 外链 */
+            /* C++ 游戏卡：B站封面 + 外链跳转 */
             <a
               href={project.bilibiliUrl}
               target="_blank"
@@ -291,13 +326,11 @@ function ProjectCard({
               ) : (
                 <div className="absolute inset-0 bg-[#1A1A1A]/10" />
               )}
-              {/* Bilibili 跳转提示 */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/bili:opacity-100 transition-opacity duration-300">
                 <span className="px-4 py-2 bg-[#FF3D00] text-white text-[11px] font-mono tracking-wider">
                   BILIBILI ↗
                 </span>
               </div>
-              {/* 常驻图标 */}
               <div className="absolute top-4 left-4 z-10">
                 <span className="px-3 py-1 bg-[#FF3D00] text-white text-[10px] font-mono tracking-wider">
                   BILIBILI
@@ -305,7 +338,36 @@ function ProjectCard({
               </div>
             </a>
           ) : project.videoUrl ? (
-            <VideoPlayer src={project.videoUrl} />
+            /* 视频卡：第一帧作为封面 + hover 播放预览 + 点击 lightbox */
+            <>
+              {/* 静态封面（如有） */}
+              {project.coverImage && (
+                <img
+                  src={project.coverImage}
+                  alt={project.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+                />
+              )}
+              {/* video 元素：paused 时显示第一帧，hover 时 play */}
+              <video
+                ref={videoRef}
+                src={project.videoUrl}
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                onLoadedMetadata={handleVideoMeta}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300
+                            ${project.coverImage ? 'opacity-0 group-hover:opacity-100' : ''}`}
+              />
+              {/* 播放图标 — 提示这是可播放的视频 */}
+              <div
+                className={`absolute top-4 left-4 z-10 px-3 py-1 bg-[#FF3D00] text-white text-[10px] font-mono tracking-wider
+                            transition-opacity duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`}
+              >
+                ▶ VIDEO
+              </div>
+            </>
           ) : project.modelUrl ? (
             <iframe
               title={project.title}
@@ -317,7 +379,6 @@ function ProjectCard({
               style={{ pointerEvents: isInteracting ? 'auto' : 'none' }}
             />
           ) : (
-            /* 占位 */
             <div className="absolute inset-0 flex items-center justify-center">
               <span className="section-label text-[#8A8A85]/40">
                 {project.id.split('-').pop()}

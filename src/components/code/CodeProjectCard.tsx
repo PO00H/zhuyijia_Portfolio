@@ -43,7 +43,7 @@ export function CodeProjectCard({ project }: Props) {
   };
 
   const handleClick = () => {
-    open(project);
+    open({ url: project.iframeUrl, title: project.title, id: project.id });
   };
 
   return (

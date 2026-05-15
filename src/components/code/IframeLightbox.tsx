@@ -3,38 +3,34 @@ import { X } from 'lucide-react';
 import { useLightbox } from './LightboxContext';
 
 export function IframeLightbox() {
-  const { activeProject, close } = useLightbox();
+  const { active, close } = useLightbox();
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
 
-  // 入场动画：mount 之后立刻设 mounted=true 触发 transition
   useEffect(() => {
-    if (activeProject) {
+    if (active) {
       setLoading(true);
-      // 给一帧让初始 className 应用，然后切换
       requestAnimationFrame(() => setMounted(true));
     } else {
       setMounted(false);
     }
-  }, [activeProject]);
+  }, [active]);
 
-  // ESC 关闭
   useEffect(() => {
-    if (!activeProject) return;
+    if (!active) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [activeProject, close]);
+  }, [active, close]);
 
-  if (!activeProject) return null;
+  if (!active) return null;
 
-  // URL 显示简化
   const displayUrl =
-    activeProject.iframeUrl === 'about:blank'
-      ? `zhuyijia.art/embed/${activeProject.id}`
-      : activeProject.iframeUrl.replace(/^https?:\/\//, '');
+    active.url === 'about:blank'
+      ? `zhuyijia.art/embed/${active.id ?? ''}`
+      : active.url.replace(/^https?:\/\//, '').slice(0, 60);
 
   return (
     <div
@@ -84,16 +80,29 @@ export function IframeLightbox() {
           </div>
         )}
 
-        {/* Iframe */}
-        <iframe
-          key={activeProject.id}
-          src={activeProject.iframeUrl}
-          title={activeProject.title}
-          className="flex-1 w-full border-0"
-          allow="autoplay; fullscreen; clipboard-write"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
-          onLoad={() => setLoading(false)}
-        />
+        {/* 内容：本地视频文件用 video，其他用 iframe */}
+        {/\.(mp4|webm|mov|m4v)(\?|$)/i.test(active.url) ? (
+          <video
+            key={active.id ?? active.url}
+            src={active.url}
+            title={active.title}
+            controls
+            autoPlay
+            playsInline
+            className="flex-1 w-full bg-black object-contain"
+            onLoadedData={() => setLoading(false)}
+          />
+        ) : (
+          <iframe
+            key={active.id ?? active.url}
+            src={active.url}
+            title={active.title}
+            className="flex-1 w-full border-0"
+            allow="autoplay; fullscreen; clipboard-write; encrypted-media"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-presentation"
+            onLoad={() => setLoading(false)}
+          />
+        )}
       </div>
     </div>
   );

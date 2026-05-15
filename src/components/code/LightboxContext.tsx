@@ -1,29 +1,38 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import type { CodeProject } from '@/data/codeProjects';
+
+/**
+ * 全局 Lightbox 状态
+ * 任何卡片只要传 { url, title } 就能弹出 iOS 风格 iframe 窗口
+ */
+export interface LightboxTarget {
+  url: string;
+  title: string;
+  id?: string;
+}
 
 interface LightboxContextValue {
-  activeProject: CodeProject | null;
-  open: (project: CodeProject) => void;
+  active: LightboxTarget | null;
+  open: (target: LightboxTarget) => void;
   close: () => void;
 }
 
 const LightboxContext = createContext<LightboxContextValue | null>(null);
 
 export function LightboxProvider({ children }: { children: ReactNode }) {
-  const [activeProject, setActiveProject] = useState<CodeProject | null>(null);
+  const [active, setActive] = useState<LightboxTarget | null>(null);
 
-  const open = useCallback((project: CodeProject) => {
-    setActiveProject(project);
+  const open = useCallback((target: LightboxTarget) => {
+    setActive(target);
     document.body.style.overflow = 'hidden';
   }, []);
 
   const close = useCallback(() => {
-    setActiveProject(null);
+    setActive(null);
     document.body.style.overflow = '';
   }, []);
 
   return (
-    <LightboxContext.Provider value={{ activeProject, open, close }}>
+    <LightboxContext.Provider value={{ active, open, close }}>
       {children}
     </LightboxContext.Provider>
   );
