@@ -52,11 +52,8 @@ const workCategories: WorkCategory[] = [
     title: 'CODE',
     mobileTitle: ['CODE'],
     subItems: [
-      { id: 'code-001', label: '001 前端项目 001', targetId: 'frontend-001' },
-      { id: 'code-002', label: '002 前端项目 002', targetId: 'frontend-002' },
-      { id: 'code-003', label: '003 前端项目 003', targetId: 'frontend-003' },
-      { id: 'code-004', label: '004 前端项目 004', targetId: 'frontend-004' },
-      { id: 'code-005', label: '005 前端项目 005', targetId: 'frontend-005' },
+      { id: 'code-001', label: '001 网页设计', targetId: 'frontend-001' },
+      { id: 'code-002', label: '002 AI 交互界面', targetId: 'frontend-002' },
     ],
     targetId: 'work-code',
   },
@@ -168,45 +165,36 @@ function WorkItem({
         </div>
       </div>
 
-      {/* Dropdown Menu */}
+      {/* Dropdown Menu — grid-rows 0fr↔1fr 平滑展开 + 子项整体淡入（不抽搐） */}
       <div
-        className={`dropdown-menu overflow-hidden transition-all duration-300 ease-out ${isActive ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'}`}
+        className="dropdown-menu grid transition-[grid-template-rows,opacity] ease-[cubic-bezier(0.22,1,0.36,1)] duration-500"
+        style={{
+          gridTemplateRows: isActive ? '1fr' : '0fr',
+          opacity: isActive ? 1 : 0,
+          pointerEvents: isActive ? 'auto' : 'none',
+        }}
         onMouseLeave={handleDropdownMouseLeave}
       >
-        <div className="pb-6 pl-12 md:pl-20 space-y-3">
-          {work.subItems.map((item, idx) => (
-            <div
-              key={item.id}
-              className="flex items-center gap-4 cursor-pointer group/item"
-              onClick={() => handleSubItemClick(item.targetId)}
-              style={{
-                animationDelay: `${idx * 50}ms`,
-                animation: isActive ? 'slideIn 0.3s ease forwards' : 'none'
-              }}
-            >
-              <span className="w-6 h-px bg-[#8A8A85]/50 group-hover/item:bg-[#FF3D00] transition-colors" />
-              <span className="body-mono text-[#8A8A85] group-hover/item:text-[#FF3D00] transition-colors">
-                <TextScrambleWithHover duration={0.5} speed={0.03} trigger={true}>
-                  {item.label}
-                </TextScrambleWithHover>
-              </span>
-            </div>
-          ))}
+        <div className="overflow-hidden">
+          <div className="pt-2 pb-6 pl-12 md:pl-20 space-y-3">
+            {work.subItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center gap-4 cursor-pointer group/item"
+                onClick={() => handleSubItemClick(item.targetId)}
+              >
+                <span className="w-6 h-px bg-[#8A8A85]/50 group-hover/item:bg-[#FF3D00] transition-colors" />
+                <span className="body-mono text-[#8A8A85] group-hover/item:text-[#FF3D00] transition-colors">
+                  <TextScrambleWithHover duration={0.5} speed={0.03} trigger={true}>
+                    {item.label}
+                  </TextScrambleWithHover>
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      <style>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-      `}</style>
     </div>
   );
 }

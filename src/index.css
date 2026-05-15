@@ -161,20 +161,17 @@
     opacity: 0;
   }
   
-  /* Scrollbar Styling */
+  /* 原生 scrollbar 样式 */
   ::-webkit-scrollbar {
     width: 6px;
   }
-  
   ::-webkit-scrollbar-track {
     background: var(--valiente-bg);
   }
-  
   ::-webkit-scrollbar-thumb {
     background: var(--valiente-gray);
     border-radius: 3px;
   }
-  
   ::-webkit-scrollbar-thumb:hover {
     background: var(--valiente-red);
   }
