@@ -79,9 +79,13 @@
   .ac-head .cat{font-size:1rem;font-weight:500;color:var(--fg)}
   .ac-head .count{font-family:var(--mono);font-size:11px;color:var(--fg-mute)}
   .ac-head .toggle{font-family:var(--mono);font-size:1.2rem;color:var(--accent);
-    width:24px;height:24px;display:grid;place-items:center;
-    border:1px solid var(--line);transition:transform .3s,background .2s,color .2s}
-  .ac-item.open .toggle{background:var(--accent);color:#000;transform:rotate(45deg)}
+    width:28px;height:28px;display:grid;place-items:center;
+    border:1px solid var(--line);transition:transform .3s,background .2s,color .2s,box-shadow .2s}
+  .ac-head:hover .toggle{border-color:var(--accent)}
+  .ac-item.open .toggle{background:var(--accent);color:#000;transform:rotate(45deg);
+    box-shadow:0 0 0 3px rgba(255,61,0,.15)}
+  .ac-item.open .ac-head:hover{background:rgba(255,61,0,.08)}
+  .ac-item.open .ac-head:hover .toggle{background:#ff8c42}
 
   .ac-preview{grid-column:1/-1;display:flex;gap:.4rem;flex-wrap:wrap;
     padding-top:.25rem;transition:opacity .3s}
