@@ -35,8 +35,10 @@
 
   // 与 PlayerConfig 命名同步
   const FEET_OFFSET_Y = 10;
-  const DASH_BASE_DIST = 110;
-  const MAX_CHARGE = 32;
+  // 演示参数 (vs 真实游戏: DASH_BASE_DIST 调小让 idle 状态两箭头紧凑，
+  //   蓄力时延伸感更明显)
+  const DASH_BASE_DIST = 68;
+  const MAX_CHARGE = 50;          // 蓄满时延伸到 baseRadius=45 + 23 + 50 = 118
   const CHARGE_RATE = 0.55;
   const MAX_CD_LEFT = 110;    // frames
   const MAX_CD_RIGHT = 90;
