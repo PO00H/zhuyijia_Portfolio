@@ -30,16 +30,20 @@
   const WALL_RIGHT = 460;
   const WALL_TOP = 70, WALL_BOTTOM = 150;
 
-  const DASH_DIST = 320;          // 固定突进距离
+  const DASH_DIST = 480;          // 固定突进距离 (够大让 TELEPORT 真的跨过墙)
   const PLAY_INTERVAL = 140;      // ms / step (固定演示节奏)
   const HOLD_AFTER_DONE = 1400;   // ms 完成后停留
 
+  // 预设：3 个对比鲜明的取值
+  //   PRECISE   step=15  → steps≈33,  stepDelta≈14.5  贴墙安全停下
+  //   FAST      step=40  → steps≈13,  stepDelta≈37    贴墙安全停下 (默认)
+  //   TELEPORT  step=500 → steps=1,   stepDelta=480   一步跨过墙 → PHASED!
   const PRESETS = [
-    { name: 'PRECISE',  step: 10  },
-    { name: 'FAST',     step: 30  },
-    { name: 'TELEPORT', step: 200 },
+    { name: 'PRECISE',  step: 15  },
+    { name: 'FAST',     step: 40  },
+    { name: 'TELEPORT', step: 500 },
   ];
-  const DEFAULT_STEP = 30;
+  const DEFAULT_STEP = 40;
 
   // 色板（与详情页 CSS var 一致）
   const C_BG = '#1a1a1a';
@@ -263,7 +267,7 @@
       </div>
       <div style="display:flex;align-items:center;gap:.5rem;flex:1;min-width:240px">
         <label style="color:var(--fg-dim);letter-spacing:.05em">STEP SIZE</label>
-        <input type="range" min="5" max="240" step="5" value="${state.stepSize}" style="accent-color:var(--accent);flex:1" />
+        <input type="range" min="5" max="500" step="5" value="${state.stepSize}" style="accent-color:var(--accent);flex:1" />
         <span class="step-val" style="color:var(--fg);min-width:48px;text-align:right">${state.stepSize}<small style="color:var(--fg-mute)">px</small></span>
       </div>
       <div style="color:var(--fg-dim)">
