@@ -158,6 +158,23 @@
       background: rgba(209, 209, 203, 0.97);
     }
   }
+
+  /* 触屏设备：WorksIndex 的 dropdown 强制常驻展开 + 所有 work-item / filter 按钮去掉 300ms click 延迟
+     ── 这是手机上 "tap Game 跳到 Code" / "tap Code 折叠关上" 等鬼点击的根治方案 */
+  @media (pointer: coarse) {
+    .dropdown-menu[data-touch-always-open="true"] {
+      grid-template-rows: 1fr !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      transition: none !important;
+    }
+    .work-item,
+    .work-item *,
+    button,
+    a {
+      touch-action: manipulation;
+    }
+  }
   
   /* Section Base */
   .section-full {
