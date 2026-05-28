@@ -256,6 +256,7 @@
 <script src="./viz/aabb.js"></script>
 <script src="./viz/raymarch.js"></script>
 <script src="./viz/memfog.js"></script>
+<script src="./viz/procui.js"></script>
 
 <script>
 const HIGHLIGHTS = [
@@ -288,7 +289,8 @@ const HIGHLIGHTS = [
       ['2.5D 深度遮挡渲染', 'Y-Sorting 动态切片',
        '将地图渲染拆分为"行切片"，并根据游戏实体的 Y 坐标动态决定渲染先后顺序，精准呈现伪 3D 深度遮挡。'],
       ['程序化矢量战术 UI', '动态顶点运算 (Procedural)',
-       '摒弃静态贴图，利用 sin/cos 实时解算多边形顶点，实现能随蓄力值 0 延迟动态伸缩的科技感箭头。'],
+       '摒弃静态贴图，利用 sin/cos 实时解算多边形顶点，实现能随蓄力值 0 延迟动态伸缩的科技感箭头。',
+       'procui'],
     ],
   },
   {
