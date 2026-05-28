@@ -255,6 +255,7 @@
 <script src="./viz/ccd.js"></script>
 <script src="./viz/aabb.js"></script>
 <script src="./viz/raymarch.js"></script>
+<script src="./viz/memfog.js"></script>
 
 <script>
 const HIGHLIGHTS = [
@@ -279,10 +280,11 @@ const HIGHLIGHTS = [
     num: '02',
     cat: '渲染管线与视觉反馈',
     catEn: 'Rendering & Visuals',
-    chips: ['Memory Fog', 'Y-Sorting', 'Procedural UI'],
+    chips: ['Pixel Shader', 'Y-Sorting', 'Procedural UI'],
     items: [
-      ['动态记忆迷雾系统', '空间裁剪 + 圆环方程衰减',
-       '引入包围盒过滤无效计算，利用数学方程画出空心波纹。配合记忆计时器呈现"残影视野衰减"，强化潜行沉浸感。'],
+      ['基于 CPU 像素着色器的全屏后处理管线', '空间裁剪 + 圆环方程衰减',
+       '引入包围盒过滤无效计算，利用数学方程画出空心波纹。配合记忆计时器呈现"残影视野衰减"，强化潜行沉浸感。',
+       'memfog'],
       ['2.5D 深度遮挡渲染', 'Y-Sorting 动态切片',
        '将地图渲染拆分为"行切片"，并根据游戏实体的 Y 坐标动态决定渲染先后顺序，精准呈现伪 3D 深度遮挡。'],
       ['程序化矢量战术 UI', '动态顶点运算 (Procedural)',
