@@ -142,7 +142,7 @@ const workDetails: WorkDetail[] = [
         wide: true,
         description: '被夺去双眼的剑客，以声波辨位、蓄力一闪，在黑暗中完成必杀。基于完全面向对象架构的高难度像素动作游戏，未使用任何引擎，物理/渲染/AI/状态调度全自研，含 13 项工业级技术实现（CCD、AABB、Raymarching、对象池、FSM 等）。',
         tools: ['C++17', 'EasyX', 'OOP', 'FSM', 'CCD', 'AABB', 'Object Pool'],
-        coverImage: '/covers/echoflash.webp',   // 静态封面
+        coverImage: '/covers/echoflash.png',   // 静态封面
         videoUrl: '/previews/echoflash.mp4',    // hover 预览（5s 循环）
         bilibiliEmbedUrl: '/embed/echoflash-detail/index.html', // 点击打开 iOS 风格详情 Lightbox
         mediaAspect: '4/3',                     // 游戏原生 4:3 比例，避免 16:9 裁切
