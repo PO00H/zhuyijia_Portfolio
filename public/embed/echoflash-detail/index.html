@@ -254,6 +254,7 @@
 <!-- 可视化算法模块（按需加载，模块化方便未来扩展） -->
 <script src="./viz/ccd.js"></script>
 <script src="./viz/aabb.js"></script>
+<script src="./viz/raymarch.js"></script>
 
 <script>
 const HIGHLIGHTS = [
@@ -270,7 +271,8 @@ const HIGHLIGHTS = [
        '利用重叠深度与方向向量将角色平滑"挤"出墙外，避免死死卡在墙角，实现极佳的微操手感。',
        'aabb'],
       ['场景破坏与逻辑解耦', '射线步进采样 (Raymarching)',
-       '摒弃高耗能几何判定，改用"刻度尺"顺着刀光轨迹离散采样，实现环境破坏与图层抹除的原子级同步。'],
+       '摒弃高耗能几何判定，改用"刻度尺"顺着刀光轨迹离散采样，实现环境破坏与图层抹除的原子级同步。',
+       'raymarch'],
     ],
   },
   {
