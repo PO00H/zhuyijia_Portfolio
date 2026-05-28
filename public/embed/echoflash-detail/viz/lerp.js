@@ -36,7 +36,7 @@
   const WORLD_CY = WORLD_H / 2;
 
   const DEFAULT_LERP = 0.5;
-  const MOUSE_SENSITIVITY = 0.5;       // 鼠标 → 玩家移动量的比例
+  const MOUSE_SENSITIVITY = 1.0;       // 鼠标 → 玩家移动量的比例 (1:1)
 
   const C_BG = '#161616';
   const C_VIEWPORT_BG = '#1a1a1a';
