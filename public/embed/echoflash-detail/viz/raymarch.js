@@ -73,8 +73,8 @@
   const C_BG = '#1a1a1a';
   const C_GRID = '#222';
   const C_WALL = '#3a3a3a';
-  const C_BAMBOO = '#5a8c3a';
-  const C_BAMBOO_VEIN = '#4a7c2a';
+  const C_BAMBOO = '#6e6e6e';        // 灰色可破坏障碍 (原本是竹子绿)
+  const C_BAMBOO_VEIN = '#4a4a4a';
   const C_PLAYER = '#FF3D00';
   const C_PREVIEW = 'rgba(255,255,255,0.35)';
   const C_SLASH = '#FF3D00';
@@ -265,8 +265,8 @@
             });
             ctx.globalAlpha = 1;
           } else {
-            // 完全破坏时画一个"残骸"标记 (深绿小点)
-            ctx.fillStyle = 'rgba(90,140,58,0.15)';
+            // 完全破坏时画一个"残骸"标记 (深灰小点)
+            ctx.fillStyle = 'rgba(110,110,110,0.18)';
             ctx.beginPath();
             ctx.arc(x + TILE_SIZE / 2, y + TILE_SIZE / 2, 3, 0, Math.PI * 2);
             ctx.fill();
@@ -354,8 +354,8 @@
       sc = C_PLAYER;
     }
     else if (state.phase === 'FADE') {
-      st = `regrowing ${Math.round(fadeT * 100)}%`;
-      sc = C_BAMBOO;
+      st = `restoring ${Math.round(fadeT * 100)}%`;
+      sc = C_DIM;
     }
     ctx.fillStyle = sc;
     ctx.fillText(st, 12, H - 16);

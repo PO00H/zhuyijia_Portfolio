@@ -49,8 +49,9 @@
   const C_GRID = '#222';
   const C_WALL = '#3a3a3a';
   const C_WALL_TOP = '#FF3D00';
-  const C_BAMBOO = '#5a8c3a';
-  const C_BAMBOO_DASH = 'rgba(90,140,58,0.25)';
+  const C_BAMBOO = '#6e6e6e';                // 灰色障碍 (原本是竹子绿)
+  const C_BAMBOO_VEIN = '#4a4a4a';
+  const C_BAMBOO_DASH = 'rgba(110,110,110,0.25)';
   const C_PLAYER = '#FF3D00';
   const C_PLAYER_RING = 'rgba(255,61,0,0.18)';
   const C_SCAN = 'rgba(254,188,46,0.15)';
@@ -201,8 +202,8 @@
         } else if (t === 2) {
           ctx.fillStyle = state.isDashing ? C_BAMBOO_DASH : C_BAMBOO;
           ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-          // 竖纹（竹子感）
-          ctx.strokeStyle = '#4a7c2a';
+          // 竖纹（区分实心墙）
+          ctx.strokeStyle = C_BAMBOO_VEIN;
           ctx.lineWidth = 1;
           [0.3, 0.6].forEach((f) => {
             ctx.beginPath();
