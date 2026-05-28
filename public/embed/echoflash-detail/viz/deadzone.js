@@ -31,9 +31,9 @@
 (function () {
   'use strict';
 
-  const W = 660, H = 340;
-  const GUTTER = 8;
-  const VIEW_W = (W - GUTTER) / 2;  // 326
+  // 单视口 (只保留带偏移版本)
+  const W = 380, H = 360;
+  const VIEW_W = W;
   const VIEW_H = H;
 
   const DISC_RADIUS = 118;
@@ -79,15 +79,10 @@
   }
 
   function tick(state) {
-    // 用鼠标在左视口的圆心相对位置算 rotationAngle
-    const cx = VIEW_W / 2;
+    const cx = W / 2;
     const cy = H / 2;
-    let dx = state.mouseCanvas.x - cx;
-    let dy = state.mouseCanvas.y - cy;
-    // 鼠标在右视口时按右圆心算
-    if (state.mouseCanvas.x > VIEW_W + GUTTER) {
-      dx = state.mouseCanvas.x - (VIEW_W + GUTTER + VIEW_W / 2);
-    }
+    const dx = state.mouseCanvas.x - cx;
+    const dy = state.mouseCanvas.y - cy;
     let a = Math.atan2(dy, dx);
 
     // 模拟手抖：每帧加 ±5° 高斯噪声 (用 box-muller 简化)
@@ -231,40 +226,26 @@
     const ctx = container._vizCtx;
 
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = C_BG;
+    ctx.fillStyle = C_VIEWPORT;
     ctx.fillRect(0, 0, W, H);
 
-    // 左视口
-    ctx.fillStyle = C_VIEWPORT;
-    ctx.fillRect(0, 0, VIEW_W, H);
-    drawDisc(ctx, VIEW_W / 2, H / 2, state.dirNoOffset, false, state, 'NO OFFSET · raw bins');
-
-    // gutter
-    ctx.fillStyle = C_GUTTER;
-    ctx.fillRect(VIEW_W, 0, GUTTER, H);
-
-    // 右视口
-    ctx.fillStyle = C_VIEWPORT;
-    ctx.fillRect(VIEW_W + GUTTER, 0, VIEW_W, H);
-    drawDisc(ctx, VIEW_W + GUTTER + VIEW_W / 2, H / 2, state.dirWithOffset, true, state, 'WITH OFFSET +22.5° · center-aligned');
+    drawDisc(ctx, W / 2, H / 2, state.dirWithOffset, true, state, 'WITH OFFSET +22.5° · center-aligned');
 
     // 视口边框
-    ctx.strokeStyle = 'rgba(255,61,0,0.22)';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(0.5, 0.5, VIEW_W - 1, H - 1);
     ctx.strokeStyle = 'rgba(254,188,46,0.22)';
-    ctx.strokeRect(VIEW_W + GUTTER + 0.5, 0.5, VIEW_W - 1, H - 1);
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0.5, 0.5, W - 1, H - 1);
 
     // 底部状态条
     ctx.font = '9px "JetBrains Mono", monospace';
     ctx.fillStyle = state.jitter ? C_YELLOW : C_DIM;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'bottom';
-    ctx.fillText(state.jitter ? '◉ JITTER ±5° per frame' : '◯ steady', 8, H - 6);
+    ctx.fillText(state.jitter ? '◉ JITTER ±5°' : '◯ steady', 8, H - 6);
     ctx.textAlign = 'right';
     const deg = normDeg(state.rawAngle * 180 / PI).toFixed(1);
     ctx.fillStyle = C_DIM;
-    ctx.fillText(`raw angle ${deg}°`, W - 8, H - 6);
+    ctx.fillText(`${deg}°`, W - 8, H - 6);
   }
 
   function loop(container) {

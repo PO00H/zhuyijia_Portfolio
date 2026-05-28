@@ -259,6 +259,7 @@
 <script src="./viz/procui.js"></script>
 <script src="./viz/lerp.js"></script>
 <script src="./viz/deadzone.js"></script>
+<script src="./viz/bfs.js"></script>
 
 <script>
 const HIGHLIGHTS = [
@@ -307,8 +308,9 @@ const HIGHLIGHTS = [
       ['零漂移摇杆补偿', '死区控制与相位偏移',
        '引入主机手柄"死区"算法杜绝近距离抖动，并在 8 方向角度解算时施加偏移锁死扇区中心，实现绝对丝滑的操作。',
        'deadzone'],
-      ['无泄漏寻路引擎', '预分配 1D BFS 热力图',
-       '舍弃高耗能动态节点树，采用预分配的 1D 网格数组，确保大量敌兵同时寻路不产生性能波动或内存碎片。'],
+      ['封闭空间无泄漏寻路引擎', '预分配 1D BFS 热力图',
+       '舍弃高耗能动态节点树，采用预分配的 1D 连续内存数组（Cache-friendly）。每帧从玩家位置 BFS 扩散距离场，敌人决策被压缩到 O(1) 四向查表。整个生命周期 0 次内存分配，根除碎片与泄漏。',
+       'bfs'],
     ],
   },
   {
