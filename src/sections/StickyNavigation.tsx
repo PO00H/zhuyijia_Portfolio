@@ -21,20 +21,21 @@ const navItems: NavItem[] = [
 
 export default function StickyNavigation() {
   const [isVisible, setIsVisible] = useState(false);
-  const [activeSection, setActiveSection] = useState('portfolio');
+  const [activeSection, setActiveSection] = useState('about');
   const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     // 当滚动到 about 部分时才显示导航栏（HERO 滑过之后）
+    // About 现在是第一屏；让 nav 在滚出 About 顶部时再出现（避免和 Preloader 退场重叠）
     ScrollTrigger.create({
       trigger: '#about',
-      start: 'top 80%',
+      start: 'top top',
       onEnter: () => setIsVisible(true),
       onLeaveBack: () => setIsVisible(false),
     });
 
     // Track active section
-    const sections = ['portfolio', 'about', 'works-index', 'work-design', 'work-game', 'work-code'];
+    const sections = ['about', 'works-index', 'work-design', 'work-game', 'work-code'];
     
     sections.forEach((sectionId) => {
       const element = document.getElementById(sectionId);

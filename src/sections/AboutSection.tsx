@@ -275,7 +275,7 @@ function AwardsBlock() {
   }, []);
 
   return (
-    <div ref={blockRef} className="mt-16 pt-16 border-t border-[#8A8A85]/20">
+    <div ref={blockRef} className="mt-10 pt-10 border-t border-[#8A8A85]/20">
       {/* Block Title */}
       <div className="block-title flex items-center gap-3 mb-8 pb-4 border-b border-[#8A8A85]/30">
         <Award className="w-5 h-5 text-[#FF3D00]" strokeWidth={1.5} />
@@ -422,14 +422,14 @@ function SkillsBlock() {
   };
 
   return (
-    <div ref={blockRef} className="mt-16 pt-8 border-t border-[#8A8A85]/20">
+    <div ref={blockRef} className="mt-10 pt-8 border-t border-[#8A8A85]/20">
       <p className="skills-title section-label mb-8">
         <TextScrambleWithHover duration={0.5} speed={0.03} trigger={true}>
           Core Skills
         </TextScrambleWithHover>
       </p>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         {skillCategories.map((category, catIndex) => (
           <div key={catIndex} className="skill-category">
             <h4 className="body-mono text-[#1A1A1A] mb-4 text-sm font-medium">
@@ -641,12 +641,12 @@ export default function AboutSection() {
     <section
       ref={sectionRef}
       id="about"
-      className="section-full relative flex flex-col justify-center py-24 px-6 md:px-12 lg:px-24"
+      className="section-full relative flex flex-col justify-center py-16 md:py-20 px-6 md:px-12 lg:px-24"
       style={{ zIndex: 10 }}
     >
       <div className="max-w-[1600px] mx-auto w-full">
       {/* Section Header */}
-      <div ref={headerRef} className="mb-16 md:mb-24">
+      <div ref={headerRef} className="mb-10 md:mb-14">
         <h2 className="display-giant text-5xl md:text-7xl lg:text-8xl mb-6">
           <TextScrambleWithHover duration={1.0} speed={0.03} trigger={isInView}>
             ABOUT ME
@@ -665,7 +665,7 @@ export default function AboutSection() {
       </div>
 
       {/* Three Column Layout - Personal Info, Education, Experience */}
-      <div className="flex flex-col md:flex-row gap-12 md:gap-8 lg:gap-12">
+      <div className="flex flex-col md:flex-row gap-8 md:gap-6 lg:gap-10">
         <PersonalInfoBlock />
         <TimelineBlock
           title="EDUCATION · 教育"

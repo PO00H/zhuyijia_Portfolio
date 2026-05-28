@@ -26,11 +26,11 @@
     line-height:.95;background:linear-gradient(135deg,#ff3d00,#ff9100);
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
     margin-bottom:.5rem}
-  .subtitle-cn{font-size:1rem;color:var(--fg-dim);margin-bottom:.25rem}
-  .subtitle-tag{font-family:var(--mono);font-size:11px;color:var(--fg-mute);letter-spacing:.1em}
-  .meta-row{display:flex;gap:1.25rem;flex-wrap:wrap;margin-top:1.5rem;
+  .subtitle-cn{font-size:1rem;color:var(--fg-dim);margin-top:.35rem;line-height:1.3}
+  .subtitle-tag{font-family:var(--mono);font-size:11px;color:var(--fg-mute);letter-spacing:.1em;margin-top:.25rem;line-height:1.3}
+  .meta-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.85rem;line-height:1.3;
     font-family:var(--mono);font-size:11px;color:var(--fg-dim);letter-spacing:.05em}
-  .meta-row span+span::before{content:"·";margin-right:1.25rem;color:var(--fg-mute)}
+  .meta-row span+span::before{content:"·";margin:0 .5rem;color:var(--fg-mute)}
 
   /* ───── TRAILER VIDEO ───── */
   .trailer{margin-bottom:3rem;border:1px solid var(--line);background:#000;overflow:hidden}
@@ -79,9 +79,13 @@
   .ac-head .cat{font-size:1rem;font-weight:500;color:var(--fg)}
   .ac-head .count{font-family:var(--mono);font-size:11px;color:var(--fg-mute)}
   .ac-head .toggle{font-family:var(--mono);font-size:1.2rem;color:var(--accent);
-    width:24px;height:24px;display:grid;place-items:center;
-    border:1px solid var(--line);transition:transform .3s,background .2s,color .2s}
-  .ac-item.open .toggle{background:var(--accent);color:#000;transform:rotate(45deg)}
+    width:28px;height:28px;display:grid;place-items:center;
+    border:1px solid var(--line);transition:transform .3s,background .2s,color .2s,box-shadow .2s}
+  .ac-head:hover .toggle{border-color:var(--accent)}
+  .ac-item.open .toggle{background:var(--accent);color:#000;transform:rotate(45deg);
+    box-shadow:0 0 0 3px rgba(255,61,0,.15)}
+  .ac-item.open .ac-head:hover{background:rgba(255,61,0,.08)}
+  .ac-item.open .ac-head:hover .toggle{background:#ff8c42}
 
   .ac-preview{grid-column:1/-1;display:flex;gap:.4rem;flex-wrap:wrap;
     padding-top:.25rem;transition:opacity .3s}
@@ -99,11 +103,26 @@
 
   /* highlight 单项 */
   .hl{padding:1rem;background:rgba(0,0,0,.4);border-left:2px solid var(--accent)}
+  .hl-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.35rem}
   .hl-title{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--accent);
-    margin-bottom:.35rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:baseline}
+    display:flex;gap:.5rem;flex-wrap:wrap;align-items:baseline;flex:1}
   .hl-title b{font-weight:700;color:var(--fg);font-family:var(--sans);font-size:13px}
   .hl-title .algo{color:var(--fg-mute)}
   .hl-desc{font-size:.85rem;color:var(--fg-dim);line-height:1.65;font-weight:300}
+
+  /* 单亮点的 viz 子折叠按钮 */
+  .hl-viz-toggle{
+    flex-shrink:0;background:transparent;border:1px solid var(--accent);color:var(--accent);
+    padding:.3rem .65rem;font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+    cursor:pointer;transition:all .2s;border-radius:2px;text-transform:uppercase;white-space:nowrap
+  }
+  .hl-viz-toggle:hover{background:var(--accent);color:#000}
+  .hl-viz-toggle .arrow{display:inline-block;transition:transform .25s}
+  .hl.viz-open .hl-viz-toggle .arrow{transform:rotate(180deg)}
+  .hl.viz-open .hl-viz-toggle{background:var(--accent);color:#000}
+  /* 默认 viz 折叠不显示 */
+  .viz{display:none}
+  .hl.viz-open .viz{display:block}
 
   /* 工具栏：全部展开/收起 */
   .ac-tools{display:flex;justify-content:flex-end;gap:1rem;margin-bottom:.75rem;
@@ -113,8 +132,38 @@
   .ac-tools button:hover{color:var(--accent)}
 
   /* ───── VIZ (algorithm visualizations) ───── */
-  .viz{margin-top:.75rem;background:#000;border:1px solid var(--line);padding:.5rem;position:relative;overflow:hidden}
-  .viz canvas{display:block;max-width:100%;height:auto;margin:0 auto}
+  .viz{margin-top:.75rem;background:var(--bg-2);border:1px solid var(--line);padding:.75rem;position:relative;overflow:hidden;border-radius:2px}
+  .viz canvas{display:block;max-width:100%;height:auto;margin:0 auto;background:#1a1a1a}
+
+  /* 多 slider 参数面板 (CCD 用到，未来其他 viz 也复用) */
+  .viz-params{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:.5rem 1rem;
+    margin-top:.75rem;
+    padding-top:.75rem;
+    border-top:1px solid var(--line);
+    font-family:var(--mono);
+    font-size:10px;
+  }
+  .viz-params label{color:var(--fg-dim);letter-spacing:.05em;text-transform:uppercase}
+  .viz-params input[type=range]{
+    accent-color:var(--accent);
+    width:100%;
+    background:transparent;
+  }
+  .viz-params .val{color:var(--fg);font-weight:500;min-width:60px;text-align:right}
+  .viz-params .val small{color:var(--fg-mute);margin-left:.15rem}
+  .viz-params .viz-meta{font-size:10px}
+  .viz-btn{
+    background:transparent;border:1px solid var(--accent);color:var(--accent);
+    padding:.35rem .75rem;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+    cursor:pointer;transition:all .2s;border-radius:2px
+  }
+  .viz-btn:hover{background:var(--accent);color:#000}
+
+  /* 旧的单 slider 容器保留兼容（不一定再用） */
   .viz-slider input[type=range]{accent-color:var(--accent);width:160px}
 
   /* ───── FOOTER ───── */
@@ -136,9 +185,7 @@
   <div class="subtitle-cn">盲剑客：《白夜瞬闪》</div>
   <div class="subtitle-tag">PIXEL ACTION · STEALTH · ONE-HIT-KILL</div>
   <div class="meta-row">
-    <span>2026</span>
-    <span>20 days · Solo</span>
-    <span>Personal Project</span>
+    <span>2026</span><span>20 days · Solo</span><span>Personal Project</span>
   </div>
 </header>
 
@@ -162,16 +209,6 @@
   <div class="chips">
     <span class="chip">C++17</span>
     <span class="chip">EasyX</span>
-    <span class="chip">Win32 GDI</span>
-    <span class="chip">OOP</span>
-    <span class="chip">FSM</span>
-    <span class="chip">CCD</span>
-    <span class="chip">AABB</span>
-    <span class="chip">Raymarching</span>
-    <span class="chip">Object Pool</span>
-    <span class="chip">BFS</span>
-    <span class="chip">Lerp</span>
-    <span class="chip">MSVC</span>
   </div>
 </section>
 
@@ -204,6 +241,14 @@
 
 <!-- 可视化算法模块（按需加载，模块化方便未来扩展） -->
 <script src="./viz/ccd.js"></script>
+<script src="./viz/aabb.js"></script>
+<script src="./viz/raymarch.js"></script>
+<script src="./viz/memfog.js"></script>
+<script src="./viz/procui.js"></script>
+<script src="./viz/lerp.js"></script>
+<script src="./viz/deadzone.js"></script>
+<script src="./viz/bfs.js"></script>
+<script src="./viz/fsm.js"></script>
 
 <script>
 const HIGHLIGHTS = [
@@ -217,23 +262,27 @@ const HIGHLIGHTS = [
        '摒弃直接坐标传送，将一闪的大位移离散化切片进行微步判定，完美保留高爆发力的同时彻底杜绝穿墙 Bug。',
        'ccd'],   // ← viz key
       ['丝滑贴墙滑动', 'AABB 矢量排挤',
-       '利用重叠深度与方向向量将角色平滑"挤"出墙外，避免死死卡在墙角，实现极佳的微操手感。'],
+       '利用重叠深度与方向向量将角色平滑"挤"出墙外，避免死死卡在墙角，实现极佳的微操手感。',
+       'aabb'],
       ['场景破坏与逻辑解耦', '射线步进采样 (Raymarching)',
-       '摒弃高耗能几何判定，改用"刻度尺"顺着刀光轨迹离散采样，实现环境破坏与图层抹除的原子级同步。'],
+       '摒弃高耗能几何判定，改用"刻度尺"顺着刀光轨迹离散采样，实现环境破坏与图层抹除的原子级同步。',
+       'raymarch'],
     ],
   },
   {
     num: '02',
     cat: '渲染管线与视觉反馈',
     catEn: 'Rendering & Visuals',
-    chips: ['Memory Fog', 'Y-Sorting', 'Procedural UI'],
+    chips: ['Pixel Shader', 'Y-Sorting', 'Procedural UI'],
     items: [
-      ['动态记忆迷雾系统', '空间裁剪 + 圆环方程衰减',
-       '引入包围盒过滤无效计算，利用数学方程画出空心波纹。配合记忆计时器呈现"残影视野衰减"，强化潜行沉浸感。'],
+      ['基于 CPU 像素着色器的全屏后处理管线', '空间裁剪 + 圆环方程衰减',
+       '引入包围盒过滤无效计算，利用数学方程画出空心波纹。配合记忆计时器呈现"残影视野衰减"，强化潜行沉浸感。',
+       'memfog'],
       ['2.5D 深度遮挡渲染', 'Y-Sorting 动态切片',
        '将地图渲染拆分为"行切片"，并根据游戏实体的 Y 坐标动态决定渲染先后顺序，精准呈现伪 3D 深度遮挡。'],
       ['程序化矢量战术 UI', '动态顶点运算 (Procedural)',
-       '摒弃静态贴图，利用 sin/cos 实时解算多边形顶点，实现能随蓄力值 0 延迟动态伸缩的科技感箭头。'],
+       '摒弃静态贴图，利用 sin/cos 实时解算多边形顶点，实现能随蓄力值 0 延迟动态伸缩的科技感箭头。',
+       'procui'],
     ],
   },
   {
@@ -243,11 +292,14 @@ const HIGHLIGHTS = [
     chips: ['Lerp', 'Dead Zone', 'BFS Heatmap'],
     items: [
       ['电影级阻尼运镜', 'Lerp 线性插值',
-       '摒弃生硬的 1:1 坐标锁死跟随，实现带弹性的"阻尼拖拽感"。一闪瞬间相机会有延迟追焦，极大增强打击张力。'],
+       '摒弃生硬的 1:1 坐标锁死跟随，实现带弹性的"阻尼拖拽感"。一闪瞬间相机会有延迟追焦，极大增强打击张力。',
+       'lerp'],
       ['零漂移摇杆补偿', '死区控制与相位偏移',
-       '引入主机手柄"死区"算法杜绝近距离抖动，并在 8 方向角度解算时施加偏移锁死扇区中心，实现绝对丝滑的操作。'],
-      ['无泄漏寻路引擎', '预分配 1D BFS 热力图',
-       '舍弃高耗能动态节点树，采用预分配的 1D 网格数组，确保大量敌兵同时寻路不产生性能波动或内存碎片。'],
+       '引入主机手柄"死区"算法杜绝近距离抖动，并在 8 方向角度解算时施加偏移锁死扇区中心，实现绝对丝滑的操作。',
+       'deadzone'],
+      ['封闭空间无泄漏寻路引擎', '预分配 1D BFS 热力图',
+       '舍弃高耗能动态节点树，采用预分配的 1D 连续内存数组（Cache-friendly）。每帧从玩家位置 BFS 扩散距离场，敌人决策被压缩到 O(1) 四向查表。整个生命周期 0 次内存分配，根除碎片与泄漏。',
+       'bfs'],
     ],
   },
   {
@@ -261,7 +313,8 @@ const HIGHLIGHTS = [
       ['零分配特效引擎', '对象池模式 (Object Pool)',
        '彻底解决动作游戏帧率杀手。提前分配固定特效对象，用完后"回收休眠"，保证同屏特效爆满时内存分配依然为零。'],
       ['场景状态机调度', '顶层 FSM 状态机',
-       '通过顶层状态 (MENU, PLAYING) 将游戏流程硬隔离，实现无缝轮回机制，一键重置数据，杜绝跨场景内存泄漏。'],
+       '通过顶层状态 (MENU, PLAYING) 将游戏流程硬隔离，实现无缝轮回机制，一键重置数据，杜绝跨场景内存泄漏。',
+       'fsm'],
       ['独立时间线控制', '帧解耦与逻辑计时器',
        '动画帧更替完全脱离线程挂起。基于独立的帧计数器驱动，确保在不同性能的电脑上，物理逻辑和画面节奏绝不崩坏。'],
     ],
@@ -290,7 +343,10 @@ HIGHLIGHTS.forEach((g) => {
             const vizKey = it[3];   // 第 4 项可选 viz key
             return `
               <div class="hl">
-                <div class="hl-title"><b>${it[0]}</b><span class="algo">· ${it[1]}</span></div>
+                <div class="hl-head">
+                  <div class="hl-title"><b>${it[0]}</b><span class="algo">· ${it[1]}</span></div>
+                  ${vizKey ? `<button class="hl-viz-toggle" type="button"><span class="arrow">▼</span> DEMO</button>` : ''}
+                </div>
                 <div class="hl-desc">${it[2]}</div>
                 ${vizKey ? `<div class="viz" data-viz="${vizKey}"></div>` : ''}
               </div>
@@ -306,27 +362,50 @@ HIGHLIGHTS.forEach((g) => {
     head.setAttribute('aria-expanded', open ? 'true' : 'false');
     handleVizForItem(item, open);
   });
+
+  // 每个 .hl 块的 viz 子折叠按钮
+  item.querySelectorAll('.hl').forEach((hl) => {
+    const toggleBtn = hl.querySelector('.hl-viz-toggle');
+    const vizEl = hl.querySelector('.viz[data-viz]');
+    if (!toggleBtn || !vizEl) return;
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const willOpen = !hl.classList.contains('viz-open');
+      hl.classList.toggle('viz-open', willOpen);
+      const key = vizEl.dataset.viz;
+      const viz = window.VIZ_REGISTRY?.[key];
+      if (!viz) return;
+      if (willOpen) {
+        if (!vizEl.dataset.mounted) {
+          viz.mount(vizEl);
+          vizEl.dataset.mounted = '1';
+        } else {
+          viz.resume(vizEl);
+        }
+      } else {
+        viz.pause(vizEl);
+      }
+    });
+  });
+
   acc.appendChild(item);
 });
 
 /**
- * 手风琴展开/折叠时管理 viz 生命周期：
- * - 首次展开：lazy mount canvas + 启动 RAF
- * - 后续展开：resume RAF
- * - 折叠：pause RAF（不卸载 canvas，状态保留）
+ * 大类手风琴展开/折叠：只 pause/resume 已挂载的 viz，不再自动 mount。
+ * 真正的"开始演示"由用户在 .hl 块上点 DEMO 按钮触发。
  */
 function handleVizForItem(item, open) {
   item.querySelectorAll('.viz[data-viz]').forEach((el) => {
+    // 只有已被用户主动展开过的 viz 才管 (避免无意义启动)
+    if (!el.dataset.mounted) return;
+    const hl = el.closest('.hl');
+    if (!hl || !hl.classList.contains('viz-open')) return;
     const key = el.dataset.viz;
     const viz = window.VIZ_REGISTRY?.[key];
     if (!viz) return;
     if (open) {
-      if (!el.dataset.mounted) {
-        viz.mount(el);
-        el.dataset.mounted = '1';
-      } else {
-        viz.resume(el);
-      }
+      viz.resume(el);
     } else {
       viz.pause(el);
     }

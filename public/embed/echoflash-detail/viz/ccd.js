@@ -1,14 +1,19 @@
 /**
- * CCD 连续碰撞检测可视化
+ * CCD 连续碰撞检测可视化 v3
  * --------------------------------------------------------------
- * 600×220 Canvas，上下两半对比：
- *   上半 "Naive": 玩家每帧直接 += speed，速度高时会"穿过"墙
- *   下半 "CCD":   把同一位移切成 N 个微步，每步 AABB 检测，撞墙就停
+ * 还原 ECHOFLASH 真实 C++ 实现:
+ *   int   steps   = (int)(dashDistance / CCD_STEP_SIZE) + 1;
+ *   float stepX   = (cos(angle) * dashDistance) / steps;
+ *   for (int i = 0; i < steps; i++) {
+ *       position += {stepX, stepY};
+ *       position = ResolveCollision(position, COLLISION_RAD, hitWall, true);
+ *       if (hitWall) break;
+ *   }
  *
- * 自动循环：每 4 秒一轮（蓄力 → 突进 → 停顿 → 重置）
- * 交互：
- *   - 滑块调突进速度 5~50 px/step
- *   - 鼠标 / 触屏拖动滑块均可（HTML range 原生兼容）
+ * UI 简化为 1 个 slider 控制 CCD_STEP_SIZE + 3 个预设：
+ *   PRECISE  (step=10)   多步细切，精确停在墙前
+ *   FAST     (step=30)   合理的默认值
+ *   TELEPORT (step=200)  步长过大，跳过墙 -> CCD 失效 (PHASED!)
  *
  * 接口：window.VIZ_REGISTRY.ccd = { mount, pause, resume }
  * --------------------------------------------------------------
@@ -16,216 +21,337 @@
 (function () {
   'use strict';
 
-  const W = 600, H = 220;
-  const STEPS = 8;          // CCD 每帧拆 8 个微步
-  const PLAYER_W = 28;
-  const WALL_X = 380;       // 墙的左边沿 X
-  const WALL_W = 36;
-  const LOOP_MS = 4000;     // 一轮循环 4 秒
+  // ── 逻辑坐标（CSS 像素），实际 canvas 内部分辨率 × DPR ──
+  const W = 640, H = 200;
+  const PLAYER_SIZE = 24;
+  const START_X = 80;
+  const PLAYER_Y = 100;
+  const WALL_LEFT = 380;
+  const WALL_RIGHT = 460;
+  const WALL_TOP = 70, WALL_BOTTOM = 150;
 
-  /** 单实例状态（mount 时初始化）*/
+  const DASH_DIST = 480;          // 固定突进距离 (够大让 TELEPORT 真的跨过墙)
+  const PLAY_INTERVAL = 140;      // ms / step (固定演示节奏)
+  const HOLD_AFTER_DONE = 1400;   // ms 完成后停留
+
+  // 预设：3 个对比鲜明的取值
+  //   PRECISE   step=15  → steps≈33,  stepDelta≈14.5  贴墙安全停下
+  //   FAST      step=40  → steps≈13,  stepDelta≈37    贴墙安全停下 (默认)
+  //   TELEPORT  step=500 → steps=1,   stepDelta=480   一步跨过墙 → PHASED!
+  const PRESETS = [
+    { name: 'PRECISE',  step: 15  },
+    { name: 'FAST',     step: 40  },
+    { name: 'TELEPORT', step: 500 },
+  ];
+  const DEFAULT_STEP = 40;
+
+  // 色板（与详情页 CSS var 一致）
+  const C_BG = '#1a1a1a';
+  const C_GROUND = '#161616';
+  const C_LINE = '#2a2a2a';
+  const C_ACCENT = '#FF3D00';
+  const C_GHOST = 'rgba(255,61,0,0.22)';
+  const C_WALL = '#3a3a3a';
+  const C_FG = '#f0f0f0';
+  const C_DIM = '#8a8a85';
+  const C_RED = '#FF5F57';
+  const C_GREEN = '#28C840';
+  const C_YELLOW = '#FEBC2E';
+
+  // ──────────────────────────────────────────────────────────
   function createState() {
     return {
-      raf: 0,
       running: false,
-      speed: 22,          // px/step，初始值
-      startTs: 0,
-      // 两个玩家各自状态
-      naive: { x: 60, hit: false, hitFrame: -1 },
-      ccd: { x: 60, hit: false, hitFrame: -1, subSteps: [] },
+      timer: 0,
+      stepSize: DEFAULT_STEP,
+      phase: 'IDLE',
+      stepIdx: 0,
+      steps: 0,
+      stepDelta: 0,
+      x: START_X,
+      history: [],
+      hitWall: false,
+      phased: false,
+      resultLabel: '',
+      resultColor: C_GREEN,
     };
   }
 
-  function aabbHit(x, w) {
-    return x + w > WALL_X && x < WALL_X + WALL_W;
+  function advanceStep(state) {
+    const prevX = state.x;
+    const nextX = state.x + state.stepDelta;
+    state.stepIdx++;
+
+    const wasOutside = prevX + PLAYER_SIZE <= WALL_LEFT;
+    const willPass = nextX >= WALL_RIGHT;
+    const willHit = (nextX + PLAYER_SIZE > WALL_LEFT) && (nextX < WALL_RIGHT);
+
+    // PHASED：上一帧还在墙左外，这一帧已经过墙右 → step 跨度太大跳过墙
+    if (wasOutside && willPass) {
+      state.history.push({ x: prevX });
+      state.x = nextX;
+      state.phased = true;
+      state.phase = 'DONE';
+      state.resultLabel = 'PHASED · CCD failed (step > wall)';
+      state.resultColor = C_RED;
+      return;
+    }
+
+    // BLOCKED：常规撞墙，模拟 ResolveCollision 把方块推回墙前
+    if (willHit) {
+      state.history.push({ x: prevX });
+      state.x = WALL_LEFT - PLAYER_SIZE;
+      state.hitWall = true;
+      state.phase = 'DONE';
+      state.resultLabel = `BLOCKED at step ${state.stepIdx} · STUN`;
+      state.resultColor = C_RED;
+      return;
+    }
+
+    // 正常推进
+    state.history.push({ x: prevX });
+    state.x = nextX;
+
+    if (state.stepIdx >= state.steps) {
+      state.phase = 'DONE';
+      state.resultLabel = `REACHED · ${DASH_DIST}px in ${state.steps} steps`;
+      state.resultColor = C_GREEN;
+    }
   }
 
-  function drawScene(ctx, state, t) {
+  function startDash(state) {
+    state.phase = 'DASHING';
+    state.stepIdx = 0;
+    state.steps = Math.floor(DASH_DIST / state.stepSize) + 1;
+    state.stepDelta = DASH_DIST / state.steps;
+    state.x = START_X;
+    state.history = [];
+    state.hitWall = false;
+    state.phased = false;
+    state.resultLabel = '';
+    scheduleNext(state);
+  }
+
+  function scheduleNext(state) {
+    state.timer = setTimeout(() => {
+      if (!state.running) return;
+      advanceStep(state);
+      draw(state.container);
+      if (state.phase === 'DASHING') {
+        scheduleNext(state);
+      } else {
+        // DONE 状态保持一段时间再重置
+        state.timer = setTimeout(() => {
+          if (!state.running) return;
+          startDash(state);
+        }, HOLD_AFTER_DONE);
+      }
+    }, PLAY_INTERVAL);
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // DRAW
+  // ──────────────────────────────────────────────────────────
+  function draw(container) {
+    const state = container._vizState;
+    const ctx = container._vizCtx;
+
     ctx.clearRect(0, 0, W, H);
 
-    // ── 顶部 / 底部背景轨道 ──
-    ctx.fillStyle = '#161616';
-    ctx.fillRect(0, 20, W, 80);    // 上半
-    ctx.fillRect(0, 120, W, 80);   // 下半
+    // 背景
+    ctx.fillStyle = C_BG;
+    ctx.fillRect(0, 0, W, H);
+    // 轨道带
+    ctx.fillStyle = C_GROUND;
+    ctx.fillRect(0, 55, W, 100);
 
-    // ── 墙（两半都有）──
-    ctx.fillStyle = '#3a3a3a';
-    ctx.fillRect(WALL_X, 20, WALL_W, 80);
-    ctx.fillRect(WALL_X, 120, WALL_W, 80);
-    // 墙体高光线
-    ctx.fillStyle = '#FF3D00';
-    ctx.fillRect(WALL_X, 20, 2, 80);
-    ctx.fillRect(WALL_X, 120, 2, 80);
-
-    // ── 标签 ──
-    ctx.font = '10px "JetBrains Mono", monospace';
+    // 顶部信息
+    ctx.font = '11px "JetBrains Mono", monospace';
     ctx.textBaseline = 'top';
-    ctx.fillStyle = '#8A8A85';
-    ctx.fillText('NAIVE  · direct add', 12, 6);
-    ctx.fillText('CCD    · sub-step + AABB', 12, 106);
+    ctx.fillStyle = C_ACCENT;
+    ctx.fillText('DASH ENGINE · CCD', 16, 12);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = state.phase === 'DASHING' ? C_FG : C_DIM;
+    ctx.font = 'bold 12px "JetBrains Mono", monospace';
+    ctx.fillText(`STEP  ${state.stepIdx} / ${state.steps}`, W - 16, 12);
+    ctx.textAlign = 'left';
 
-    // ── 上半：Naive 玩家 ──
-    const naive = state.naive;
-    ctx.fillStyle = naive.hit ? '#FF5F57' : '#FF3D00';
-    ctx.fillRect(naive.x, 46, PLAYER_W, 28);
+    // 墙
+    ctx.fillStyle = C_WALL;
+    ctx.fillRect(WALL_LEFT, WALL_TOP, WALL_RIGHT - WALL_LEFT, WALL_BOTTOM - WALL_TOP);
+    ctx.fillStyle = C_ACCENT;
+    ctx.fillRect(WALL_LEFT, WALL_TOP, WALL_RIGHT - WALL_LEFT, 2);
+    ctx.font = '9px "JetBrains Mono", monospace';
+    ctx.fillStyle = C_DIM;
+    ctx.textAlign = 'center';
+    ctx.fillText('WALL', (WALL_LEFT + WALL_RIGHT) / 2, WALL_BOTTOM + 5);
+    ctx.textAlign = 'left';
 
-    // 状态标签（右侧）
-    if (t > LOOP_MS * 0.8) {
-      const passed = naive.x > WALL_X + WALL_W;
-      ctx.fillStyle = passed ? '#FF5F57' : '#28C840';
-      ctx.font = 'bold 10px "JetBrains Mono", monospace';
-      ctx.fillText(passed ? 'BUG · PHASED THROUGH' : 'OK', W - 180, 46);
-    }
-
-    // ── 下半：CCD 玩家 ──
-    const ccd = state.ccd;
-    // 微步残影（最近的几个）
-    ccd.subSteps.forEach((sx, i) => {
-      const alpha = (i + 1) / ccd.subSteps.length * 0.4;
-      ctx.fillStyle = `rgba(255,61,0,${alpha})`;
-      ctx.fillRect(sx, 146, PLAYER_W, 28);
+    // 残影
+    state.history.forEach((h) => {
+      ctx.fillStyle = C_GHOST;
+      ctx.fillRect(h.x, PLAYER_Y - PLAYER_SIZE / 2, PLAYER_SIZE, PLAYER_SIZE);
     });
-    ctx.fillStyle = ccd.hit ? '#FF5F57' : '#FF3D00';
-    ctx.fillRect(ccd.x, 146, PLAYER_W, 28);
-    // 撞墙时的小爆点（红色三角）
-    if (ccd.hit) {
-      ctx.fillStyle = '#FF5F57';
+
+    // 玩家
+    ctx.fillStyle = state.hitWall ? C_RED : (state.phased ? C_RED : C_ACCENT);
+    ctx.fillRect(state.x, PLAYER_Y - PLAYER_SIZE / 2, PLAYER_SIZE, PLAYER_SIZE);
+    ctx.strokeStyle = state.hitWall || state.phased ? '#ff8c84' : '#ffb380';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(state.x + 0.5, PLAYER_Y - PLAYER_SIZE / 2 + 0.5, PLAYER_SIZE - 1, PLAYER_SIZE - 1);
+
+    if (state.phased) {
+      // 在玩家上方加红色感叹号
+      ctx.fillStyle = C_RED;
+      ctx.font = 'bold 16px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('!', state.x + PLAYER_SIZE / 2, PLAYER_Y - 26);
+      ctx.textAlign = 'left';
+    }
+
+    // 刻度尺
+    const RY = 172;
+    ctx.strokeStyle = C_LINE;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, RY);
+    ctx.lineTo(W, RY);
+    ctx.stroke();
+    ctx.font = '9px "JetBrains Mono", monospace';
+    const ticks = [
+      { x: START_X, label: 'START', col: C_ACCENT },
+      { x: WALL_LEFT, label: '↓ wall', col: C_DIM },
+      { x: START_X + DASH_DIST, label: `target ${DASH_DIST}px`, col: C_DIM },
+    ];
+    ticks.forEach((t) => {
+      if (t.x > W) return;
+      ctx.strokeStyle = t.col;
       ctx.beginPath();
-      ctx.moveTo(WALL_X - 4, 156);
-      ctx.lineTo(WALL_X - 14, 150);
-      ctx.lineTo(WALL_X - 14, 162);
-      ctx.fill();
-    }
-    // 状态标签
-    if (t > LOOP_MS * 0.8) {
-      ctx.fillStyle = ccd.hit ? '#28C840' : '#8A8A85';
-      ctx.font = 'bold 10px "JetBrains Mono", monospace';
-      ctx.fillText(ccd.hit ? 'OK · STOPPED AT WALL' : 'IDLE', W - 180, 146);
-    }
+      ctx.moveTo(t.x, RY - 4);
+      ctx.lineTo(t.x, RY + 4);
+      ctx.stroke();
+      ctx.fillStyle = t.col;
+      ctx.textAlign = 'center';
+      ctx.fillText(t.label, t.x, RY + 8);
+    });
+    ctx.textAlign = 'left';
 
-    // ── 进度条 ──
-    ctx.fillStyle = '#2a2a2a';
-    ctx.fillRect(0, H - 4, W, 4);
-    ctx.fillStyle = '#FF3D00';
-    ctx.fillRect(0, H - 4, (t % LOOP_MS) / LOOP_MS * W, 4);
+    // 底部状态
+    ctx.font = 'bold 11px "JetBrains Mono", monospace';
+    let st, sc;
+    if (state.phase === 'DASHING') {
+      st = `DASHING ▸ step ${state.stepIdx}/${state.steps} · pos ${Math.round(state.x - START_X)}px`;
+      sc = C_YELLOW;
+    } else if (state.phase === 'DONE') {
+      st = state.resultLabel;
+      sc = state.resultColor;
+    } else {
+      st = 'IDLE';
+      sc = C_DIM;
+    }
+    ctx.fillStyle = sc;
+    ctx.fillText(st, 16, H - 14);
   }
 
-  function tick(state, ctx, ts) {
-    if (!state.startTs) state.startTs = ts;
-    const t = (ts - state.startTs) % LOOP_MS;
+  // ──────────────────────────────────────────────────────────
+  // CONTROLS
+  // ──────────────────────────────────────────────────────────
+  function buildControls(container, state) {
+    const wrap = document.createElement('div');
+    wrap.className = 'viz-controls-row';
+    wrap.style.cssText = 'display:flex;align-items:center;gap:.75rem;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--line);flex-wrap:wrap;font-family:var(--mono);font-size:10px';
+    wrap.innerHTML = `
+      <button class="viz-btn" data-act="replay">▶ REPLAY</button>
+      <div style="display:flex;gap:.4rem">
+        ${PRESETS.map((p, i) => `<button class="viz-btn viz-preset" data-step="${p.step}">${p.name}</button>`).join('')}
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;flex:1;min-width:240px">
+        <label style="color:var(--fg-dim);letter-spacing:.05em">STEP SIZE</label>
+        <input type="range" min="5" max="500" step="5" value="${state.stepSize}" style="accent-color:var(--accent);flex:1" />
+        <span class="step-val" style="color:var(--fg);min-width:48px;text-align:right">${state.stepSize}<small style="color:var(--fg-mute)">px</small></span>
+      </div>
+      <div style="color:var(--fg-dim)">
+        steps = <span class="steps-val" style="color:var(--accent);font-weight:700">11</span>
+      </div>
+    `;
+    container.appendChild(wrap);
 
-    // 0-800ms 蓄力（不动） / 800-2400ms 突进 / 2400-4000ms 停顿
-    if (t < 800) {
-      // reset
-      state.naive.x = 60;
-      state.naive.hit = false;
-      state.ccd.x = 60;
-      state.ccd.hit = false;
-      state.ccd.subSteps = [];
-    } else if (t < 2400) {
-      // 突进
-      // Naive: 每帧直接加 speed × 2.5（夸张速度让 bug 明显）
-      if (!state.naive.hit) {
-        const next = state.naive.x + state.speed * 2.5;
-        // 检测：但 naive 不做切片，只在最后位置检测，所以高速会穿墙
-        if (next < W - PLAYER_W) {
-          state.naive.x = next;
-        }
-        // 标 bug：如果 next 已经过了墙的右边
-        if (next > WALL_X + WALL_W) {
-          state.naive.hit = false; // 没"撞到"，但视觉上穿过去了
-        }
-      }
-      // CCD: 同样大位移，但切片
-      if (!state.ccd.hit) {
-        const totalDelta = state.speed * 2.5;
-        const stepDelta = totalDelta / STEPS;
-        let curX = state.ccd.x;
-        const recent = [];
-        for (let i = 0; i < STEPS; i++) {
-          const nx = curX + stepDelta;
-          recent.push(nx);
-          if (aabbHit(nx, PLAYER_W)) {
-            // 退回到刚好贴着墙
-            curX = WALL_X - PLAYER_W;
-            state.ccd.hit = true;
-            break;
-          }
-          curX = nx;
-        }
-        state.ccd.x = curX;
-        state.ccd.subSteps = recent.slice(0, 5); // 保留最近 5 个残影
-      }
+    const slider = wrap.querySelector('input[type=range]');
+    const stepValLabel = wrap.querySelector('.step-val');
+    const stepsLabel = wrap.querySelector('.steps-val');
+
+    function updateStepsLabel() {
+      stepsLabel.textContent = Math.floor(DASH_DIST / state.stepSize) + 1;
     }
-    // 2400-4000ms 停顿，状态保持
+    function applyStep(step) {
+      state.stepSize = step;
+      slider.value = step;
+      stepValLabel.firstChild.nodeValue = step;
+      updateStepsLabel();
+    }
+    updateStepsLabel();
 
-    drawScene(ctx, state, t);
+    slider.addEventListener('input', () => applyStep(parseInt(slider.value, 10)));
+    slider.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+
+    wrap.querySelectorAll('.viz-preset').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        applyStep(parseInt(btn.dataset.step, 10));
+        clearTimeout(state.timer);
+        startDash(state);
+      });
+    });
+
+    wrap.querySelector('[data-act="replay"]').addEventListener('click', () => {
+      clearTimeout(state.timer);
+      startDash(state);
+    });
   }
 
+  // ──────────────────────────────────────────────────────────
+  // MOUNT
+  // ──────────────────────────────────────────────────────────
   function mount(container) {
     container.innerHTML = '';
 
-    // canvas
     const canvas = document.createElement('canvas');
-    canvas.width = W;
-    canvas.height = H;
-    canvas.style.width = '100%';
-    canvas.style.height = 'auto';
-    canvas.style.display = 'block';
+    // DPR 高清渲染：内部分辨率 = CSS × DPR
+    const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.cssText = `display:block;width:100%;height:auto;max-width:${W}px;margin:0 auto;border-radius:2px;image-rendering:auto`;
     container.appendChild(canvas);
 
-    // 控制栏（slider）
-    const controls = document.createElement('div');
-    controls.className = 'viz-slider';
-    controls.innerHTML = `
-      <span style="font-family:var(--mono);font-size:10px;color:var(--fg-mute)">SPEED</span>
-      <input type="range" min="5" max="50" value="22" step="1" aria-label="CCD speed" />
-      <span class="speed-val" style="font-family:var(--mono);font-size:10px;color:var(--accent);min-width:30px">22</span>
-    `;
-    controls.style.cssText = 'display:flex;align-items:center;gap:.75rem;padding:.5rem .25rem 0;';
-    container.appendChild(controls);
-
     const ctx = canvas.getContext('2d');
+    // 让所有绘制操作仍然按 CSS 坐标系（W × H）写
+    ctx.scale(dpr, dpr);
+    ctx.imageSmoothingEnabled = false;
+
     const state = createState();
-    container._vizState = state;
+    state.container = container;
     container._vizCanvas = canvas;
+    container._vizCtx = ctx;
+    container._vizState = state;
 
-    // 绑定 slider（鼠标 + 触屏原生支持）
-    const slider = controls.querySelector('input');
-    const valLabel = controls.querySelector('.speed-val');
-    slider.addEventListener('input', () => {
-      state.speed = parseInt(slider.value, 10);
-      valLabel.textContent = slider.value;
-    });
-    // touchmove fallback：原生 input[type=range] 在大多数浏览器已支持 touch，
-    // 不过 iOS Safari 上还可以加 touchstart 让用户更容易开始拖
-    slider.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
-
-    function loop(ts) {
-      if (!state.running) return;
-      tick(state, ctx, ts);
-      state.raf = requestAnimationFrame(loop);
-    }
+    buildControls(container, state);
 
     state.running = true;
-    state.raf = requestAnimationFrame(loop);
-    container._vizLoop = loop;
+    draw(container);
+    startDash(state);
   }
 
   function pause(container) {
-    const state = container._vizState;
-    if (!state) return;
-    state.running = false;
-    if (state.raf) cancelAnimationFrame(state.raf);
-    state.raf = 0;
+    const s = container._vizState;
+    if (!s) return;
+    s.running = false;
+    if (s.timer) { clearTimeout(s.timer); s.timer = 0; }
   }
 
   function resume(container) {
-    const state = container._vizState;
-    if (!state || state.running) return;
-    state.running = true;
-    state.startTs = 0;  // 重置时间基准，从头开始一轮
-    state.raf = requestAnimationFrame(container._vizLoop);
+    const s = container._vizState;
+    if (!s || s.running) return;
+    s.running = true;
+    startDash(s);
   }
 
   window.VIZ_REGISTRY = window.VIZ_REGISTRY || {};

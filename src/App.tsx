@@ -3,7 +3,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // Sections
-import HeroSection from './sections/HeroSection';
 import StickyNavigation from './sections/StickyNavigation';
 import AboutSection from './sections/AboutSection';
 import WorksIndexSection from './sections/WorksIndexSection';
@@ -16,6 +15,7 @@ import { CustomCursor } from './components/CustomCursor';
 // import { SmoothScroll } from './components/SmoothScroll';   // 暂时去掉 Lenis 平滑滚动
 // import { ScrollProgress } from './components/ScrollProgress'; // 自定义滚动条已撤回，使用原生
 import { Preloader } from './components/Preloader';
+import { SectionSnapController } from './components/SectionSnapController';
 
 import './App.css';
 
@@ -49,6 +49,7 @@ function App() {
     <LightboxProvider>
       <CustomCursor />
       <Preloader />
+      <SectionSnapController />
       <IframeLightbox />
     <div className="relative bg-[#D1D1CB] min-h-screen">
       {/* Dot Grid Background - 铺满整个页面，在最底层 */}
@@ -61,10 +62,7 @@ function App() {
 
       {/* Main Content - 在背景之上 */}
       <main className="relative" style={{ zIndex: 10 }}>
-        {/* Screen 1: Hero / Portfolio */}
-        <HeroSection />
-
-        {/* Screen 2: About Me */}
+        {/* Screen 1: About Me (Hero 已合并进 Preloader) */}
         <AboutSection />
 
         {/* Screen 3: Works Index */}
@@ -87,7 +85,7 @@ function App() {
 
             {/* Center: Links */}
             <div className="flex flex-wrap gap-6 md:gap-8">
-              <a href="#portfolio" className="nav-link">
+              <a href="#about" className="nav-link">
                 <TextScrambleWithHover duration={0.5} speed={0.03} trigger={true}>home</TextScrambleWithHover>
               </a>
               <a href="#about" className="nav-link">
