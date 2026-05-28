@@ -74,13 +74,7 @@ export default function StickyNavigation() {
             duration: 0.5,
             ease: [0.25, 0.46, 0.45, 0.94],
           }}
-          className="fixed top-0 left-0 right-0 py-4 px-6 md:px-12 z-50"
-          style={{
-            background: 'rgba(209, 209, 203, 0.92)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            borderBottom: '1px solid rgba(138, 138, 133, 0.2)',
-          }}
+          className="sticky-nav-bar fixed top-0 left-0 right-0 py-4 px-6 md:px-12 z-50"
         >
           <div className="flex items-center justify-between max-w-[1800px] mx-auto">
             {/* Logo / Home */}
