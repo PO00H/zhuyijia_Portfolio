@@ -257,6 +257,7 @@
 <script src="./viz/raymarch.js"></script>
 <script src="./viz/memfog.js"></script>
 <script src="./viz/procui.js"></script>
+<script src="./viz/lerp.js"></script>
 
 <script>
 const HIGHLIGHTS = [
@@ -300,7 +301,8 @@ const HIGHLIGHTS = [
     chips: ['Lerp', 'Dead Zone', 'BFS Heatmap'],
     items: [
       ['电影级阻尼运镜', 'Lerp 线性插值',
-       '摒弃生硬的 1:1 坐标锁死跟随，实现带弹性的"阻尼拖拽感"。一闪瞬间相机会有延迟追焦，极大增强打击张力。'],
+       '摒弃生硬的 1:1 坐标锁死跟随，实现带弹性的"阻尼拖拽感"。一闪瞬间相机会有延迟追焦，极大增强打击张力。',
+       'lerp'],
       ['零漂移摇杆补偿', '死区控制与相位偏移',
        '引入主机手柄"死区"算法杜绝近距离抖动，并在 8 方向角度解算时施加偏移锁死扇区中心，实现绝对丝滑的操作。'],
       ['无泄漏寻路引擎', '预分配 1D BFS 热力图',
