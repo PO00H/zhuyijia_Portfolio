@@ -33,8 +33,9 @@
 
   const W = 540, H = 360;
 
-  // 与 PlayerConfig 命名同步
-  const FEET_OFFSET_Y = 10;
+  // 游戏源码里 FEET_OFFSET_Y=10 是把 UI 偏移到精灵图脚下；
+  // viz 里玩家只是一个圆点，归零让所有 UI（箭头/呼吸圈/CD弧）共圆心
+  const FEET_OFFSET_Y = 0;
   // 演示参数 (vs 真实游戏: DASH_BASE_DIST 调小让 idle 状态两箭头紧凑，
   //   蓄力时延伸感更明显)
   const DASH_BASE_DIST = 68;
