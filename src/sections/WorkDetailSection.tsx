@@ -31,6 +31,7 @@ interface Project {
   bilibiliEmbedUrl?: string;  // 点击 lightbox 嵌入的 Bilibili iframe URL（player.bilibili.com/...）
   bilibiliUrl?: string;       // 跳转用外链（旧字段，C++游戏卡片）
   coverImage?: string;        // 静态封面图；没有则用 video 第一帧
+  mediaAspect?: '16/9' | '4/3';  // 媒体外框比例；默认 16/9，游戏类常用 4/3
   textureMaps?: TextureMap[];
   awards?: Award[];
   stylizedImage?: { name: string; src: string };
@@ -135,14 +136,16 @@ const workDetails: WorkDetail[] = [
     projects: [
       {
         id: 'game-001',
-        title: 'C++ 游戏',
-        category: 'C++ / Game Dev',
-        year: '2025',
+        title: 'ECHOFLASH — 盲剑客：《白夜瞬闪》',
+        category: 'C++ / EasyX',
+        year: '2026',
         wide: true,
-        description: '基于 C++ 开发的游戏项目，点击封面跳转 B站 查看演示视频。',
-        tools: ['C++'],
-        bilibiliUrl: 'https://space.bilibili.com/',
-        coverImage: '',
+        description: '被夺去双眼的剑客，以声波辨位、蓄力一闪，在黑暗中完成必杀。基于完全面向对象架构的高难度像素动作游戏，未使用任何引擎，物理/渲染/AI/状态调度全自研，含 13 项工业级技术实现（CCD、AABB、Raymarching、对象池、FSM 等）。',
+        tools: ['C++17', 'EasyX', 'OOP', 'FSM', 'CCD', 'AABB', 'Object Pool'],
+        coverImage: '/covers/echoflash.png',   // 静态封面
+        videoUrl: '/previews/echoflash.mp4',    // hover 预览（5s 循环）
+        bilibiliEmbedUrl: '/embed/echoflash-detail/index.html', // 点击打开 iOS 风格详情 Lightbox
+        mediaAspect: '4/3',                     // 游戏原生 4:3 比例，避免 16:9 裁切
       },
       {
         id: 'game-002',
@@ -275,7 +278,8 @@ function ProjectCard({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isInteracting]);
 
-  const mediaAspect = 'aspect-[16/9]';
+  // 媒体外框比例：默认 16/9，game 类项目可改 4/3 适配老分辨率游戏录屏
+  const mediaAspect = project.mediaAspect === '4/3' ? 'aspect-[4/3]' : 'aspect-[16/9]';
 
   return (
     <div
@@ -283,13 +287,7 @@ function ProjectCard({
       className={`group ${project.wide ? 'col-span-1 md:col-span-2' : 'col-span-1'}`}
       id={project.id}
     >
-      <div className="flex flex-col gap-6 py-10 border-b border-[#8A8A85]/20 relative">
-        {/* 右下角橙色收尾 */}
-        <div className="absolute bottom-0 right-0 w-16 h-16 pointer-events-none">
-          <div className="absolute bottom-0 right-0 w-full h-[2px] bg-[#FF3D00]" />
-          <div className="absolute bottom-0 right-0 w-[2px] h-full bg-[#FF3D00]" />
-        </div>
-
+      <div className="flex flex-col gap-4 relative">
         {/* Project ID badge */}
         <div
           className="h-6 px-3 py-1 bg-[#FF3D00] text-white text-[10px] font-mono tracking-wider flex items-center w-fit cursor-pointer hover:bg-[#FF3D00]/80 transition-colors"
@@ -303,11 +301,11 @@ function ProjectCard({
         {/* Media container */}
         <div
           className={`w-full bg-[#1A1A1A]/5 border border-[#8A8A85]/20 relative overflow-hidden ${mediaAspect}
-                      ${project.videoUrl ? 'cursor-pointer' : ''}`}
+                      ${(project.videoUrl || project.bilibiliEmbedUrl) ? 'cursor-pointer' : ''}`}
           onMouseEnter={project.videoUrl ? handleMediaEnter : () => setIsHovered(true)}
           onMouseLeave={project.videoUrl ? handleMediaLeave : () => setIsHovered(false)}
-          onClick={project.videoUrl ? handleMediaClick : undefined}
-          data-cursor={project.videoUrl ? 'view' : undefined}
+          onClick={(project.videoUrl || project.bilibiliEmbedUrl) ? handleMediaClick : undefined}
+          data-cursor={(project.videoUrl || project.bilibiliEmbedUrl) ? 'view' : undefined}
         >
           {project.bilibiliUrl ? (
             /* C++ 游戏卡：B站封面 + 外链跳转 */
@@ -653,7 +651,7 @@ function WorkCategorySection({
       {work.id === 'work-code' ? (
         <CodeWorksGrid />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
           {work.projects.map((project) => (
             <ProjectCard key={project.id} project={project} onProjectClick={onProjectClick} />
           ))}

@@ -43,3 +43,4 @@ vite.config.d.ts
 # Local backups (not for git)
 _videos_original/
 _*_backup/
+_inbox/
