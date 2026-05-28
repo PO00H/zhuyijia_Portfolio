@@ -43,37 +43,36 @@
   const W = 320, H = 180;
 
   // ── 算法常量 ──
-  // 4 档对比清晰可辨：
-  //   未探测 (BASE_DARKNESS 0.06)   → 底色 * 0.06 ≈ 10/255   几乎黑
-  //   记忆残影 (MEMORY_CAP 0.55)     → 底色 * 0.55 ≈ 92/255   中灰
-  //   实时声波 (~0.85+)              → 底色 * 0.85 ≈ 143/255  亮
-  //   玩家本地 (~1.0)                → 底色 * 1.0  = 满亮     最亮
-  const BASE_DARKNESS = 0.06;
+  // 4 档对比清晰可辨（底色 200 时：50 / 120 / 170 / 200）:
+  //   未探测 (BASE_DARKNESS 0.25) → 200 × 0.25 = 50/255   暗但可见轮廓
+  //   记忆残影 (MEMORY_CAP 0.60)   → 200 × 0.60 = 120/255  中灰
+  //   实时声波 (~0.85)             → 200 × 0.85 = 170/255  亮
+  //   玩家本地 (~1.0)              → 200 × 1.0  = 200/255  最亮
+  const BASE_DARKNESS = 0.25;
   const MAX_WAVE_RAD = 140;
   const WAVE_SPEED = 110;
   const WAVE_EDGE = 22;
   const DEFAULT_SENSE_RAD = 42;
   const SENSE_EDGE = 18;
 
-  const WAVE_COOLDOWN_MS = 3000;
+  const WAVE_COOLDOWN_MS = 2500;     // 缩短让用户更快看到第一次声波
 
   // 残影永久保留（与游戏一致：exploredMap 只 max 不 decay）
   const MEMORY_DECAY_PER_FRAME = 0;
-  const MEMORY_CAP = 0.55;
+  const MEMORY_CAP = 0.60;
 
   // ── 底图（"场景"基础颜色，被 vis 调暗）──
   // 我们生成几面"墙" + 一些"目标点"，让 visibility 变化时清晰可见
   function buildBaseMap() {
-    // 返回 Uint8ClampedArray 大小 W*H*3（仅 RGB，A 渲染时填 255）
     const buf = new Uint8ClampedArray(W * H * 3);
-    // 默认地面色
-    const FLOOR_R = 0xA8, FLOOR_G = 0xA8, FLOOR_B = 0xA8;
+    // 默认地面色 (调亮到 200，让"亮起"时对比明显)
+    const FLOOR = 0xC8;       // 200
     for (let i = 0; i < W * H; i++) {
-      buf[i * 3] = FLOOR_R;
-      buf[i * 3 + 1] = FLOOR_G;
-      buf[i * 3 + 2] = FLOOR_B;
+      buf[i * 3] = FLOOR;
+      buf[i * 3 + 1] = FLOOR;
+      buf[i * 3 + 2] = FLOOR;
     }
-    // 几面深色墙（实心矩形）
+    // 几面墙（中灰，比地板暗但不至于黑得彻底）
     const walls = [
       { x: 60, y: 30, w: 40, h: 12 },
       { x: 180, y: 50, w: 14, h: 60 },
@@ -86,7 +85,7 @@
         for (let x = w.x; x < w.x + w.w; x++) {
           if (x < 0 || x >= W || y < 0 || y >= H) continue;
           const i = (y * W + x) * 3;
-          buf[i] = 0x33; buf[i + 1] = 0x33; buf[i + 2] = 0x33;
+          buf[i] = 0x55; buf[i + 1] = 0x55; buf[i + 2] = 0x55;  // 85
         }
       }
     });
@@ -312,7 +311,7 @@
     // 底部图例：4 档亮度对比说明（让用户一眼看出"未探测 vs 已探测"）
     const legendY = H - 12;
     const legendX = 6;
-    const SAMPLE = 168;  // 底色 #A8 = 168
+    const SAMPLE = 200;  // 底色 #C8 = 200
     function legendItem(x, vis, label) {
       const v = Math.round(SAMPLE * vis);
       ctx.fillStyle = `rgb(${v},${v},${v})`;
@@ -423,6 +422,11 @@
     stage.style.cursor = 'crosshair';
 
     state.running = true;
+    // 同步画第一帧（不依赖 RAF）— 让用户立刻看到画面，
+    // 也避免 iframe 在某些情况下 RAF 第一次 tick 延迟过久
+    shadePixels(state);
+    state.ctx.putImageData(state.imageData, 0, 0);
+    drawOverlay(container);
     state.raf = requestAnimationFrame((ts) => loop(container, ts));
   }
 
