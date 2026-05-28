@@ -42,20 +42,24 @@
   // ── 渲染分辨率 (per-pixel 跑 60fps 的合理上限) ──
   const W = 320, H = 180;
 
-  // ── 算法常量 (与游戏 EffectManager 同名) ──
-  const BASE_DARKNESS = 0.12;
-  const MAX_WAVE_RAD = 140;     // 类似 GameConfig 的最大波纹半径
-  const WAVE_SPEED = 110;       // px/s 扩散速度
-  const WAVE_EDGE = 22;         // 软边宽度
-  const DEFAULT_SENSE_RAD = 38; // 玩家感知半径
-  const SENSE_EDGE = 16;        // 玩家感知软边宽度
+  // ── 算法常量 ──
+  // 4 档对比清晰可辨：
+  //   未探测 (BASE_DARKNESS 0.06)   → 底色 * 0.06 ≈ 10/255   几乎黑
+  //   记忆残影 (MEMORY_CAP 0.55)     → 底色 * 0.55 ≈ 92/255   中灰
+  //   实时声波 (~0.85+)              → 底色 * 0.85 ≈ 143/255  亮
+  //   玩家本地 (~1.0)                → 底色 * 1.0  = 满亮     最亮
+  const BASE_DARKNESS = 0.06;
+  const MAX_WAVE_RAD = 140;
+  const WAVE_SPEED = 110;
+  const WAVE_EDGE = 22;
+  const DEFAULT_SENSE_RAD = 42;
+  const SENSE_EDGE = 18;
 
-  // 声波 cooldown
-  const WAVE_COOLDOWN_MS = 3500;
+  const WAVE_COOLDOWN_MS = 3000;
 
-  // 记忆衰减：每帧 expMap 自然变暗一点（让"残影"逐渐消失，避免永久变白）
-  const MEMORY_DECAY_PER_FRAME = 0.0008;
-  const MEMORY_CAP = 0.45;      // 残影最高亮度（远低于实时可见 1.0，看起来像"半亮记忆"）
+  // 残影永久保留（与游戏一致：exploredMap 只 max 不 decay）
+  const MEMORY_DECAY_PER_FRAME = 0;
+  const MEMORY_CAP = 0.55;
 
   // ── 底图（"场景"基础颜色，被 vis 调暗）──
   // 我们生成几面"墙" + 一些"目标点"，让 visibility 变化时清晰可见
@@ -300,10 +304,31 @@
     ctx.fillStyle = '#8a8a85';
     const pixelCount = W * H;
     const status = state.isWaveActive
-      ? `WAVE r=${state.waveRadius.toFixed(0)} · ${pixelCount} px/frame`
-      : `IDLE · cooldown ${Math.max(0, state.waveCooldown / 1000).toFixed(1)}s`;
+      ? `WAVE r=${state.waveRadius.toFixed(0)} · ${pixelCount}px/frame`
+      : `IDLE · pulse in ${Math.max(0, state.waveCooldown / 1000).toFixed(1)}s`;
     ctx.fillText(status, W - 6, 4);
     ctx.textAlign = 'left';
+
+    // 底部图例：4 档亮度对比说明（让用户一眼看出"未探测 vs 已探测"）
+    const legendY = H - 12;
+    const legendX = 6;
+    const SAMPLE = 168;  // 底色 #A8 = 168
+    function legendItem(x, vis, label) {
+      const v = Math.round(SAMPLE * vis);
+      ctx.fillStyle = `rgb(${v},${v},${v})`;
+      ctx.fillRect(x, legendY, 8, 8);
+      ctx.strokeStyle = '#3a3a3a';
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(x + 0.5, legendY + 0.5, 7, 7);
+      ctx.fillStyle = '#8a8a85';
+      ctx.fillText(label, x + 10, legendY + 1);
+      return x + 10 + ctx.measureText(label).width + 8;
+    }
+    let lx = legendX;
+    lx = legendItem(lx, BASE_DARKNESS, 'unseen');
+    lx = legendItem(lx, MEMORY_CAP, 'memory');
+    lx = legendItem(lx, 0.88, 'wave');
+    lx = legendItem(lx, 1.0, 'local');
   }
 
   // ── CONTROLS ──
