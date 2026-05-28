@@ -166,6 +166,7 @@ function WorkItem({
       </div>
 
       {/* Dropdown Menu — grid-rows 0fr↔1fr 平滑展开 + 子项整体淡入（不抽搐） */}
+      {/* 触屏设备走 CSS @media 强制常驻展开，避免 hover 在 mobile 上误触发开关 */}
       <div
         className="dropdown-menu grid transition-[grid-template-rows,opacity] ease-[cubic-bezier(0.22,1,0.36,1)] duration-500"
         style={{
@@ -174,6 +175,7 @@ function WorkItem({
           pointerEvents: isActive ? 'auto' : 'none',
         }}
         onMouseLeave={handleDropdownMouseLeave}
+        data-touch-always-open="true"
       >
         <div className="overflow-hidden">
           <div className="pt-2 pb-6 pl-12 md:pl-20 space-y-3">
