@@ -112,6 +112,11 @@
     padding:0;text-transform:uppercase;letter-spacing:.15em;transition:color .2s}
   .ac-tools button:hover{color:var(--accent)}
 
+  /* ───── VIZ (algorithm visualizations) ───── */
+  .viz{margin-top:.75rem;background:#000;border:1px solid var(--line);padding:.5rem;position:relative;overflow:hidden}
+  .viz canvas{display:block;max-width:100%;height:auto;margin:0 auto}
+  .viz-slider input[type=range]{accent-color:var(--accent);width:160px}
+
   /* ───── FOOTER ───── */
   footer{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--line);
     display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
@@ -197,6 +202,9 @@
   </a>
 </footer>
 
+<!-- 可视化算法模块（按需加载，模块化方便未来扩展） -->
+<script src="./viz/ccd.js"></script>
+
 <script>
 const HIGHLIGHTS = [
   {
@@ -206,7 +214,8 @@ const HIGHLIGHTS = [
     chips: ['CCD', 'AABB', 'Raymarching'],
     items: [
       ['极限高速防穿模', 'CCD 连续碰撞检测',
-       '摒弃直接坐标传送，将一闪的大位移离散化切片进行微步判定，完美保留高爆发力的同时彻底杜绝穿墙 Bug。'],
+       '摒弃直接坐标传送，将一闪的大位移离散化切片进行微步判定，完美保留高爆发力的同时彻底杜绝穿墙 Bug。',
+       'ccd'],   // ← viz key
       ['丝滑贴墙滑动', 'AABB 矢量排挤',
        '利用重叠深度与方向向量将角色平滑"挤"出墙外，避免死死卡在墙角，实现极佳的微操手感。'],
       ['场景破坏与逻辑解耦', '射线步进采样 (Raymarching)',
@@ -261,7 +270,7 @@ const HIGHLIGHTS = [
 
 const acc = document.getElementById('acc');
 
-HIGHLIGHTS.forEach((g, i) => {
+HIGHLIGHTS.forEach((g) => {
   const item = document.createElement('div');
   item.className = 'ac-item';
   item.innerHTML = `
@@ -277,12 +286,16 @@ HIGHLIGHTS.forEach((g, i) => {
     <div class="ac-body">
       <div class="inner">
         <div class="pad">
-          ${g.items.map(it => `
-            <div class="hl">
-              <div class="hl-title"><b>${it[0]}</b><span class="algo">· ${it[1]}</span></div>
-              <div class="hl-desc">${it[2]}</div>
-            </div>
-          `).join('')}
+          ${g.items.map(it => {
+            const vizKey = it[3];   // 第 4 项可选 viz key
+            return `
+              <div class="hl">
+                <div class="hl-title"><b>${it[0]}</b><span class="algo">· ${it[1]}</span></div>
+                <div class="hl-desc">${it[2]}</div>
+                ${vizKey ? `<div class="viz" data-viz="${vizKey}"></div>` : ''}
+              </div>
+            `;
+          }).join('')}
         </div>
       </div>
     </div>
@@ -291,9 +304,48 @@ HIGHLIGHTS.forEach((g, i) => {
   head.addEventListener('click', () => {
     const open = item.classList.toggle('open');
     head.setAttribute('aria-expanded', open ? 'true' : 'false');
+    handleVizForItem(item, open);
   });
   acc.appendChild(item);
 });
+
+/**
+ * 手风琴展开/折叠时管理 viz 生命周期：
+ * - 首次展开：lazy mount canvas + 启动 RAF
+ * - 后续展开：resume RAF
+ * - 折叠：pause RAF（不卸载 canvas，状态保留）
+ */
+function handleVizForItem(item, open) {
+  item.querySelectorAll('.viz[data-viz]').forEach((el) => {
+    const key = el.dataset.viz;
+    const viz = window.VIZ_REGISTRY?.[key];
+    if (!viz) return;
+    if (open) {
+      if (!el.dataset.mounted) {
+        viz.mount(el);
+        el.dataset.mounted = '1';
+      } else {
+        viz.resume(el);
+      }
+    } else {
+      viz.pause(el);
+    }
+  });
+}
+
+// 整个详情页移出视口时也暂停所有正在运行的 viz（节省 CPU）
+const pageVizObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    document.querySelectorAll('.ac-item.open .viz[data-mounted]').forEach((el) => {
+      const key = el.dataset.viz;
+      const viz = window.VIZ_REGISTRY?.[key];
+      if (!viz) return;
+      if (entry.isIntersecting) viz.resume(el);
+      else viz.pause(el);
+    });
+  });
+}, { threshold: 0 });
+pageVizObserver.observe(document.body);
 
 document.getElementById('expand-all').addEventListener('click', () => {
   acc.querySelectorAll('.ac-item').forEach(it => {
