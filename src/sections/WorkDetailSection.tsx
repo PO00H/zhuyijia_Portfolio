@@ -141,9 +141,9 @@ const workDetails: WorkDetail[] = [
         wide: true,
         description: '被夺去双眼的剑客，以声波辨位、蓄力一闪，在黑暗中完成必杀。基于完全面向对象架构的高难度像素动作游戏，未使用任何引擎，物理/渲染/AI/状态调度全自研，含 13 项工业级技术实现（CCD、AABB、Raymarching、对象池、FSM 等）。',
         tools: ['C++17', 'EasyX', 'OOP', 'FSM', 'CCD', 'AABB', 'Object Pool'],
-        // 点击卡片：打开 iOS 风格 Lightbox，加载详情页（介绍 + 13 项亮点手风琴）
-        bilibiliEmbedUrl: '/embed/echoflash-detail/index.html',
-        // 后续补 hover 视频：videoUrl: '/previews/echoflash.mp4'
+        coverImage: '/covers/echoflash.webp',   // 静态封面
+        videoUrl: '/previews/echoflash.mp4',    // hover 预览（5s 循环）
+        bilibiliEmbedUrl: '/embed/echoflash-detail/index.html', // 点击打开 iOS 风格详情 Lightbox
       },
       {
         id: 'game-002',

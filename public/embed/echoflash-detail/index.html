@@ -32,6 +32,10 @@
     font-family:var(--mono);font-size:11px;color:var(--fg-dim);letter-spacing:.05em}
   .meta-row span+span::before{content:"·";margin-right:1.25rem;color:var(--fg-mute)}
 
+  /* ───── TRAILER VIDEO ───── */
+  .trailer{margin-bottom:3rem;border:1px solid var(--line);background:#000;overflow:hidden}
+  .trailer video{width:100%;height:auto;display:block}
+
   /* ───── TAGLINE ───── */
   .tagline{border-left:2px solid var(--accent);padding:.5rem 0 .5rem 1.5rem;margin-bottom:3rem}
   .tagline .en{font-size:1.4rem;font-weight:300;letter-spacing:-.01em;color:var(--fg)}
@@ -136,6 +140,10 @@
 <div class="tagline">
   <div class="en">A blind swordsman who hears with sound, strikes with light.</div>
   <div class="cn">被夺去双眼的剑客，以声波辨位、蓄力一闪，在黑暗中完成必杀。</div>
+</div>
+
+<div class="trailer">
+  <video src="./trailer.mp4" controls playsinline preload="metadata" poster="/covers/echoflash.webp"></video>
 </div>
 
 <section class="intro">

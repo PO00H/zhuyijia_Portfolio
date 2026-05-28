@@ -196,16 +196,16 @@ export default function HeroSection() {
             speed={0.03}
             trigger={animationStarted}
           >
-            3D MODELING 建模 · UE ENVIRONMENT ART 地编
+            Design · Game · Code
           </TextScrambleWithHover>
         </p>
         <p className="body-mono text-[#8A8A85] text-sm md:text-base mt-2">
-          <TextScrambleWithHover 
-            duration={0.5} 
+          <TextScrambleWithHover
+            duration={0.5}
             speed={0.03}
             trigger={animationStarted}
           >
-            UE BLUEPRINT 蓝图开发 · STYLIZED ART 风格化着色器
+            视觉设计 · 游戏开发 · 前端开发
           </TextScrambleWithHover>
         </p>
       </div>
