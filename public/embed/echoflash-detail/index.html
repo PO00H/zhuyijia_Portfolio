@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECHOFLASH — Project Detail</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0e0e0e; --bg-2:#161616; --line:#2a2a2a;
+    --fg:#f0f0f0; --fg-dim:#8a8a85; --fg-mute:#5a5a55;
+    --accent:#ff3d00;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --sans:'Inter', system-ui, sans-serif;
+  }
+  html,body{background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.6}
+  body{padding:3rem 2rem 5rem;max-width:1100px;margin:0 auto;font-size:14px}
+  @media (max-width:640px){body{padding:2rem 1.25rem 4rem}}
+
+  /* ───── HEADER ───── */
+  header{margin-bottom:3rem}
+  .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.25em;color:var(--accent);
+    margin-bottom:1rem;text-transform:uppercase}
+  h1{font-size:clamp(3rem,8vw,5.5rem);font-weight:800;letter-spacing:-.04em;
+    line-height:.95;background:linear-gradient(135deg,#ff3d00,#ff9100);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    margin-bottom:.5rem}
+  .subtitle-cn{font-size:1rem;color:var(--fg-dim);margin-bottom:.25rem}
+  .subtitle-tag{font-family:var(--mono);font-size:11px;color:var(--fg-mute);letter-spacing:.1em}
+  .meta-row{display:flex;gap:1.25rem;flex-wrap:wrap;margin-top:1.5rem;
+    font-family:var(--mono);font-size:11px;color:var(--fg-dim);letter-spacing:.05em}
+  .meta-row span+span::before{content:"·";margin-right:1.25rem;color:var(--fg-mute)}
+
+  /* ───── TAGLINE ───── */
+  .tagline{border-left:2px solid var(--accent);padding:.5rem 0 .5rem 1.5rem;margin-bottom:3rem}
+  .tagline .en{font-size:1.4rem;font-weight:300;letter-spacing:-.01em;color:var(--fg)}
+  .tagline .cn{font-size:.95rem;color:var(--fg-dim);margin-top:.4rem}
+
+  /* ───── SECTION COMMON ───── */
+  section{margin-bottom:3rem}
+  h2{font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:1.25rem;padding-bottom:.5rem;border-bottom:1px solid var(--line)}
+  p{color:var(--fg-dim);font-weight:300}
+
+  /* ───── INTRO ───── */
+  .intro p{line-height:1.85;color:var(--fg-dim);font-size:.95rem}
+
+  /* ───── CHIPS ───── */
+  .chips{display:flex;gap:.5rem;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:10px;letter-spacing:.05em;
+    padding:.4rem .8rem;border:1px solid var(--accent);color:var(--accent);
+    background:transparent;transition:all .2s}
+  .chip:hover{background:var(--accent);color:#000}
+
+  /* ───── CONTROLS ───── */
+  .controls-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.75rem}
+  .ctrl{display:flex;align-items:center;gap:1rem;padding:.75rem 1rem;
+    background:var(--bg-2);border:1px solid var(--line)}
+  .ctrl kbd{font-family:var(--mono);font-size:10px;padding:.3rem .6rem;
+    background:#000;border:1px solid var(--line);color:var(--fg);
+    border-radius:3px;min-width:90px;text-align:center;letter-spacing:.05em}
+  .ctrl span{font-family:var(--mono);font-size:11px;color:var(--fg-dim)}
+
+  /* ───── ACCORDION (HIGHLIGHTS) ───── */
+  .accordion{display:flex;flex-direction:column;gap:.5rem}
+  .ac-item{border:1px solid var(--line);background:var(--bg-2);overflow:hidden}
+  .ac-item.open{border-color:var(--accent)}
+  .ac-head{width:100%;display:grid;grid-template-columns:auto 1fr auto auto;
+    gap:.75rem 1.25rem;align-items:center;padding:1rem 1.25rem;
+    background:transparent;color:var(--fg);border:none;cursor:pointer;
+    font-family:inherit;text-align:left;transition:background .2s}
+  .ac-head:hover{background:rgba(255,61,0,.05)}
+  .ac-head .num{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.1em}
+  .ac-head .cat{font-size:1rem;font-weight:500;color:var(--fg)}
+  .ac-head .count{font-family:var(--mono);font-size:11px;color:var(--fg-mute)}
+  .ac-head .toggle{font-family:var(--mono);font-size:1.2rem;color:var(--accent);
+    width:24px;height:24px;display:grid;place-items:center;
+    border:1px solid var(--line);transition:transform .3s,background .2s,color .2s}
+  .ac-item.open .toggle{background:var(--accent);color:#000;transform:rotate(45deg)}
+
+  .ac-preview{grid-column:1/-1;display:flex;gap:.4rem;flex-wrap:wrap;
+    padding-top:.25rem;transition:opacity .3s}
+  .ac-item.open .ac-preview{opacity:0;height:0;padding:0;overflow:hidden}
+  .chip-sm{font-family:var(--mono);font-size:9px;letter-spacing:.05em;
+    padding:.25rem .55rem;border:1px solid var(--fg-mute);color:var(--fg-dim);
+    text-transform:uppercase}
+
+  /* 用 grid-template-rows 0fr↔1fr 实现内容自适应展开 */
+  .ac-body{display:grid;grid-template-rows:0fr;
+    transition:grid-template-rows 500ms cubic-bezier(.22,1,.36,1)}
+  .ac-item.open .ac-body{grid-template-rows:1fr}
+  .ac-body>.inner{overflow:hidden}
+  .ac-body .pad{padding:0 1.25rem 1.5rem 1.25rem;display:flex;flex-direction:column;gap:1rem}
+
+  /* highlight 单项 */
+  .hl{padding:1rem;background:rgba(0,0,0,.4);border-left:2px solid var(--accent)}
+  .hl-title{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--accent);
+    margin-bottom:.35rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:baseline}
+  .hl-title b{font-weight:700;color:var(--fg);font-family:var(--sans);font-size:13px}
+  .hl-title .algo{color:var(--fg-mute)}
+  .hl-desc{font-size:.85rem;color:var(--fg-dim);line-height:1.65;font-weight:300}
+
+  /* 工具栏：全部展开/收起 */
+  .ac-tools{display:flex;justify-content:flex-end;gap:1rem;margin-bottom:.75rem;
+    font-family:var(--mono);font-size:10px;letter-spacing:.1em}
+  .ac-tools button{background:none;border:none;color:var(--fg-mute);cursor:pointer;
+    padding:0;text-transform:uppercase;letter-spacing:.15em;transition:color .2s}
+  .ac-tools button:hover{color:var(--accent)}
+
+  /* ───── FOOTER ───── */
+  footer{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+  footer .ghost{font-family:var(--mono);font-size:10px;color:var(--fg-mute);letter-spacing:.1em}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;
+    border:1px solid var(--accent);color:var(--accent);text-decoration:none;
+    font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+    transition:all .2s}
+  .btn:hover{background:var(--accent);color:#000}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">04 / Game · C++ Project</div>
+  <h1>ECHOFLASH</h1>
+  <div class="subtitle-cn">盲剑客：《白夜瞬闪》</div>
+  <div class="subtitle-tag">PIXEL ACTION · STEALTH · ONE-HIT-KILL</div>
+  <div class="meta-row">
+    <span>2026</span>
+    <span>20 days · Solo</span>
+    <span>Personal Project</span>
+  </div>
+</header>
+
+<div class="tagline">
+  <div class="en">A blind swordsman who hears with sound, strikes with light.</div>
+  <div class="cn">被夺去双眼的剑客，以声波辨位、蓄力一闪，在黑暗中完成必杀。</div>
+</div>
+
+<section class="intro">
+  <h2>About</h2>
+  <p>ECHOFLASH 是一款基于完全面向对象架构的高难度像素动作游戏。玩家扮演被家族背叛而失明的剑客，主动释放圆形声波在记忆迷雾中探测地形与敌人；攻击采用蓄力一闪机制——鼠标指向、长按蓄力、松开瞬间突进，落点由脚下预览圈与终点叉叉 UI 双重标记，撞墙眩晕 1 秒，斩中敌人即必杀。配合 0.1s 顿帧、屏幕震动与血迹粒子营造极致斩击手感。三层关卡构成"以听觉为剑，以黑暗为友"的复仇之路。</p>
+  <p style="margin-top:1rem">游戏使用 EasyX + 纯 C++ 从零构建，未使用任何引擎，所有物理、渲染、AI、状态调度均为自研实现（详见下方 13 项工业级技术亮点）。</p>
+</section>
+
+<section>
+  <h2>Tech Stack</h2>
+  <div class="chips">
+    <span class="chip">C++17</span>
+    <span class="chip">EasyX</span>
+    <span class="chip">Win32 GDI</span>
+    <span class="chip">OOP</span>
+    <span class="chip">FSM</span>
+    <span class="chip">CCD</span>
+    <span class="chip">AABB</span>
+    <span class="chip">Raymarching</span>
+    <span class="chip">Object Pool</span>
+    <span class="chip">BFS</span>
+    <span class="chip">Lerp</span>
+    <span class="chip">MSVC</span>
+  </div>
+</section>
+
+<section>
+  <h2>Controls</h2>
+  <div class="controls-grid">
+    <div class="ctrl"><kbd>LMB Hold</kbd><span>蓄力 · 松开释放突进</span></div>
+    <div class="ctrl"><kbd>RMB</kbd><span>主动声波探测</span></div>
+    <div class="ctrl"><kbd>Enter</kbd><span>菜单确认 / 推进过场</span></div>
+    <div class="ctrl"><kbd>ESC</kbd><span>暂停 / 返回</span></div>
+    <div class="ctrl"><kbd>Z</kbd><span>运行时调试视图</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Technical Highlights · 13 工业级实现</h2>
+  <div class="ac-tools">
+    <button id="expand-all">Expand all</button>
+    <button id="collapse-all">Collapse all</button>
+  </div>
+  <div class="accordion" id="acc"></div>
+</section>
+
+<footer>
+  <div class="ghost">ECHOFLASH · 2026 · ZHUYIJIA</div>
+  <a class="btn" href="https://github.com/PO00H/C-easyX" target="_blank" rel="noopener">
+    Source on GitHub ↗
+  </a>
+</footer>
+
+<script>
+const HIGHLIGHTS = [
+  {
+    num: '01',
+    cat: '物理引擎与核心玩法',
+    catEn: 'Physics & Core',
+    chips: ['CCD', 'AABB', 'Raymarching'],
+    items: [
+      ['极限高速防穿模', 'CCD 连续碰撞检测',
+       '摒弃直接坐标传送，将一闪的大位移离散化切片进行微步判定，完美保留高爆发力的同时彻底杜绝穿墙 Bug。'],
+      ['丝滑贴墙滑动', 'AABB 矢量排挤',
+       '利用重叠深度与方向向量将角色平滑"挤"出墙外，避免死死卡在墙角，实现极佳的微操手感。'],
+      ['场景破坏与逻辑解耦', '射线步进采样 (Raymarching)',
+       '摒弃高耗能几何判定，改用"刻度尺"顺着刀光轨迹离散采样，实现环境破坏与图层抹除的原子级同步。'],
+    ],
+  },
+  {
+    num: '02',
+    cat: '渲染管线与视觉反馈',
+    catEn: 'Rendering & Visuals',
+    chips: ['Memory Fog', 'Y-Sorting', 'Procedural UI'],
+    items: [
+      ['动态记忆迷雾系统', '空间裁剪 + 圆环方程衰减',
+       '引入包围盒过滤无效计算，利用数学方程画出空心波纹。配合记忆计时器呈现"残影视野衰减"，强化潜行沉浸感。'],
+      ['2.5D 深度遮挡渲染', 'Y-Sorting 动态切片',
+       '将地图渲染拆分为"行切片"，并根据游戏实体的 Y 坐标动态决定渲染先后顺序，精准呈现伪 3D 深度遮挡。'],
+      ['程序化矢量战术 UI', '动态顶点运算 (Procedural)',
+       '摒弃静态贴图，利用 sin/cos 实时解算多边形顶点，实现能随蓄力值 0 延迟动态伸缩的科技感箭头。'],
+    ],
+  },
+  {
+    num: '03',
+    cat: '交互手感与 AI',
+    catEn: 'Interaction & AI',
+    chips: ['Lerp', 'Dead Zone', 'BFS Heatmap'],
+    items: [
+      ['电影级阻尼运镜', 'Lerp 线性插值',
+       '摒弃生硬的 1:1 坐标锁死跟随，实现带弹性的"阻尼拖拽感"。一闪瞬间相机会有延迟追焦，极大增强打击张力。'],
+      ['零漂移摇杆补偿', '死区控制与相位偏移',
+       '引入主机手柄"死区"算法杜绝近距离抖动，并在 8 方向角度解算时施加偏移锁死扇区中心，实现绝对丝滑的操作。'],
+      ['无泄漏寻路引擎', '预分配 1D BFS 热力图',
+       '舍弃高耗能动态节点树，采用预分配的 1D 网格数组，确保大量敌兵同时寻路不产生性能波动或内存碎片。'],
+    ],
+  },
+  {
+    num: '04',
+    cat: '底层架构与工程管线',
+    catEn: 'Engine Architecture',
+    chips: ['Debug Vis', 'Object Pool', 'FSM', 'Frame Decouple'],
+    items: [
+      ['运行时可视化调试', '边缘检测与视觉剥离',
+       '封装带防连按的 Debug 拨测开关（Z 键）。一键将底层的物理碰撞体 (AABB) 和运行参数透视渲染，展现极强的工程思维。'],
+      ['零分配特效引擎', '对象池模式 (Object Pool)',
+       '彻底解决动作游戏帧率杀手。提前分配固定特效对象，用完后"回收休眠"，保证同屏特效爆满时内存分配依然为零。'],
+      ['场景状态机调度', '顶层 FSM 状态机',
+       '通过顶层状态 (MENU, PLAYING) 将游戏流程硬隔离，实现无缝轮回机制，一键重置数据，杜绝跨场景内存泄漏。'],
+      ['独立时间线控制', '帧解耦与逻辑计时器',
+       '动画帧更替完全脱离线程挂起。基于独立的帧计数器驱动，确保在不同性能的电脑上，物理逻辑和画面节奏绝不崩坏。'],
+    ],
+  },
+];
+
+const acc = document.getElementById('acc');
+
+HIGHLIGHTS.forEach((g, i) => {
+  const item = document.createElement('div');
+  item.className = 'ac-item';
+  item.innerHTML = `
+    <button class="ac-head" type="button" aria-expanded="false">
+      <span class="num">${g.num}</span>
+      <span class="cat">${g.cat} <span style="color:var(--fg-mute);font-size:.85em;margin-left:.5rem">/ ${g.catEn}</span></span>
+      <span class="count">(${g.items.length})</span>
+      <span class="toggle">+</span>
+      <div class="ac-preview">
+        ${g.chips.map(c => `<span class="chip-sm">${c}</span>`).join('')}
+      </div>
+    </button>
+    <div class="ac-body">
+      <div class="inner">
+        <div class="pad">
+          ${g.items.map(it => `
+            <div class="hl">
+              <div class="hl-title"><b>${it[0]}</b><span class="algo">· ${it[1]}</span></div>
+              <div class="hl-desc">${it[2]}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+  const head = item.querySelector('.ac-head');
+  head.addEventListener('click', () => {
+    const open = item.classList.toggle('open');
+    head.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  acc.appendChild(item);
+});
+
+document.getElementById('expand-all').addEventListener('click', () => {
+  acc.querySelectorAll('.ac-item').forEach(it => {
+    it.classList.add('open');
+    it.querySelector('.ac-head').setAttribute('aria-expanded','true');
+  });
+});
+document.getElementById('collapse-all').addEventListener('click', () => {
+  acc.querySelectorAll('.ac-item').forEach(it => {
+    it.classList.remove('open');
+    it.querySelector('.ac-head').setAttribute('aria-expanded','false');
+  });
+});
+</script>
+
+</body>
+</html>

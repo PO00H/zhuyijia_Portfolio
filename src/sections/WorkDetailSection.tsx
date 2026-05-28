@@ -135,14 +135,15 @@ const workDetails: WorkDetail[] = [
     projects: [
       {
         id: 'game-001',
-        title: 'C++ 游戏',
-        category: 'C++ / Game Dev',
-        year: '2025',
+        title: 'ECHOFLASH — 盲剑客：《白夜瞬闪》',
+        category: 'C++ / EasyX',
+        year: '2026',
         wide: true,
-        description: '基于 C++ 开发的游戏项目，点击封面跳转 B站 查看演示视频。',
-        tools: ['C++'],
-        bilibiliUrl: 'https://space.bilibili.com/',
-        coverImage: '',
+        description: '被夺去双眼的剑客，以声波辨位、蓄力一闪，在黑暗中完成必杀。基于完全面向对象架构的高难度像素动作游戏，未使用任何引擎，物理/渲染/AI/状态调度全自研，含 13 项工业级技术实现（CCD、AABB、Raymarching、对象池、FSM 等）。',
+        tools: ['C++17', 'EasyX', 'OOP', 'FSM', 'CCD', 'AABB', 'Object Pool'],
+        // 点击卡片：打开 iOS 风格 Lightbox，加载详情页（介绍 + 13 项亮点手风琴）
+        bilibiliEmbedUrl: '/embed/echoflash-detail/index.html',
+        // 后续补 hover 视频：videoUrl: '/previews/echoflash.mp4'
       },
       {
         id: 'game-002',
@@ -303,11 +304,11 @@ function ProjectCard({
         {/* Media container */}
         <div
           className={`w-full bg-[#1A1A1A]/5 border border-[#8A8A85]/20 relative overflow-hidden ${mediaAspect}
-                      ${project.videoUrl ? 'cursor-pointer' : ''}`}
+                      ${(project.videoUrl || project.bilibiliEmbedUrl) ? 'cursor-pointer' : ''}`}
           onMouseEnter={project.videoUrl ? handleMediaEnter : () => setIsHovered(true)}
           onMouseLeave={project.videoUrl ? handleMediaLeave : () => setIsHovered(false)}
-          onClick={project.videoUrl ? handleMediaClick : undefined}
-          data-cursor={project.videoUrl ? 'view' : undefined}
+          onClick={(project.videoUrl || project.bilibiliEmbedUrl) ? handleMediaClick : undefined}
+          data-cursor={(project.videoUrl || project.bilibiliEmbedUrl) ? 'view' : undefined}
         >
           {project.bilibiliUrl ? (
             /* C++ 游戏卡：B站封面 + 外链跳转 */
