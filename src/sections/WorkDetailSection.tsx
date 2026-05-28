@@ -31,6 +31,7 @@ interface Project {
   bilibiliEmbedUrl?: string;  // 点击 lightbox 嵌入的 Bilibili iframe URL（player.bilibili.com/...）
   bilibiliUrl?: string;       // 跳转用外链（旧字段，C++游戏卡片）
   coverImage?: string;        // 静态封面图；没有则用 video 第一帧
+  mediaAspect?: '16/9' | '4/3';  // 媒体外框比例；默认 16/9，游戏类常用 4/3
   textureMaps?: TextureMap[];
   awards?: Award[];
   stylizedImage?: { name: string; src: string };
@@ -144,6 +145,7 @@ const workDetails: WorkDetail[] = [
         coverImage: '/covers/echoflash.webp',   // 静态封面
         videoUrl: '/previews/echoflash.mp4',    // hover 预览（5s 循环）
         bilibiliEmbedUrl: '/embed/echoflash-detail/index.html', // 点击打开 iOS 风格详情 Lightbox
+        mediaAspect: '4/3',                     // 游戏原生 4:3 比例，避免 16:9 裁切
       },
       {
         id: 'game-002',
@@ -276,7 +278,8 @@ function ProjectCard({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isInteracting]);
 
-  const mediaAspect = 'aspect-[16/9]';
+  // 媒体外框比例：默认 16/9，game 类项目可改 4/3 适配老分辨率游戏录屏
+  const mediaAspect = project.mediaAspect === '4/3' ? 'aspect-[4/3]' : 'aspect-[16/9]';
 
   return (
     <div
