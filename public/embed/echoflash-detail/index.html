@@ -113,8 +113,38 @@
   .ac-tools button:hover{color:var(--accent)}
 
   /* ───── VIZ (algorithm visualizations) ───── */
-  .viz{margin-top:.75rem;background:#000;border:1px solid var(--line);padding:.5rem;position:relative;overflow:hidden}
-  .viz canvas{display:block;max-width:100%;height:auto;margin:0 auto}
+  .viz{margin-top:.75rem;background:var(--bg-2);border:1px solid var(--line);padding:.75rem;position:relative;overflow:hidden;border-radius:2px}
+  .viz canvas{display:block;max-width:100%;height:auto;margin:0 auto;background:#1a1a1a}
+
+  /* 多 slider 参数面板 (CCD 用到，未来其他 viz 也复用) */
+  .viz-params{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:.5rem 1rem;
+    margin-top:.75rem;
+    padding-top:.75rem;
+    border-top:1px solid var(--line);
+    font-family:var(--mono);
+    font-size:10px;
+  }
+  .viz-params label{color:var(--fg-dim);letter-spacing:.05em;text-transform:uppercase}
+  .viz-params input[type=range]{
+    accent-color:var(--accent);
+    width:100%;
+    background:transparent;
+  }
+  .viz-params .val{color:var(--fg);font-weight:500;min-width:60px;text-align:right}
+  .viz-params .val small{color:var(--fg-mute);margin-left:.15rem}
+  .viz-params .viz-meta{font-size:10px}
+  .viz-btn{
+    background:transparent;border:1px solid var(--accent);color:var(--accent);
+    padding:.35rem .75rem;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+    cursor:pointer;transition:all .2s;border-radius:2px
+  }
+  .viz-btn:hover{background:var(--accent);color:#000}
+
+  /* 旧的单 slider 容器保留兼容（不一定再用） */
   .viz-slider input[type=range]{accent-color:var(--accent);width:160px}
 
   /* ───── FOOTER ───── */
