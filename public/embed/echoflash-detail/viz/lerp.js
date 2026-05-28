@@ -30,13 +30,12 @@
   const VIEW_W = (W - GUTTER) / 2;     // 326
   const VIEW_H = H;
 
-  // World 尺寸 (比单个 viewport 大很多，让相机移动可见)
-  const WORLD_W = 1400, WORLD_H = 1000;
+  // World 尺寸 (比单个 viewport 略大，相机移动可见但 world 边界有参照)
+  const WORLD_W = 720, WORLD_H = 540;
   const WORLD_CX = WORLD_W / 2;
   const WORLD_CY = WORLD_H / 2;
 
   const DEFAULT_LERP = 0.5;
-  const MOUSE_SENSITIVITY = 1.0;       // 鼠标 → 玩家移动量的比例 (1:1)
 
   const C_BG = '#161616';
   const C_VIEWPORT_BG = '#1a1a1a';
@@ -47,14 +46,14 @@
   const C_FG = '#f0f0f0';
   const C_DIM = '#8a8a85';
 
-  // 几个 world 地标
+  // World 内地标 (分布在 720x540 各角，提供方位参照)
   const LANDMARKS = [
-    { x: 350, y: 280, r: 35, label: 'A' },
-    { x: 850, y: 220, r: 45, label: 'B' },
-    { x: 1180, y: 520, r: 50, label: 'C' },
-    { x: 500, y: 680, r: 38, label: 'D' },
-    { x: 1000, y: 800, r: 42, label: 'E' },
-    { x: 200, y: 500, r: 28, label: 'F' },
+    { x: 130, y: 110, r: 28, label: 'A' },
+    { x: 580, y: 100, r: 32, label: 'B' },
+    { x: 360, y: 270, r: 36, label: 'C' },   // 中心
+    { x: 90,  y: 410, r: 26, label: 'D' },
+    { x: 620, y: 430, r: 30, label: 'E' },
+    { x: 340, y: 470, r: 22, label: 'F' },
   ];
 
   function createState() {
@@ -65,6 +64,10 @@
       player: { x: WORLD_CX, y: WORLD_CY },
       hardCam: { x: WORLD_CX, y: WORLD_CY },
       lerpCam: { x: WORLD_CX, y: WORLD_CY },
+      // 拖拽控制
+      isDragging: false,
+      dragAnchorMouse: { x: 0, y: 0 },     // 按下时的鼠标 screen 位置
+      dragAnchorPlayer: { x: 0, y: 0 },    // 按下时玩家的 world 位置
       mouseCanvas: { x: W / 2, y: H / 2 },
       lastPlayerX: WORLD_CX, lastPlayerY: WORLD_CY,
       speed: 0,
@@ -72,14 +75,15 @@
   }
 
   function tick(state) {
-    // 1) 由鼠标在 canvas 中的偏移驱动玩家在 world 的位置
-    //    鼠标在画布正中 → 玩家在 world 中心
-    //    鼠标偏移 N px → 玩家偏移 N * MOUSE_SENSITIVITY px
-    //    鼠标在哪个视口里都用同一套规则（取 mouseCanvas 减 W/2、H/2）
-    const dx = (state.mouseCanvas.x - W / 2) * MOUSE_SENSITIVITY;
-    const dy = (state.mouseCanvas.y - H / 2) * MOUSE_SENSITIVITY;
-    state.player.x = Math.max(0, Math.min(WORLD_W, WORLD_CX + dx));
-    state.player.y = Math.max(0, Math.min(WORLD_H, WORLD_CY + dy));
+    // 1) 玩家位置：仅在拖拽期间响应鼠标
+    //    player = anchorPlayer + (currentMouse - anchorMouse)
+    //    松手后保持在最后位置
+    if (state.isDragging) {
+      const dx = state.mouseCanvas.x - state.dragAnchorMouse.x;
+      const dy = state.mouseCanvas.y - state.dragAnchorMouse.y;
+      state.player.x = Math.max(0, Math.min(WORLD_W, state.dragAnchorPlayer.x + dx));
+      state.player.y = Math.max(0, Math.min(WORLD_H, state.dragAnchorPlayer.y + dy));
+    }
 
     state.speed = Math.hypot(state.player.x - state.lastPlayerX, state.player.y - state.lastPlayerY);
     state.lastPlayerX = state.player.x;
@@ -238,10 +242,12 @@
 
     // 底部速度显示（跨整个 canvas）
     ctx.font = '9px "JetBrains Mono", monospace';
-    ctx.textAlign = 'right';
     ctx.textBaseline = 'bottom';
     ctx.fillStyle = C_DIM;
-    ctx.fillText(`player speed ${state.speed.toFixed(1)} px/frame · sensitivity ${MOUSE_SENSITIVITY}`, W - 8, H - 8);
+    ctx.textAlign = 'left';
+    ctx.fillText(state.isDragging ? '◉ dragging' : '◯ click & drag inside canvas', 8, H - 8);
+    ctx.textAlign = 'right';
+    ctx.fillText(`player speed ${state.speed.toFixed(1)} px/frame`, W - 8, H - 8);
   }
 
   function loop(container) {
@@ -286,7 +292,7 @@
     const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
     canvas.width = W * dpr;
     canvas.height = H * dpr;
-    canvas.style.cssText = `display:block;width:100%;height:auto;max-width:${W}px;margin:0 auto;border-radius:2px;touch-action:none;cursor:crosshair`;
+    canvas.style.cssText = `display:block;width:100%;height:auto;max-width:${W}px;margin:0 auto;border-radius:2px;touch-action:none;cursor:grab`;
     container.appendChild(canvas);
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
@@ -305,10 +311,43 @@
       state.mouseCanvas.x = (clientX - rect.left) * sx;
       state.mouseCanvas.y = (clientY - rect.top) * sx;
     };
+    const startDrag = () => {
+      state.isDragging = true;
+      state.dragAnchorMouse.x = state.mouseCanvas.x;
+      state.dragAnchorMouse.y = state.mouseCanvas.y;
+      state.dragAnchorPlayer.x = state.player.x;
+      state.dragAnchorPlayer.y = state.player.y;
+      canvas.style.cursor = 'grabbing';
+    };
+    const endDrag = () => {
+      state.isDragging = false;
+      canvas.style.cursor = 'grab';
+    };
+
+    // 鼠标
+    canvas.addEventListener('mousedown', (e) => {
+      updateMouse(e.clientX, e.clientY);
+      startDrag();
+    });
     canvas.addEventListener('mousemove', (e) => updateMouse(e.clientX, e.clientY));
-    canvas.addEventListener('touchmove', (e) => {
-      if (e.touches[0]) { updateMouse(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault(); }
+    window.addEventListener('mouseup', endDrag);   // 在 window 上听释放，鼠标可以拖出 canvas
+
+    // 触屏
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.touches[0]) {
+        updateMouse(e.touches[0].clientX, e.touches[0].clientY);
+        startDrag();
+        e.preventDefault();
+      }
     }, { passive: false });
+    canvas.addEventListener('touchmove', (e) => {
+      if (e.touches[0]) {
+        updateMouse(e.touches[0].clientX, e.touches[0].clientY);
+        e.preventDefault();
+      }
+    }, { passive: false });
+    canvas.addEventListener('touchend', endDrag);
+    canvas.addEventListener('touchcancel', endDrag);
 
     state.running = true;
     draw(container);
