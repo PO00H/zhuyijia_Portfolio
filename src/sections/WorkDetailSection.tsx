@@ -287,13 +287,7 @@ function ProjectCard({
       className={`group ${project.wide ? 'col-span-1 md:col-span-2' : 'col-span-1'}`}
       id={project.id}
     >
-      <div className="flex flex-col gap-6 py-10 border-b border-[#8A8A85]/20 relative">
-        {/* 右下角橙色收尾 */}
-        <div className="absolute bottom-0 right-0 w-16 h-16 pointer-events-none">
-          <div className="absolute bottom-0 right-0 w-full h-[2px] bg-[#FF3D00]" />
-          <div className="absolute bottom-0 right-0 w-[2px] h-full bg-[#FF3D00]" />
-        </div>
-
+      <div className="flex flex-col gap-4 relative">
         {/* Project ID badge */}
         <div
           className="h-6 px-3 py-1 bg-[#FF3D00] text-white text-[10px] font-mono tracking-wider flex items-center w-fit cursor-pointer hover:bg-[#FF3D00]/80 transition-colors"
@@ -657,7 +651,7 @@ function WorkCategorySection({
       {work.id === 'work-code' ? (
         <CodeWorksGrid />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
           {work.projects.map((project) => (
             <ProjectCard key={project.id} project={project} onProjectClick={onProjectClick} />
           ))}
