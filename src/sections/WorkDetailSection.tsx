@@ -347,9 +347,10 @@ function ProjectCard({
                 />
               )}
               {/* video 元素：paused 时显示第一帧，hover 时 play */}
+              {/* src 末尾的 #t=0.1 是 iOS Safari 强制 decode 首帧的关键 hint —— 否则手机端没有 coverImage 时视频区域是灰色 */}
               <video
                 ref={videoRef}
-                src={project.videoUrl}
+                src={`${project.videoUrl}#t=0.1`}
                 muted
                 loop
                 playsInline
