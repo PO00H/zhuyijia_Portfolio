@@ -46,8 +46,10 @@ export function CustomCursor() {
       el.style.width = `${size}px`;
       el.style.height = `${size}px`;
       el.dataset.variant = variant;
-      // 让出原生光标
-      document.documentElement.style.cursor = overIframe ? 'auto' : 'none';
+      // 让出原生光标：iframe 上方 或 lightbox 打开时 (shrunk)
+      //   —— 这样在视频 lightbox 内可以看到原生光标使用进度条 / 控件
+      const yieldNative = overIframe || shrunk;
+      document.documentElement.style.cursor = yieldNative ? 'auto' : 'none';
     };
 
     // ── 鼠标位置同步 ──
@@ -148,7 +150,7 @@ export function CustomCursor() {
       <style>{`
         @media (pointer: fine) {
           html, body, * { cursor: inherit; }
-          iframe { cursor: auto !important; }
+          iframe, video { cursor: auto !important; }
         }
       `}</style>
       <div
