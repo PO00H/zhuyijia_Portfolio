@@ -103,11 +103,26 @@
 
   /* highlight 单项 */
   .hl{padding:1rem;background:rgba(0,0,0,.4);border-left:2px solid var(--accent)}
+  .hl-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.35rem}
   .hl-title{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--accent);
-    margin-bottom:.35rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:baseline}
+    display:flex;gap:.5rem;flex-wrap:wrap;align-items:baseline;flex:1}
   .hl-title b{font-weight:700;color:var(--fg);font-family:var(--sans);font-size:13px}
   .hl-title .algo{color:var(--fg-mute)}
   .hl-desc{font-size:.85rem;color:var(--fg-dim);line-height:1.65;font-weight:300}
+
+  /* 单亮点的 viz 子折叠按钮 */
+  .hl-viz-toggle{
+    flex-shrink:0;background:transparent;border:1px solid var(--accent);color:var(--accent);
+    padding:.3rem .65rem;font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+    cursor:pointer;transition:all .2s;border-radius:2px;text-transform:uppercase;white-space:nowrap
+  }
+  .hl-viz-toggle:hover{background:var(--accent);color:#000}
+  .hl-viz-toggle .arrow{display:inline-block;transition:transform .25s}
+  .hl.viz-open .hl-viz-toggle .arrow{transform:rotate(180deg)}
+  .hl.viz-open .hl-viz-toggle{background:var(--accent);color:#000}
+  /* 默认 viz 折叠不显示 */
+  .viz{display:none}
+  .hl.viz-open .viz{display:block}
 
   /* 工具栏：全部展开/收起 */
   .ac-tools{display:flex;justify-content:flex-end;gap:1rem;margin-bottom:.75rem;
@@ -324,7 +339,10 @@ HIGHLIGHTS.forEach((g) => {
             const vizKey = it[3];   // 第 4 项可选 viz key
             return `
               <div class="hl">
-                <div class="hl-title"><b>${it[0]}</b><span class="algo">· ${it[1]}</span></div>
+                <div class="hl-head">
+                  <div class="hl-title"><b>${it[0]}</b><span class="algo">· ${it[1]}</span></div>
+                  ${vizKey ? `<button class="hl-viz-toggle" type="button"><span class="arrow">▼</span> DEMO</button>` : ''}
+                </div>
                 <div class="hl-desc">${it[2]}</div>
                 ${vizKey ? `<div class="viz" data-viz="${vizKey}"></div>` : ''}
               </div>
@@ -340,27 +358,50 @@ HIGHLIGHTS.forEach((g) => {
     head.setAttribute('aria-expanded', open ? 'true' : 'false');
     handleVizForItem(item, open);
   });
+
+  // 每个 .hl 块的 viz 子折叠按钮
+  item.querySelectorAll('.hl').forEach((hl) => {
+    const toggleBtn = hl.querySelector('.hl-viz-toggle');
+    const vizEl = hl.querySelector('.viz[data-viz]');
+    if (!toggleBtn || !vizEl) return;
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const willOpen = !hl.classList.contains('viz-open');
+      hl.classList.toggle('viz-open', willOpen);
+      const key = vizEl.dataset.viz;
+      const viz = window.VIZ_REGISTRY?.[key];
+      if (!viz) return;
+      if (willOpen) {
+        if (!vizEl.dataset.mounted) {
+          viz.mount(vizEl);
+          vizEl.dataset.mounted = '1';
+        } else {
+          viz.resume(vizEl);
+        }
+      } else {
+        viz.pause(vizEl);
+      }
+    });
+  });
+
   acc.appendChild(item);
 });
 
 /**
- * 手风琴展开/折叠时管理 viz 生命周期：
- * - 首次展开：lazy mount canvas + 启动 RAF
- * - 后续展开：resume RAF
- * - 折叠：pause RAF（不卸载 canvas，状态保留）
+ * 大类手风琴展开/折叠：只 pause/resume 已挂载的 viz，不再自动 mount。
+ * 真正的"开始演示"由用户在 .hl 块上点 DEMO 按钮触发。
  */
 function handleVizForItem(item, open) {
   item.querySelectorAll('.viz[data-viz]').forEach((el) => {
+    // 只有已被用户主动展开过的 viz 才管 (避免无意义启动)
+    if (!el.dataset.mounted) return;
+    const hl = el.closest('.hl');
+    if (!hl || !hl.classList.contains('viz-open')) return;
     const key = el.dataset.viz;
     const viz = window.VIZ_REGISTRY?.[key];
     if (!viz) return;
     if (open) {
-      if (!el.dataset.mounted) {
-        viz.mount(el);
-        el.dataset.mounted = '1';
-      } else {
-        viz.resume(el);
-      }
+      viz.resume(el);
     } else {
       viz.pause(el);
     }
