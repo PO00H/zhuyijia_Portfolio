@@ -15,8 +15,221 @@
     --sans:'Inter', system-ui, sans-serif;
   }
   html,body{background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.6}
+  html{scroll-padding-top:64px}  /* 让 anchor 滚动不被 sticky nav 遮挡 */
   body{padding:3rem 2rem 5rem;max-width:1100px;margin:0 auto;font-size:14px}
   @media (max-width:640px){body{padding:2rem 1.25rem 4rem}}
+
+  /* ───── STICKY NAV (复刻主站 StickyNavigation) ───── */
+  .echoflash-nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(14,14,14,0.85);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+    padding:.85rem 2rem;
+    transform:translateY(-100%);
+    transition:transform .45s cubic-bezier(.22,1,.36,1);
+  }
+  .echoflash-nav.visible{transform:translateY(0)}
+  .echoflash-nav-inner{
+    max-width:1100px;margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;gap:2rem;
+  }
+  .echoflash-nav .brand{
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;
+    color:var(--fg);text-decoration:none;text-transform:uppercase;
+    transition:color .2s
+  }
+  .echoflash-nav .brand:hover{color:var(--accent)}
+  .echoflash-nav .links{display:flex;gap:1.5rem;flex-wrap:wrap}
+  .echoflash-nav .links a{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+    color:var(--fg-dim);text-decoration:none;
+    display:inline-flex;align-items:baseline;gap:.4rem;
+    text-transform:uppercase;
+    padding-bottom:2px;border-bottom:1px solid transparent;
+    transition:color .2s,border-color .2s
+  }
+  .echoflash-nav .links a .idx{font-size:9px;color:var(--fg-mute);transition:color .2s}
+  .echoflash-nav .links a:hover{color:var(--accent)}
+  .echoflash-nav .links a:hover .idx{color:var(--accent)}
+  .echoflash-nav .links a.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .echoflash-nav .links a.active .idx{color:var(--accent)}
+  @media (pointer:coarse), (max-width:768px){
+    .echoflash-nav{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(14,14,14,0.96);padding:.7rem 1rem}
+    .echoflash-nav-inner{gap:.75rem}
+    .echoflash-nav .brand{display:none}
+    .echoflash-nav .links{gap:.9rem;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .echoflash-nav .links a{white-space:nowrap}
+  }
+
+  /* ───── ART PIPELINE 常开 block ───── */
+  /* 01 像素角色 占左侧较小方形区，02 UI 占右侧更宽区（不对称） */
+  /* align-items:stretch → 两个 block 等高，底部对齐 */
+  .art-top-grid{
+    display:grid;grid-template-columns:minmax(220px,0.85fr) 1.6fr;gap:1rem;align-items:stretch;
+  }
+  .art-top-grid .art-block{display:flex;flex-direction:column}
+  .art-top-grid .art-block .art-block-body{flex:1}
+  .art-block{
+    border:1px solid var(--line);background:var(--bg-2);overflow:hidden;
+  }
+  .art-block-head{
+    display:grid;grid-template-columns:auto 1fr;gap:.75rem 1.25rem;align-items:center;
+    padding:1rem 1.25rem;border-bottom:1px solid var(--line);
+  }
+  .art-block-head .num{
+    font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.1em;
+  }
+  .art-block-head .title{font-size:1rem;font-weight:500;color:var(--fg)}
+  .art-block-head .title .en{color:var(--fg-mute);font-size:.85em;margin-left:.5rem}
+  .art-block-body{padding:1.25rem}
+  @media (max-width:768px){
+    .art-top-grid{grid-template-columns:1fr}
+  }
+
+  /* ───── ART PIPELINE 通用 ───── */
+  .art-placeholder{
+    padding:1.5rem 1.25rem;
+    background:rgba(0,0,0,.3);
+    border-left:2px solid var(--fg-mute);
+    color:var(--fg-mute);
+    font-family:var(--mono);font-size:11px;letter-spacing:.05em;
+    display:flex;align-items:center;gap:1rem;
+  }
+  .art-placeholder::before{
+    content:'';display:inline-block;width:8px;height:8px;border-radius:50%;
+    background:var(--accent);animation:art-pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes art-pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+  /* ─── 3.1 Character · 8 方向 3×3 九宫格 ─── */
+  .art-character-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    width:100%;max-width:420px;margin:0 auto;
+  }
+  .art-character-grid .cell{
+    aspect-ratio:1/1;background:#0e0e0e;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;overflow:hidden;
+  }
+  .art-character-grid .cell img{
+    width:80%;height:80%;object-fit:contain;
+    image-rendering:pixelated;image-rendering:-moz-crisp-edges;image-rendering:crisp-edges;
+  }
+  .art-character-grid .cell.center{
+    background:#0e0e0e;
+    flex-direction:column;gap:.25rem;
+    border:1px dashed var(--accent);
+    box-shadow:inset 0 0 0 1px transparent;
+  }
+  .art-character-grid .cell.center .lbl{
+    font-family:var(--mono);font-size:14px;letter-spacing:.15em;color:var(--accent);font-weight:600;
+  }
+  .art-character-grid .cell.center .sub{
+    font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--fg-mute);
+  }
+  .art-character-grid .cell::after{
+    content:attr(data-dir);position:absolute;top:4px;left:6px;
+    font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--fg-mute);
+    text-transform:uppercase;pointer-events:none;
+  }
+  .art-character-grid .cell.center::after{content:none}
+
+  /* ─── 3.2 FX · 2 列对称大卡 ─── */
+  .art-fx-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:1rem;
+  }
+  .art-fx-grid .fx-card{
+    background:#0e0e0e;border:1px solid var(--line);
+  }
+  .art-fx-grid .fx-card video{
+    width:100%;aspect-ratio:16/9;object-fit:contain;display:block;background:#000;
+    image-rendering:pixelated;
+  }
+  .art-fx-grid .fx-card figcaption{
+    padding:.6rem .85rem;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+    color:var(--fg-dim);border-top:1px solid var(--line);
+  }
+  @media (max-width:640px){
+    .art-fx-grid{grid-template-columns:1fr}
+  }
+
+  /* ─── 3.3 Tiled · 切换式查看器 ─── */
+  .art-tiled-viewer{display:flex;flex-direction:column;gap:.75rem}
+  .art-tiled-viewer .tiled-tabs{
+    display:flex;gap:.5rem;flex-wrap:wrap;
+  }
+  .art-tiled-viewer .tiled-tab{
+    background:transparent;border:1px solid var(--line);color:var(--fg-dim);
+    padding:.4rem .9rem;font-family:var(--mono);font-size:10px;letter-spacing:.15em;
+    cursor:pointer;transition:all .2s;text-transform:uppercase;border-radius:2px;
+  }
+  .art-tiled-viewer .tiled-tab:hover{border-color:var(--accent);color:var(--accent)}
+  .art-tiled-viewer .tiled-tab.active{background:var(--accent);border-color:var(--accent);color:#000}
+  .art-tiled-viewer .tiled-stage{
+    background:#0e0e0e;border:1px solid var(--line);
+    display:flex;justify-content:center;align-items:center;
+    padding:1rem;min-height:200px;
+  }
+  .art-tiled-viewer .tiled-stage img{
+    max-width:100%;height:auto;display:block;cursor:zoom-in;
+    image-rendering:pixelated;image-rendering:-moz-crisp-edges;image-rendering:crisp-edges;
+    transition:opacity .2s;
+  }
+  .art-tiled-viewer .tiled-caption{
+    font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--fg-dim);
+    display:flex;justify-content:space-between;
+  }
+  .art-tiled-viewer .tiled-caption::after{
+    content:'click image · 100% ↗';color:var(--fg-mute);font-size:9px;
+  }
+  @media (max-width:640px){
+    .art-tiled-viewer .tiled-stage img{max-width:100%}
+  }
+
+  /* ─── 3.4 UI · 按钮三态(窄竖列) + 通关(宽) 左右排 ─── */
+  .art-ui-groups{
+    display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:start;
+  }
+  .ui-group .ui-group-title{
+    font-family:var(--mono);font-size:11px;letter-spacing:.15em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:.6rem;
+  }
+  /* 按钮三态：竖排 */
+  .ui-group .ui-states{display:flex;flex-direction:column;gap:.5rem}
+  /* 去掉半透明框：图片直接漂在底色上 */
+  .ui-group .ui-state-card{
+    background:transparent;border:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:.35rem;gap:.35rem;
+  }
+  .ui-group .ui-state-card img{
+    max-width:100%;max-height:48px;object-fit:contain;display:block;
+    image-rendering:pixelated;
+  }
+  /* 通关：宽大图 */
+  .ui-group .ui-state-card.single{padding:0}
+  .ui-group .ui-state-card.single img{max-height:none;width:100%}
+  .ui-group .ui-state-card figcaption{
+    font-family:var(--mono);font-size:9px;letter-spacing:.15em;color:var(--fg-mute);
+    text-transform:uppercase;
+  }
+  /* 通关大图不要 REVENGE COMPLETE 标注 */
+  .ui-group .ui-state-card.single figcaption{display:none}
+  @media (max-width:640px){
+    .art-ui-groups{grid-template-columns:1fr}
+  }
+
+  /* ─── 移动端 ─── */
+  @media (max-width:640px){
+    .art-character-grid{max-width:100%}
+    .art-character-grid .cell.center .lbl{font-size:11px}
+    .art-character-grid .cell.center .sub{font-size:8px}
+    .ui-group .ui-states{grid-template-columns:1fr}
+    .art-fx-scroll .fx-card{width:240px}
+  }
 
   /* ───── HEADER ───── */
   header{margin-bottom:3rem}
@@ -179,7 +392,21 @@
 </head>
 <body>
 
-<header>
+<!-- Sticky Nav · 复刻主站 StickyNavigation -->
+<nav class="echoflash-nav" id="echoflash-nav">
+  <div class="echoflash-nav-inner">
+    <a href="#top" class="brand" data-target="top">ECHOFLASH</a>
+    <div class="links">
+      <a href="#about" data-target="about"><span class="idx">01</span> About</a>
+      <a href="#stack" data-target="stack"><span class="idx">02</span> Stack</a>
+      <a href="#ctrl"  data-target="ctrl"><span  class="idx">03</span> Controls</a>
+      <a href="#art"   data-target="art"><span   class="idx">04</span> Art</a>
+      <a href="#tech"  data-target="tech"><span  class="idx">05</span> Tech</a>
+    </div>
+  </div>
+</nav>
+
+<header id="top">
   <div class="eyebrow">04 / Game · C++ Project</div>
   <h1>ECHOFLASH</h1>
   <div class="subtitle-cn">盲剑客：《白夜瞬闪》</div>
@@ -198,13 +425,13 @@
   <video src="./trailer.mp4" controls playsinline preload="metadata" poster="/covers/echoflash.png"></video>
 </div>
 
-<section class="intro">
+<section class="intro" id="about">
   <h2>About</h2>
   <p>ECHOFLASH 是一款基于完全面向对象架构的高难度像素动作游戏。玩家扮演被家族背叛而失明的剑客，主动释放圆形声波在记忆迷雾中探测地形与敌人；攻击采用蓄力一闪机制——鼠标指向、长按蓄力、松开瞬间突进，落点由脚下预览圈与终点叉叉 UI 双重标记，撞墙眩晕 1 秒，斩中敌人即必杀。配合 0.1s 顿帧、屏幕震动与血迹粒子营造极致斩击手感。三层关卡构成"以听觉为剑，以黑暗为友"的复仇之路。</p>
   <p style="margin-top:1rem">游戏使用 EasyX + 纯 C++ 从零构建，未使用任何引擎，所有物理、渲染、AI、状态调度均为自研实现（详见下方 13 项工业级技术亮点）。</p>
 </section>
 
-<section>
+<section id="stack">
   <h2>Tech Stack</h2>
   <div class="chips">
     <span class="chip">C++17</span>
@@ -212,7 +439,7 @@
   </div>
 </section>
 
-<section>
+<section id="ctrl">
   <h2>Controls</h2>
   <div class="controls-grid">
     <div class="ctrl"><kbd>LMB Hold</kbd><span>蓄力 · 松开释放突进</span></div>
@@ -223,8 +450,43 @@
   </div>
 </section>
 
-<section>
-  <h2>Technical Highlights · 13 工业级实现</h2>
+<section id="art">
+  <h2>Art Pipeline · 美术管线</h2>
+  <p style="margin-bottom:1.5rem">本作美术资产全部自制。以下按管线分类，每类按其视觉特性使用不同版式。</p>
+
+  <!-- 顶部：角色 8 方向 + UI 设计 左右拼接，常开 -->
+  <div class="art-top-grid">
+    <div class="art-block">
+      <div class="art-block-head">
+        <span class="num">01</span>
+        <span class="title">像素角色 8 方向 <span class="en">/ 8-Dir Character</span></span>
+      </div>
+      <div class="art-block-body" id="art-character"></div>
+    </div>
+    <div class="art-block">
+      <div class="art-block-head">
+        <span class="num">02</span>
+        <span class="title">UI 设计 <span class="en">/ UI Design</span></span>
+      </div>
+      <div class="art-block-body" id="art-ui"></div>
+    </div>
+  </div>
+
+  <!-- 中部：EasyX 特效，常开 -->
+  <div class="art-block" style="margin-top:1rem">
+    <div class="art-block-head">
+      <span class="num">03</span>
+      <span class="title">EasyX 特效 <span class="en">/ EasyX FX</span></span>
+    </div>
+    <div class="art-block-body" id="art-fx"></div>
+  </div>
+
+  <!-- 底部：Tiled 瓦片地图（唯一保留折叠交互） -->
+  <div class="accordion" id="art-acc" style="margin-top:1rem"></div>
+</section>
+
+<section id="tech">
+  <h2>Technical Highlights · 技术亮点</h2>
   <div class="ac-tools">
     <button id="expand-all">Expand all</button>
     <button id="collapse-all">Collapse all</button>
@@ -438,6 +700,295 @@ document.getElementById('collapse-all').addEventListener('click', () => {
     it.querySelector('.ac-head').setAttribute('aria-expanded','false');
   });
 });
+
+/* ────────────────────────────────────────────────────────────────
+ *  ART PIPELINE 手风琴（4 类素材实装）
+ * ──────────────────────────────────────────────────────────────── */
+const ART_ASSETS = {
+  character: {
+    dirs: [
+      { key:'north-west', label:'NW' }, { key:'north',      label:'N'  }, { key:'north-east', label:'NE' },
+      { key:'west',       label:'W'  }, /* 中心 */                       { key:'east',       label:'E'  },
+      { key:'south-west', label:'SW' }, { key:'south',      label:'S'  }, { key:'south-east', label:'SE' },
+    ],
+    frames: 9,
+    framePath: (dir, i) => `./art/character/${dir}/frame_${String(i).padStart(3,'0')}.png`,
+    fps: 10,
+  },
+  fx: [
+    { src: './art/fx/left.mp4',  label: 'LEFT SLASH · 左斩特效'  },
+    { src: './art/fx/right.mp4', label: 'RIGHT SLASH · 右斩特效' },
+  ],
+  tiled: [
+    { src: './art/tiled/map01.png', label: 'LEVEL 1 · 竹林' },
+    { src: './art/tiled/map02.png', label: 'LEVEL 2' },
+    { src: './art/tiled/map03.png', label: 'LEVEL 3' },
+  ],
+  ui: [
+    {
+      group: 'MAIN MENU · 继续按钮三态',
+      states: [
+        { src: './art/ui/main_continue_normal.png', label: 'NORMAL' },
+        { src: './art/ui/main_continue_hover.png',  label: 'HOVER'  },
+        { src: './art/ui/main_continue_active.png', label: 'ACTIVE' },
+      ],
+    },
+    {
+      group: 'VICTORY · 通关',
+      states: [
+        { src: './art/ui/victory/revenge_complete.png', label: 'REVENGE COMPLETE', single: true },
+      ],
+    },
+  ],
+};
+
+
+// ── 3.1 Character 渲染 ──
+function renderCharacterGrid(container) {
+  const grid = document.createElement('div');
+  grid.className = 'art-character-grid';
+  const { dirs, frames, framePath } = ART_ASSETS.character;
+  // 8 个 cell + 中心格（index 4）
+  for (let i = 0; i < 9; i++) {
+    if (i === 4) {
+      const c = document.createElement('div');
+      c.className = 'cell center';
+      c.innerHTML = `<div class="lbl">8-DIR</div><div class="sub">像素角色</div>`;
+      grid.appendChild(c);
+      continue;
+    }
+    // dirs 数组按 8 个外圈位置顺序排（跳过中心）
+    const dirIdx = i < 4 ? i : i - 1;
+    const dir = dirs[dirIdx];
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.dataset.dir = dir.label;
+    const img = document.createElement('img');
+    img.alt = dir.key;
+    img.src = framePath(dir.key, 0);
+    cell.appendChild(img);
+    grid.appendChild(cell);
+  }
+  container.appendChild(grid);
+
+  // interval 控制：挂在 container 上方便 open/close 钩
+  let frameIdx = 0;
+  let timer = null;
+  container._startAnim = () => {
+    if (timer) return;
+    timer = setInterval(() => {
+      frameIdx = (frameIdx + 1) % frames;
+      grid.querySelectorAll('.cell:not(.center) img').forEach((img, idx) => {
+        const dir = dirs[idx];
+        img.src = framePath(dir.key, frameIdx);
+      });
+    }, 1000 / ART_ASSETS.character.fps);
+  };
+  container._stopAnim = () => {
+    if (timer) { clearInterval(timer); timer = null; }
+  };
+}
+
+// ── 3.2 FX 渲染（2 列对称大卡）──
+function renderFxScroll(container) {
+  const wrap = document.createElement('div');
+  wrap.className = 'art-fx-grid';
+  ART_ASSETS.fx.forEach(({ src, label }) => {
+    const card = document.createElement('figure');
+    card.className = 'fx-card';
+    card.innerHTML = `
+      <video src="${src}#t=0.1" muted loop autoplay playsinline preload="metadata"></video>
+      <figcaption>${label}</figcaption>
+    `;
+    wrap.appendChild(card);
+  });
+  container.appendChild(wrap);
+}
+
+// ── 3.3 Tiled 渲染（tab 切换式查看器）──
+function renderTiledList(container) {
+  const viewer = document.createElement('div');
+  viewer.className = 'art-tiled-viewer';
+  const tabsRow = document.createElement('div');
+  tabsRow.className = 'tiled-tabs';
+  const stage = document.createElement('div');
+  stage.className = 'tiled-stage';
+  const caption = document.createElement('div');
+  caption.className = 'tiled-caption';
+
+  const img = document.createElement('img');
+  img.alt = '';
+  stage.appendChild(img);
+
+  const setActive = (idx) => {
+    const item = ART_ASSETS.tiled[idx];
+    img.style.opacity = '0';
+    img.src = item.src;
+    img.alt = item.label;
+    img.onload = () => { img.style.opacity = '1'; };
+    caption.firstChild.textContent = item.label;
+    tabsRow.querySelectorAll('.tiled-tab').forEach((b, i) => {
+      b.classList.toggle('active', i === idx);
+    });
+  };
+
+  ART_ASSETS.tiled.forEach((item, idx) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'tiled-tab';
+    btn.textContent = `Level ${idx + 1}`;
+    btn.addEventListener('click', () => setActive(idx));
+    tabsRow.appendChild(btn);
+  });
+
+  caption.appendChild(document.createTextNode(ART_ASSETS.tiled[0].label));
+
+  img.addEventListener('click', () => {
+    const active = ART_ASSETS.tiled[
+      Array.from(tabsRow.children).findIndex(b => b.classList.contains('active'))
+    ];
+    if (active) window.open(active.src, '_blank', 'noopener,noreferrer');
+  });
+
+  viewer.appendChild(tabsRow);
+  viewer.appendChild(stage);
+  viewer.appendChild(caption);
+  container.appendChild(viewer);
+
+  // 默认第一个
+  setActive(0);
+}
+
+// ── 3.4 UI 渲染 ──
+function renderUiGroups(container) {
+  const wrap = document.createElement('div');
+  wrap.className = 'art-ui-groups';
+  ART_ASSETS.ui.forEach(({ group, states }) => {
+    const g = document.createElement('div');
+    g.className = 'ui-group';
+    g.innerHTML = `
+      <div class="ui-group-title">${group}</div>
+      <div class="ui-states">
+        ${states.map(s => `
+          <figure class="ui-state-card${s.single ? ' single' : ''}">
+            <img src="${s.src}" alt="${s.label}">
+            <figcaption>${s.label}</figcaption>
+          </figure>
+        `).join('')}
+      </div>
+    `;
+    wrap.appendChild(g);
+  });
+  container.appendChild(wrap);
+}
+
+// ── 渲染常开 3 块：character / ui / fx，直接挂在各自 #art-character / #art-ui / #art-fx ──
+const charBody = document.getElementById('art-character');
+renderCharacterGrid(charBody);
+// character 是 setInterval 动画，常开模式下直接启动
+if (charBody._startAnim) charBody._startAnim();
+
+renderUiGroups(document.getElementById('art-ui'));
+renderFxScroll(document.getElementById('art-fx'));
+
+// ── 唯一保留折叠交互：Tiled 瓦片地图，做成单条 .ac-item ──
+const artAcc = document.getElementById('art-acc');
+{
+  const item = document.createElement('div');
+  item.className = 'ac-item';
+  item.innerHTML = `
+    <button class="ac-head" type="button" aria-expanded="false">
+      <span class="num">04</span>
+      <span class="cat">Tiled 瓦片地图 <span style="color:var(--fg-mute);font-size:.85em;margin-left:.5rem">/ Tiled Maps</span></span>
+      <span class="count">(3 levels)</span>
+      <span class="toggle">+</span>
+      <div class="ac-preview">
+        <span class="chip-sm">Level 1</span>
+        <span class="chip-sm">Level 2</span>
+        <span class="chip-sm">Level 3</span>
+      </div>
+    </button>
+    <div class="ac-body">
+      <div class="inner">
+        <div class="pad"></div>
+      </div>
+    </div>
+  `;
+  const pad = item.querySelector('.pad');
+  renderTiledList(pad);
+  const head = item.querySelector('.ac-head');
+  head.addEventListener('click', () => {
+    const open = item.classList.toggle('open');
+    head.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  artAcc.appendChild(item);
+}
+
+document.getElementById('art-expand-all').addEventListener('click', () => {
+  artAcc.querySelectorAll('.ac-item').forEach(it => {
+    it.classList.add('open');
+    it.querySelector('.ac-head').setAttribute('aria-expanded','true');
+  });
+});
+document.getElementById('art-collapse-all').addEventListener('click', () => {
+  artAcc.querySelectorAll('.ac-item').forEach(it => {
+    it.classList.remove('open');
+    it.querySelector('.ac-head').setAttribute('aria-expanded','false');
+  });
+});
+
+/* ────────────────────────────────────────────────────────────────
+ *  STICKY NAV · 滑入显隐 + IntersectionObserver scrollspy + 平滑滚
+ * ──────────────────────────────────────────────────────────────── */
+(function () {
+  const nav = document.getElementById('echoflash-nav');
+  const navLinks = nav.querySelectorAll('a[data-target]');
+  const linkByTarget = {};
+  navLinks.forEach(a => { linkByTarget[a.dataset.target] = a; });
+
+  // 1) 滚出 header 后滑入；滚回顶部隐藏
+  const SHOW_THRESHOLD = 200;
+  let shown = false;
+  function onScroll() {
+    const next = window.scrollY > SHOW_THRESHOLD;
+    if (next !== shown) {
+      shown = next;
+      nav.classList.toggle('visible', shown);
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // 2) scrollspy：哪个 section 在视窗中央，对应 link 高亮
+  const trackedIds = ['about', 'stack', 'ctrl', 'art', 'tech'];
+  const trackedEls = trackedIds.map(id => document.getElementById(id)).filter(Boolean);
+  const setActive = (id) => {
+    navLinks.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+  };
+  const io = new IntersectionObserver((entries) => {
+    // 选取所有相交的 section，取最靠近视窗顶端的那个
+    const candidates = entries
+      .filter(e => e.isIntersecting)
+      .map(e => ({ id: e.target.id, top: e.boundingClientRect.top }))
+      .sort((a, b) => Math.abs(a.top - 80) - Math.abs(b.top - 80));
+    if (candidates.length) setActive(candidates[0].id);
+  }, { rootMargin: '-30% 0px -55% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] });
+  trackedEls.forEach(el => io.observe(el));
+
+  // 3) 平滑滚到 anchor
+  navLinks.forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = a.dataset.target;
+      if (id === 'top') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+})();
 </script>
 
 </body>
