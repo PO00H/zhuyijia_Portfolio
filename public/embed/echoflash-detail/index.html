@@ -388,6 +388,80 @@
     font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
     transition:all .2s}
   .btn:hover{background:var(--accent);color:#000}
+
+  /* ───── SUB HEADING (section 内小标题) ───── */
+  .sub-h{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--fg-dim);
+    text-transform:uppercase;margin:2rem 0 1rem}
+
+  /* ───── DESIGN PILLAR (设计立意) ───── */
+  .design-pillar{border:1px solid var(--line);background:var(--bg-2);
+    border-left:2px solid var(--accent);padding:1.5rem}
+  .design-pillar .pillar-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+    color:var(--accent);text-transform:uppercase;margin-bottom:.6rem}
+  .design-pillar .pillar-text{font-size:1.5rem;font-weight:700;color:var(--fg);
+    letter-spacing:-.01em;line-height:1.25;margin-bottom:.85rem}
+  .design-pillar p{font-size:.9rem;line-height:1.8}
+
+  /* ───── CORE LOOP (核心循环) ───── */
+  .loop{display:flex;align-items:stretch;gap:.5rem;flex-wrap:wrap}
+  .loop-step{flex:1;min-width:130px;background:var(--bg-2);border:1px solid var(--line);
+    padding:1rem .85rem;display:flex;flex-direction:column;gap:.4rem;transition:border-color .2s}
+  .loop-step:hover{border-color:var(--accent)}
+  .loop-step .ls-num{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.1em}
+  .loop-step .ls-title{font-size:.95rem;font-weight:600;color:var(--fg)}
+  .loop-step .ls-sub{font-family:var(--mono);font-size:9px;color:var(--fg-mute);letter-spacing:.08em;text-transform:uppercase}
+  .loop-arrow{display:flex;align-items:center;color:var(--fg-mute);font-size:1.1rem}
+  @media (max-width:640px){
+    .loop{flex-direction:column}
+    .loop-arrow{justify-content:center;transform:rotate(90deg)}
+  }
+
+  /* ───── STAT BAND (数据规模) ───── */
+  .stat-band{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:2rem}
+  .stat-band .stat{background:var(--bg-2);padding:1.1rem 1rem;text-align:center;
+    display:flex;flex-direction:column;gap:.3rem}
+  .stat-band .stat .n{font-family:var(--mono);font-size:1.6rem;font-weight:500;
+    color:var(--accent);line-height:1;letter-spacing:-.02em}
+  .stat-band .stat .l{font-family:var(--mono);font-size:9px;letter-spacing:.08em;
+    color:var(--fg-dim);text-transform:uppercase}
+
+  /* ───── DEV JOURNEY (开发历程) ───── */
+  .journey{display:flex;flex-direction:column;gap:.75rem}
+  .jcard{border:1px solid var(--line);background:var(--bg-2);padding:1.1rem 1.25rem;
+    border-left:2px solid var(--accent);transition:background .2s}
+  .jcard:hover{background:rgba(255,61,0,.04)}
+  .jcard-head{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem}
+  .jcard-head .jnum{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.1em}
+  .jcard-head .jtag{font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+    color:var(--fg-mute);border:1px solid var(--line);padding:.15rem .5rem;text-transform:uppercase}
+  .jproblem{font-size:.92rem;color:var(--fg);font-weight:500;margin-bottom:.55rem;line-height:1.6}
+  .jsolution{font-size:.85rem;color:var(--fg-dim);line-height:1.7;font-weight:300}
+  .jsolution .jarrow{font-family:var(--mono);font-size:10px;color:var(--accent);
+    letter-spacing:.1em;margin-right:.5rem;text-transform:uppercase}
+
+  /* ───── REFLECTION & ROADMAP (总结与未来) ───── */
+  .next-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media (max-width:640px){.next-grid{grid-template-columns:1fr}}
+  .next-col{border:1px solid var(--line);background:var(--bg-2);padding:1.25rem}
+  .next-list{list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-top:.25rem}
+  .next-list li{font-size:.88rem;color:var(--fg-dim);line-height:1.6;font-weight:300;
+    padding-left:1.1rem;position:relative}
+  .next-list li::before{content:'▹';position:absolute;left:0;color:var(--accent)}
+
+  /* ───── COLOPHON (运行与致谢) ───── */
+  .colophon{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+  .colophon .col-box{border:1px solid var(--line);background:var(--bg-2);padding:1.1rem 1.25rem}
+  .colophon .col-box h4{font-family:var(--mono);font-size:10px;letter-spacing:.18em;
+    color:var(--accent);text-transform:uppercase;margin-bottom:.6rem;font-weight:500}
+  .colophon .col-box p,.colophon .col-box li{font-size:.82rem;color:var(--fg-dim);
+    line-height:1.65;font-weight:300}
+  .colophon .col-box ul{list-style:none;display:flex;flex-direction:column;gap:.3rem}
+  .colophon .col-box code{font-family:var(--mono);font-size:.78rem;color:var(--fg);
+    background:#000;padding:.1rem .35rem;border:1px solid var(--line);border-radius:2px}
+
+  /* ───── 常显 VIZ（About 介绍流程用，覆盖默认的 .viz{display:none}）───── */
+  .viz.viz-static{display:block}
 </style>
 </head>
 <body>
@@ -398,10 +472,11 @@
     <a href="#top" class="brand" data-target="top">ECHOFLASH</a>
     <div class="links">
       <a href="#about" data-target="about"><span class="idx">01</span> About</a>
-      <a href="#stack" data-target="stack"><span class="idx">02</span> Stack</a>
-      <a href="#ctrl"  data-target="ctrl"><span  class="idx">03</span> Controls</a>
-      <a href="#art"   data-target="art"><span   class="idx">04</span> Art</a>
-      <a href="#tech"  data-target="tech"><span  class="idx">05</span> Tech</a>
+      <a href="#design" data-target="design"><span class="idx">02</span> Design</a>
+      <a href="#art"   data-target="art"><span   class="idx">03</span> Art</a>
+      <a href="#tech"  data-target="tech"><span  class="idx">04</span> Tech</a>
+      <a href="#journey" data-target="journey"><span class="idx">05</span> Journey</a>
+      <a href="#next"  data-target="next"><span  class="idx">06</span> Next</a>
     </div>
   </div>
 </nav>
@@ -429,24 +504,47 @@
   <h2>About</h2>
   <p>ECHOFLASH 是一款基于完全面向对象架构的高难度像素动作游戏。玩家扮演被家族背叛而失明的剑客，主动释放圆形声波在记忆迷雾中探测地形与敌人；攻击采用蓄力一闪机制——鼠标指向、长按蓄力、松开瞬间突进，落点由脚下预览圈与终点叉叉 UI 双重标记，撞墙眩晕 1 秒，斩中敌人即必杀。配合 0.1s 顿帧、屏幕震动与血迹粒子营造极致斩击手感。三层关卡构成"以听觉为剑，以黑暗为友"的复仇之路。</p>
   <p style="margin-top:1rem">游戏使用 EasyX + 纯 C++ 从零构建，未使用任何引擎，所有物理、渲染、AI、状态调度均为自研实现（详见下方 13 项工业级技术亮点）。</p>
-</section>
 
-<section id="stack">
-  <h2>Tech Stack</h2>
+  <h3 class="sub-h">技术栈 · Tech Stack</h3>
   <div class="chips">
     <span class="chip">C++17</span>
     <span class="chip">EasyX</span>
   </div>
-</section>
 
-<section id="ctrl">
-  <h2>Controls</h2>
+  <h3 class="sub-h">操作方式 · Controls</h3>
   <div class="controls-grid">
     <div class="ctrl"><kbd>LMB Hold</kbd><span>蓄力 · 松开释放突进</span></div>
     <div class="ctrl"><kbd>RMB</kbd><span>主动声波探测</span></div>
     <div class="ctrl"><kbd>Enter</kbd><span>菜单确认 / 推进过场</span></div>
     <div class="ctrl"><kbd>ESC</kbd><span>暂停 / 返回</span></div>
     <div class="ctrl"><kbd>Z</kbd><span>运行时调试视图</span></div>
+  </div>
+
+  <h3 class="sub-h">介绍流程 · 状态机总览</h3>
+  <p style="margin-bottom:.75rem;font-size:.88rem">游戏完整生命周期由一个顶层状态机驱动。下图<strong>可交互</strong>——点击节点或边上的标签，即可走一遍真实的状态流转（菜单 → 剧情 → 教程 → 游戏 → 暂停 / 落命 / 胜利）。</p>
+  <div class="viz viz-static" data-viz="fsm"></div>
+</section>
+
+<section id="design">
+  <h2>Design · 设计内核</h2>
+
+  <div class="design-pillar">
+    <div class="pillar-label">Design Pillar · 一句话立意</div>
+    <div class="pillar-text">剥夺视觉，把"听"变成核心动词。</div>
+    <p>大多数动作游戏让你"看清一切再出手"。ECHOFLASH 反其道而行——主角失明，屏幕被记忆迷雾笼罩，玩家必须主动放声波"听"出地形与敌人，再凭记忆里的残像蓄力一闪。看不见，反而逼出极致的专注与紧张，这正是"以听觉为剑、以黑暗为友"的体验内核。</p>
+  </div>
+
+  <h3 class="sub-h">核心玩法循环 · Core Loop</h3>
+  <div class="loop">
+    <div class="loop-step"><span class="ls-num">01</span><span class="ls-title">声呐探测</span><span class="ls-sub">RMB · Sense</span></div>
+    <div class="loop-arrow">→</div>
+    <div class="loop-step"><span class="ls-num">02</span><span class="ls-title">潜行规避</span><span class="ls-sub">Avoid Vision</span></div>
+    <div class="loop-arrow">→</div>
+    <div class="loop-step"><span class="ls-num">03</span><span class="ls-title">蓄力瞄准</span><span class="ls-sub">LMB Hold · Aim</span></div>
+    <div class="loop-arrow">→</div>
+    <div class="loop-step"><span class="ls-num">04</span><span class="ls-title">一闪斩杀</span><span class="ls-sub">Release · One-Hit</span></div>
+    <div class="loop-arrow">→</div>
+    <div class="loop-step"><span class="ls-num">05</span><span class="ls-title">推进关卡</span><span class="ls-sub">Advance</span></div>
   </div>
 </section>
 
@@ -492,6 +590,54 @@
     <button id="collapse-all">Collapse all</button>
   </div>
   <div class="accordion" id="acc"></div>
+</section>
+
+<section id="journey">
+  <h2>Dev Journey · 开发历程</h2>
+  <p style="margin-bottom:1.5rem">从零用 C++ 手搓一个动作游戏，真正花时间的不是写功能，而是为了实现那些"亮点"反过来死磕的三道难题——它们最能说明我学到了什么。</p>
+
+  <div class="journey">
+    <div class="jcard">
+      <div class="jcard-head"><span class="jnum">01</span><span class="jtag">穿墙 Bug</span></div>
+      <div class="jproblem">蓄力一闪是大位移瞬移，速度太快会"跳过"墙壁，直接穿模进墙里。</div>
+      <div class="jsolution"><span class="jarrow">解法</span>引入 CCD 连续碰撞检测：把一次长冲刺离散成很多小步，逐步推进、逐步检测，命中墙立刻停——既保住爆发力，又彻底杜绝穿墙。</div>
+    </div>
+    <div class="jcard">
+      <div class="jcard-head"><span class="jnum">02</span><span class="jtag">敌人寻路 · 1D 热力图</span></div>
+      <div class="jproblem">我要的亮点：多个敌人同时智能绕墙追玩家。但传统寻路每帧动态 new/delete 节点，内存碎片化又拖慢帧率，根本撑不起同屏多敌人。</div>
+      <div class="jsolution"><span class="jarrow">反推</span>预分配一块一维连续内存当 BFS 热力图（cache-friendly），每帧从玩家位置扩散一次距离场，每个敌人只需 <code>O(1)</code> 查表决定朝向——整个生命周期零内存分配。</div>
+    </div>
+    <div class="jcard">
+      <div class="jcard-head"><span class="jnum">03</span><span class="jtag">战争迷雾 · 逐像素后处理</span></div>
+      <div class="jproblem">我要的亮点："看不见"是游戏的灵魂——一层能被声波点亮、又随记忆慢慢衰减的动态迷雾。但全屏 48 万像素每帧逐个重算，直接拖垮帧率。</div>
+      <div class="jsolution"><span class="jarrow">反推</span>先用包围盒裁掉绝大多数无关像素，只对声波环与感知圈附近的像素用圆环方程算亮度，再配合记忆计时器做残影衰减——把全屏后处理压进可接受的开销。</div>
+    </div>
+  </div>
+</section>
+
+<section id="next">
+  <h2>Reflection &amp; Roadmap · 总结与未来</h2>
+  <div class="next-grid">
+    <div class="next-col">
+      <h3 class="sub-h" style="margin-top:0">我学到了什么</h3>
+      <ul class="next-list">
+        <li>用面向对象 + 状态机，把一个完整游戏"拆解"成可维护的模块。</li>
+        <li>性能优化的本质：先找"执行频率 × 单次成本"最高的热点，再下手。</li>
+        <li>手感不是写出来的，是一次次试玩"调"出来的——数值即设计。</li>
+        <li>边界条件、内存生命周期、缓存友好，这些"看不见"的功课才决定上限。</li>
+      </ul>
+    </div>
+    <div class="next-col">
+      <h3 class="sub-h" style="margin-top:0">下一步</h3>
+      <ul class="next-list">
+        <li>接入声音系统：让"声呐"真正有听觉反馈，强化盲眼沉浸。</li>
+        <li>更丰富的敌人类型，以及多阶段 Boss 战。</li>
+        <li>关卡编辑与存档系统，支持更大的世界。</li>
+        <li>把寻路升级为 A*，支持动态障碍与更聪明的包抄。</li>
+      </ul>
+    </div>
+  </div>
+
 </section>
 
 <footer>
@@ -687,6 +833,15 @@ const pageVizObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0 });
 pageVizObserver.observe(document.body);
+
+// ── About 末尾"介绍流程"的 FSM 状态机：页面加载即挂载、常显 ──
+(function () {
+  const introViz = document.querySelector('#about .viz[data-viz="fsm"]');
+  if (introViz && window.VIZ_REGISTRY && window.VIZ_REGISTRY.fsm && !introViz.dataset.mounted) {
+    window.VIZ_REGISTRY.fsm.mount(introViz);
+    introViz.dataset.mounted = '1';
+  }
+})();
 
 document.getElementById('expand-all').addEventListener('click', () => {
   acc.querySelectorAll('.ac-item').forEach(it => {
@@ -924,13 +1079,13 @@ const artAcc = document.getElementById('art-acc');
   artAcc.appendChild(item);
 }
 
-document.getElementById('art-expand-all').addEventListener('click', () => {
+document.getElementById('art-expand-all')?.addEventListener('click', () => {
   artAcc.querySelectorAll('.ac-item').forEach(it => {
     it.classList.add('open');
     it.querySelector('.ac-head').setAttribute('aria-expanded','true');
   });
 });
-document.getElementById('art-collapse-all').addEventListener('click', () => {
+document.getElementById('art-collapse-all')?.addEventListener('click', () => {
   artAcc.querySelectorAll('.ac-item').forEach(it => {
     it.classList.remove('open');
     it.querySelector('.ac-head').setAttribute('aria-expanded','false');
@@ -947,7 +1102,7 @@ document.getElementById('art-collapse-all').addEventListener('click', () => {
   navLinks.forEach(a => { linkByTarget[a.dataset.target] = a; });
 
   // 1) 滚出 header 后滑入；滚回顶部隐藏
-  const SHOW_THRESHOLD = 200;
+  const SHOW_THRESHOLD = -1;   // 改为 -1：页面一加载导航即滑入并常驻（汇报时随时可跳转）
   let shown = false;
   function onScroll() {
     const next = window.scrollY > SHOW_THRESHOLD;
@@ -960,7 +1115,7 @@ document.getElementById('art-collapse-all').addEventListener('click', () => {
   onScroll();
 
   // 2) scrollspy：哪个 section 在视窗中央，对应 link 高亮
-  const trackedIds = ['about', 'stack', 'ctrl', 'art', 'tech'];
+  const trackedIds = ['about', 'design', 'art', 'tech', 'journey', 'next'];
   const trackedEls = trackedIds.map(id => document.getElementById(id)).filter(Boolean);
   const setActive = (id) => {
     navLinks.forEach(a => a.classList.toggle('active', a.dataset.target === id));
