@@ -149,6 +149,19 @@ const workDetails: WorkDetail[] = [
       },
       {
         id: 'game-002',
+        title: "Eraser's Odyssey — 《橡皮奥德赛》",
+        category: 'Game Design · Pixel Art',
+        year: '2025',
+        wide: true,
+        description:
+          '文具生态的轻度策略 Roguelike。橡皮小人在放大的儿童书房里经历 3 分钟"收集→合成→战斗"循环，把订书机、橡皮、胶带等文具特性系统化映射为弹幕、清除、控制等玩法机制。涵盖元素联想系统、合成系统、敌人设计、像素美术管线与 Godot 原型（AI 辅助）。',
+        tools: ['Game Design', 'Pixel Art', 'Aseprite', 'Godot', 'Procreate'],
+        coverImage: '/covers/eraser-odyssey.png',
+        bilibiliEmbedUrl: '/embed/eraser-odyssey/index.html',
+        mediaAspect: '4/3',
+      },
+      {
+        id: 'game-003',
         title: '《IK 重定向》',
         category: 'UE5 Blueprint',
         year: '2025',
@@ -157,7 +170,7 @@ const workDetails: WorkDetail[] = [
         videoUrl: '/videos/UE1.mp4',
       },
       {
-        id: 'game-003',
+        id: 'game-004',
         title: '《迭代缩小》',
         category: 'UE5 Blueprint',
         year: '2025',
@@ -166,7 +179,7 @@ const workDetails: WorkDetail[] = [
         videoUrl: '/videos/UE2.mp4',
       },
       {
-        id: 'game-004',
+        id: 'game-005',
         title: '《跟随指针》',
         category: 'UE5 Blueprint',
         year: '2025',
@@ -377,6 +390,18 @@ function ProjectCard({
               scrolling="no"
               style={{ pointerEvents: isInteracting ? 'auto' : 'none' }}
             />
+          ) : project.coverImage ? (
+            /* 仅封面卡：静态封面 + 点击打开详情页 Lightbox */
+            <>
+              <img
+                src={project.coverImage}
+                alt={project.title}
+                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-90"
+              />
+              <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-[#FF3D00] text-white text-[10px] font-mono tracking-wider">
+                ▶ VIEW
+              </div>
+            </>
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
               <span className="section-label text-[#8A8A85]/40">

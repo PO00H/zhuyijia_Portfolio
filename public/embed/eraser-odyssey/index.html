@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eraser's Odyssey《橡皮奥德赛》— Project Detail</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#15110c; --bg-2:#201913; --line:#362d22;
+    --fg:#f3ede4; --fg-dim:#9c9081; --fg-mute:#6d6253;
+    --accent:#ff3d00; --accent-2:#ff9100;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --sans:'Inter', system-ui, sans-serif;
+  }
+  html,body{background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.6}
+  html{scroll-padding-top:64px}
+  body{max-width:1100px;margin:0 auto;font-size:14px;padding:0 0 5rem}
+  img{display:block}
+  .px{image-rendering:pixelated;image-rendering:-moz-crisp-edges;image-rendering:crisp-edges}
+  a{color:inherit}
+
+  /* ───── STICKY NAV ───── */
+  .eo-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(14,14,14,.85);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
+    padding:.85rem 2rem;transform:translateY(-100%);transition:transform .45s cubic-bezier(.22,1,.36,1)}
+  .eo-nav.visible{transform:translateY(0)}
+  .eo-nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:2rem}
+  .eo-nav .brand{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-decoration:none;text-transform:uppercase}
+  .eo-nav .brand:hover{color:var(--accent)}
+  .eo-nav .links{display:flex;gap:1.4rem;flex-wrap:wrap}
+  .eo-nav .links a{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--fg-dim);text-decoration:none;
+    display:inline-flex;align-items:baseline;gap:.4rem;text-transform:uppercase;padding-bottom:2px;
+    border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+  .eo-nav .links a .idx{font-size:9px;color:var(--fg-mute);transition:color .2s}
+  .eo-nav .links a:hover,.eo-nav .links a.active{color:var(--accent)}
+  .eo-nav .links a.active{border-bottom-color:var(--accent)}
+  .eo-nav .links a:hover .idx,.eo-nav .links a.active .idx{color:var(--accent)}
+  @media (pointer:coarse),(max-width:768px){
+    .eo-nav{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(14,14,14,.96);padding:.7rem 1rem}
+    .eo-nav-inner{gap:.75rem}.eo-nav .brand{display:none}
+    .eo-nav .links{gap:.9rem;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .eo-nav .links a{white-space:nowrap}
+  }
+
+  /* ───── layout ───── */
+  section{padding:3.5rem 2rem;border-top:1px solid var(--line)}
+  @media (max-width:640px){section{padding:2.5rem 1.25rem}}
+  .sec-head{margin-bottom:1.75rem}
+  .sec-head .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase}
+  .sec-head h2{font-size:1.5rem;font-weight:700;margin-top:.4rem;letter-spacing:.01em}
+  .sec-head .en{color:var(--fg-mute);font-weight:400;font-size:.7em;margin-left:.5rem;letter-spacing:.08em}
+  .sec-head p.lead{color:var(--fg-dim);margin-top:.75rem;max-width:60ch}
+
+  /* ───── HERO ───── */
+  .hero{position:relative;display:flex;flex-direction:column;align-items:flex-start;
+    padding:4.5rem 2rem 3.25rem;border-top:none;
+    background:radial-gradient(130% 115% at 20% 0%, #17120d 0%, var(--bg) 58%)}
+  .hero .cat{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--accent);text-transform:uppercase}
+  .hero h1{font-size:clamp(2.4rem,7vw,4.5rem);font-weight:800;line-height:.95;margin:.5rem 0 .25rem;
+    background:linear-gradient(135deg,#ff3d00,#ff9100);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;width:fit-content}
+  .hero .cn{font-size:clamp(1rem,3vw,1.5rem);font-weight:500;color:var(--fg)}
+  .hero .tagline{margin-top:1rem;font-size:1.05rem;color:var(--fg);border-left:3px solid var(--accent);padding-left:.9rem;max-width:48ch}
+  .hero .pitch{margin-top:.75rem;color:var(--fg-dim);max-width:60ch}
+  .hero .meta{margin-top:1.25rem;display:flex;flex-wrap:wrap;gap:.5rem}
+  .tag{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--fg-dim);
+    border:1px solid var(--line);background:var(--bg-2);padding:.3rem .6rem;text-transform:uppercase}
+  .tag.hot{color:var(--accent);border-color:var(--accent)}
+
+  /* ───── element mapping table ───── */
+  .map-wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:1.5rem;align-items:start}
+  @media (max-width:860px){.map-wrap{grid-template-columns:1fr}}
+  .brainstorm-fig{border:1px solid var(--line);background:var(--bg-2);padding:.5rem}
+  .brainstorm-fig img{width:100%;height:auto}
+  .brainstorm-fig figcaption{font-family:var(--mono);font-size:10px;color:var(--fg-mute);padding:.5rem .25rem 0;letter-spacing:.05em}
+  table.map{width:100%;border-collapse:collapse;font-size:13px}
+  table.map th,table.map td{text-align:left;padding:.6rem .7rem;border-bottom:1px solid var(--line);vertical-align:top}
+  table.map th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--fg-mute);text-transform:uppercase;font-weight:400}
+  table.map td:first-child{color:var(--accent);white-space:nowrap;font-weight:500}
+  table.map td:last-child{color:var(--fg-dim);font-size:12px}
+
+  /* ───── LOOP state machine (canvas) ───── */
+  .fsm{margin-top:.5rem}
+  #fsm-mount{border:1px solid var(--line);background:#1b1611;padding:.6rem}
+  .viz-btn{background:var(--bg-2);border:1px solid var(--line);color:var(--fg-dim);
+    font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:.45rem .8rem;cursor:pointer;
+    text-transform:uppercase;transition:border-color .2s,color .2s}
+  .viz-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .fsm-detail{margin-top:1.25rem;border:1px solid var(--line);border-left:3px solid var(--accent);
+    background:var(--bg-2);padding:1.25rem 1.4rem;min-height:84px}
+  .fsm-detail h4{font-size:1rem;font-weight:600;margin-bottom:.4rem}
+  .fsm-detail h4 span{color:var(--fg-mute);font-family:var(--mono);font-size:11px;font-weight:400}
+  .fsm-detail p{color:var(--fg-dim);font-size:13px}
+
+  /* ───── generic figure grid ───── */
+  .fig-grid{display:grid;gap:1rem}
+  .fig-grid.cols-2{grid-template-columns:1fr 1fr}
+  .fig-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  @media (max-width:768px){.fig-grid.cols-2,.fig-grid.cols-3{grid-template-columns:1fr}}
+  figure.card{border:1px solid var(--line);background:var(--bg-2);overflow:hidden}
+  figure.card img{width:100%;height:auto}
+  figure.card figcaption{font-family:var(--mono);font-size:10px;color:var(--fg-dim);padding:.6rem .8rem;letter-spacing:.05em;border-top:1px solid var(--line)}
+
+  /* ───── sprite animation ───── */
+  .sprite-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem}
+  .sprite-cell{border:1px solid var(--line);background:#0e0e0e;display:flex;flex-direction:column;align-items:center}
+  .sprite-cell canvas{width:100%;aspect-ratio:1/1;background:
+    repeating-conic-gradient(#141414 0% 25%,#101010 0% 50%) 0/24px 24px}
+  .sprite-cell .lbl{font-family:var(--mono);font-size:10px;color:var(--fg-dim);padding:.5rem;letter-spacing:.05em;
+    border-top:1px solid var(--line);width:100%;text-align:center}
+  .sprite-cell .lbl b{color:var(--accent);font-weight:500}
+
+  /* ───── enemy / key chips ───── */
+  .enemy-list{list-style:none;display:grid;gap:.6rem}
+  .enemy-list li{border-left:2px solid var(--line);padding:.5rem .9rem;color:var(--fg-dim);font-size:13px}
+  .enemy-list li b{color:var(--fg);font-weight:600}
+  .enemy-list li.boss{border-left-color:var(--accent)}
+  .battle-hud{max-width:720px;margin:0 auto}
+  .key-row{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-top:1.25rem}
+  @media (max-width:640px){.key-row{grid-template-columns:repeat(2,1fr)}}
+  .key-row figure{border:1px solid var(--line);background:var(--bg-2);padding:1.1rem .6rem .8rem;text-align:center;
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between}
+  .key-row img{width:100%;height:104px;object-fit:contain;margin:0 auto}
+  @media (max-width:640px){.key-row img{height:84px}}
+  .key-row figcaption{font-family:var(--mono);font-size:9px;color:var(--fg-mute);margin-top:.8rem;letter-spacing:.08em}
+
+  /* recipe table */
+  table.recipe{width:100%;border-collapse:collapse;font-size:13px;margin-top:1rem}
+  table.recipe th,table.recipe td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--line)}
+  table.recipe th{font-family:var(--mono);font-size:10px;color:var(--fg-mute);text-transform:uppercase;letter-spacing:.1em;font-weight:400}
+  table.recipe td.kind{font-family:var(--mono);font-size:10px;color:var(--accent);text-transform:uppercase}
+  table.recipe td.out b{color:var(--fg)}
+
+  /* prototype: 左侧上下叠放小图，右侧主图 —— 左右底边齐平 */
+  .proto-layout{display:grid;grid-template-columns:.82fr 1.18fr;gap:1rem;align-items:stretch}
+  .proto-side{display:flex;flex-direction:column;justify-content:space-between;gap:1rem}
+  .proto-main{display:flex;flex-direction:column}
+  .proto-main img{flex:1;min-height:0;width:100%;height:100%;object-fit:contain;background:#0f0b07}
+  @media (max-width:768px){.proto-layout{grid-template-columns:1fr}.proto-main img{flex:none}}
+
+  .note{font-family:var(--mono);font-size:11px;color:var(--fg-mute);letter-spacing:.03em;
+    border:1px dashed var(--line);padding:.8rem 1rem;margin-top:1rem;line-height:1.7}
+  .note b{color:var(--fg-dim)}
+  footer{padding:3rem 2rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;
+    flex-wrap:wrap;gap:1rem;font-family:var(--mono);font-size:10px;color:var(--fg-mute);letter-spacing:.1em}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="eo-nav" id="nav">
+  <div class="eo-nav-inner">
+    <a href="#top" class="brand">ERASER'S ODYSSEY</a>
+    <div class="links">
+      <a href="#concept"  ><span class="idx">01</span> Concept</a>
+      <a href="#loop"     ><span class="idx">02</span> Loop</a>
+      <a href="#crafting" ><span class="idx">03</span> Crafting</a>
+      <a href="#enemies"  ><span class="idx">04</span> Enemies</a>
+      <a href="#art"      ><span class="idx">05</span> Pixel Art</a>
+      <a href="#ui"       ><span class="idx">06</span> UI</a>
+      <a href="#proto"    ><span class="idx">07</span> Prototype</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="cat">Game Design · Pixel Art / Concept · 2025</div>
+  <h1>ERASER'S ODYSSEY</h1>
+  <div class="cn">《橡皮奥德赛》</div>
+  <p class="tagline">"当你的橡皮擦成为救世主。"</p>
+  <p class="pitch">一款文具生态的轻度策略 Roguelike —— 3 分钟 "收集 → 合成 → 战斗" 循环，把课桌变成幻想战场。</p>
+  <div class="meta">
+    <span class="tag hot">Game Design</span>
+    <span class="tag hot">Pixel Art</span>
+    <span class="tag">Aseprite</span>
+    <span class="tag">Godot</span>
+    <span class="tag">Procreate</span>
+    <span class="tag">Roguelike</span>
+  </div>
+</header>
+
+<!-- 01 CONCEPT -->
+<section id="concept">
+  <div class="sec-head">
+    <div class="kicker">01 / Concept</div>
+    <h2>头脑风暴 & 元素联想 <span class="en">Element Mapping</span></h2>
+    <p class="lead">这款游戏的设计内核，是一套 "现实文具 → 游戏机制" 的系统化映射。每一件文具的真实特性，都被转译成一条自洽的玩法规则。</p>
+  </div>
+  <div class="map-wrap">
+    <figure class="brainstorm-fig">
+      <img src="art/brainstorm.png" alt="头脑风暴">
+      <figcaption>// 概念头脑风暴 · 文具生态发散</figcaption>
+    </figure>
+    <table class="map">
+      <thead><tr><th>现实元素</th><th>游戏内转化</th><th>关联逻辑</th></tr></thead>
+      <tbody>
+        <tr><td>订书机</td><td>BOSS 发射订书钉弹幕</td><td>"穿刺" 特性 → 弹幕攻击</td></tr>
+        <tr><td>橡皮擦</td><td>擦除敌人护盾 / 地形障碍</td><td>"修正" 功能 → 清除类技能</td></tr>
+        <tr><td>胶带</td><td>黏住敌人 3 秒</td><td>黏性 → 控制类效果</td></tr>
+        <tr><td>铅笔屑</td><td>可收集货币，升级合成台</td><td>现实垃圾 → 资源化</td></tr>
+        <tr><td>台灯光晕</td><td>仅在光晕内恢复生命</td><td>灯光象征庇护 → 限定恢复区</td></tr>
+        <tr><td>作业本折痕</td><td>迷宫地形生成</td><td>纸张折叠几何 → 程序化关卡</td></tr>
+        <tr><td>午后蝉鸣</td><td>倒计时阶段背景音</td><td>夏日紧迫感 → 强化时间焦虑</td></tr>
+        <tr><td>儿童涂鸦</td><td>技能图标 / UI 风格</td><td>稚拙笔触 → 美术统一性</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 02 LOOP -->
+<section id="loop">
+  <div class="sec-head">
+    <div class="kicker">02 / Core Loop</div>
+    <h2>核心循环状态机 <span class="en">3-min Collect · Craft · Battle</span></h2>
+    <p class="lead">游戏由一个 3 分钟的轻策略心流循环驱动。点击下方任一阶段查看设计细节 —— 它本质上是一台四态状态机。</p>
+  </div>
+  <div class="fsm" id="fsm">
+    <div id="fsm-mount"></div>
+    <div class="fsm-detail" id="fsm-detail"></div>
+  </div>
+</section>
+
+<!-- 03 CRAFTING -->
+<section id="crafting">
+  <div class="sec-head">
+    <div class="kicker">03 / Crafting</div>
+    <h2>合成系统 <span class="en">Crafting System</span></h2>
+    <p class="lead">作业本展开式合成界面。文具两两组合，衍生出攻击、防御、控制三系道具，并保留随机合成的探索惊喜。</p>
+  </div>
+  <div class="fig-grid cols-2">
+    <figure class="card"><img class="px" src="art/crafting/craft-ui.png" alt="合成界面"><figcaption>// 合成界面 · 作业本格子</figcaption></figure>
+    <figure class="card"><img class="px" src="art/crafting/craft-result.png" alt="合成结算"><figcaption>// 合成结算 · 产物预览</figcaption></figure>
+  </div>
+  <table class="recipe">
+    <thead><tr><th>类型</th><th>配方</th><th>产物 / 效果</th></tr></thead>
+    <tbody>
+      <tr><td class="kind">基础</td><td>铅笔 + 胶带</td><td class="out"><b>胶带铅笔鞭</b>：攻击距离变长 + 黏性短暂黏敌</td></tr>
+      <tr><td class="kind">基础</td><td>橡皮 + 回形针</td><td class="out"><b>回形针橡皮盾</b>：抵挡数次攻击</td></tr>
+      <tr><td class="kind">进阶</td><td>飞页书签 + 隐形便签</td><td class="out"><b>幻影飞书</b>：操控幻影书撞击 + 眩晕</td></tr>
+      <tr><td class="kind">随机</td><td>任意两件随意组合</td><td class="out">概率触发未知新道具，战斗中探索</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 04 ENEMIES -->
+<section id="enemies">
+  <div class="sec-head">
+    <div class="kicker">04 / Enemies</div>
+    <h2>敌人 & Boss 设计 <span class="en">Learning Stress, Materialized</span></h2>
+    <p class="lead">敌人设计是 "学习压力的具象化"。每个敌人都从一件文具的特性长出独有的攻击模式与破解方式。</p>
+  </div>
+  <div class="map-wrap" style="grid-template-columns:0.85fr 1.15fr">
+    <div class="sprite-cell" style="max-width:320px">
+      <canvas data-sprite="stapler" width="240" height="200"></canvas>
+      <div class="lbl"><b>订书机 BOSS</b> · 精灵图循环动画</div>
+    </div>
+    <ul class="enemy-list">
+      <li class="boss"><b>订书机（核心 BOSS）</b>：金属外壳，远程弹射订书钉，近战夹伤；需用回形针干扰其装订机制找破绽。</li>
+      <li><b>错题集幽灵</b>：揉皱纸张 + 红墨水弹；被 "胶带铅笔鞭" 黏住即无法攻击。</li>
+      <li><b>直尺骑士</b>：手持直尺高速冲刺；"回形针橡皮盾" 可弹飞使其陷入混乱。</li>
+      <li><b>数学公式蛇</b>：数字符号组成，需橡皮擦除核心 "等号" 击败。</li>
+      <li><b>迟到时钟 BOSS</b>：长腿摆钟，投掷分针似追踪导弹；利用书堆 / 笔筒躲避。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 05 PIXEL ART -->
+<section id="art">
+  <div class="sec-head">
+    <div class="kicker">05 / Pixel Art</div>
+    <h2>像素美术 · 角色动画 <span class="en">Sprite Animation</span></h2>
+    <p class="lead">主角橡皮小人的全套动作精灵，由 Aseprite 制作（64×64 / 帧，~10fps）。以下为精灵表实时切帧循环。</p>
+  </div>
+  <div class="sprite-grid">
+    <div class="sprite-cell"><canvas data-sprite="idle" width="200" height="200"></canvas><div class="lbl"><b>IDLE</b> · 站立 5帧</div></div>
+    <div class="sprite-cell"><canvas data-sprite="walk" width="200" height="200"></canvas><div class="lbl"><b>WALK</b> · 走路</div></div>
+    <div class="sprite-cell"><canvas data-sprite="turn" width="200" height="200"></canvas><div class="lbl"><b>TURN</b> · 转身 5帧</div></div>
+    <div class="sprite-cell"><canvas data-sprite="jump" width="200" height="200"></canvas><div class="lbl"><b>JUMP</b> · 跳跃</div></div>
+    <div class="sprite-cell"><canvas data-sprite="cloud" width="200" height="200"></canvas><div class="lbl"><b>CLOUD</b> · 云雾爆炸 10帧</div></div>
+  </div>
+</section>
+
+<!-- 06 UI -->
+<section id="ui">
+  <div class="sec-head">
+    <div class="kicker">06 / UI</div>
+    <h2>UI 设计 <span class="en">Interface</span></h2>
+    <p class="lead">界面语言延续 "儿童涂鸦" 的稚拙笔触，与文具世界观统一。</p>
+  </div>
+  <figure class="card battle-hud"><img class="px" src="art/ui/battle.png" alt="对战界面"><figcaption>// 对战界面 HUD · 血条 / 倒计时 / Boss</figcaption></figure>
+  <div class="key-row">
+    <figure><img class="px" src="art/ui/keys/wasd.png" alt="WASD"><figcaption>MOVE</figcaption></figure>
+    <figure><img class="px" src="art/ui/keys/arrows.png" alt="方向键"><figcaption>AIM</figcaption></figure>
+    <figure><img class="px" src="art/ui/keys/enter.png" alt="Enter"><figcaption>CONFIRM</figcaption></figure>
+    <figure><img class="px" src="art/ui/keys/esc.png" alt="Esc"><figcaption>MENU</figcaption></figure>
+    <figure><img class="px" src="art/ui/keys/compass-shoot.png" alt="罗盘射击"><figcaption>SHOOT</figcaption></figure>
+  </div>
+</section>
+
+<!-- 07 PROTOTYPE -->
+<section id="proto">
+  <div class="sec-head">
+    <div class="kicker">07 / Prototype</div>
+    <h2>Godot 原型 <span class="en">AI-assisted Workflow</span></h2>
+    <p class="lead">用 Cursor + GodotMCP 的 AI 辅助工作流快速搭出可交互原型，验证了可拖拽物品、合成交互等核心机制。</p>
+  </div>
+  <div class="proto-layout">
+    <div class="proto-side">
+      <figure class="card"><img src="art/prototype/godot-editor.png" alt="Godot 编辑器"><figcaption>// Godot 编辑器搭建</figcaption></figure>
+      <figure class="card"><img src="art/prototype/craft-spec.png" alt="合成阶段流程设计"><figcaption>// 合成阶段 · 交互流程设计</figcaption></figure>
+      <figure class="card"><img src="art/prototype/cursor-godot.png" alt="Cursor 集成 Godot"><figcaption>// Cursor + Godot 集成</figcaption></figure>
+    </div>
+    <figure class="card proto-main"><img src="art/prototype/draggable-script.png" alt="可拖拽物品脚本"><figcaption>// 可拖拽物品脚本 · DraggableItem.gd</figcaption></figure>
+  </div>
+  <div class="note"><b>// 诚实标注：</b>原型为 AI 辅助快速验证（Cursor + GodotMCP），用于打通"可拖拽合成 → 交互反馈"的核心机制，非完整成品引擎。</div>
+</section>
+
+<!-- USERS -->
+<section id="users">
+  <div class="sec-head">
+    <div class="kicker">— / Target Users</div>
+    <h2>目标用户 & 验证计划 <span class="en">Design Hypotheses</span></h2>
+  </div>
+  <ul class="enemy-list">
+    <li><b>目标群体</b>：17–30 岁怀旧玩家，渴望用简单文具重拾童年想象力，并在轻松策略中获得成就感。</li>
+    <li><b>验证设计</b>：BOSS 战前用 "脚步声逼近" 音效配合 3 分钟时间压力，测试玩家对压力机制的接受度。</li>
+    <li><b>计划中的数据可视化</b>：合成组合需求扇形图 / 场景探索热力图 / 反馈词云（"童年回忆""策略深度""轻松上手"）。</li>
+  </ul>
+  <div class="note"><b>// 说明：</b>本段为设计阶段的用户假设与验证<b>计划</b>，非已完成的真实用户测试结论。</div>
+</section>
+
+<footer>
+  <span>ERASER'S ODYSSEY · 《橡皮奥德赛》</span>
+  <span>ZHUYIJIA · 2025</span>
+</footer>
+
+<script>
+/* ───────── STICKY NAV: 滑入显隐 + scrollspy ───────── */
+(function(){
+  const nav=document.getElementById('nav');
+  const links=[...nav.querySelectorAll('.links a')];
+  const ids=links.map(a=>a.getAttribute('href').slice(1));
+  const els=ids.map(id=>document.getElementById(id)).filter(Boolean);
+  let lastY=window.scrollY;
+  function onScroll(){
+    const y=window.scrollY;
+    if(y>200) nav.classList.add('visible'); else nav.classList.remove('visible');
+    lastY=y;
+  }
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id=e.target.id;
+        links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+id));
+      }
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  els.forEach(el=>io.observe(el));
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+})();
+
+/* ───────── CORE LOOP · canvas 状态机（仿 ECHOFLASH FSM）───────── */
+(function(){
+  const W=660,H=380,NW=120,NH=46;
+  const NODES=[
+    {id:'COLLECT',cn:'收集',en:'COLLECT',x:130,y:88, desc:'操控橡皮小人在放大的儿童书房探索：书桌（铅笔/橡皮/胶带/回形针）、书架（飞页书签/隐形便签）、地板碎片。途中随机小事件（躲弹珠得「收集手套」）。'},
+    {id:'CRAFT',cn:'合成',en:'CRAFT',x:530,y:88, desc:'作业本式合成界面。基础合成（铅笔+胶带=胶带铅笔鞭）、进阶、随机三类，悬停提示合成方向，规划本局 build。'},
+    {id:'BATTLE',cn:'战斗',en:'BATTLE',x:330,y:194, desc:'靠近房间中心触发战斗，开启 3 分钟倒计时。按敌人（错题集幽灵/直尺骑士/时钟 BOSS）攻击模式灵活切换合成道具应对。'},
+    {id:'VICTORY',cn:'胜利',en:'VICTORY',x:518,y:308, desc:'倒计时内清场获胜，解锁新配方（「万能文具扳手」）—— 回到收集，开启更强的下一轮。'},
+    {id:'DEFEAT',cn:'失败',en:'DEFEAT',x:142,y:308, desc:'倒计时归零仍有敌人 → 失败。家长画外音「别玩了，该收收心啦！」，可带提示重试。'},
+  ];
+  const TR=[
+    {from:'COLLECT',to:'CRAFT',trig:'道具足够 · 开作业本',curve:0},
+    {from:'CRAFT',to:'COLLECT',trig:'返回继续收集',curve:0.55},
+    {from:'COLLECT',to:'BATTLE',trig:'靠近战斗区',curve:0.25},
+    {from:'CRAFT',to:'BATTLE',trig:'备战完成',curve:0.2},
+    {from:'BATTLE',to:'VICTORY',trig:'3 分钟内清场',curve:0.18},
+    {from:'BATTLE',to:'DEFEAT',trig:'倒计时归零 · 有敌存活',curve:0.18},
+    {from:'VICTORY',to:'COLLECT',trig:'解锁配方 · 下一轮',curve:-0.55},
+    {from:'DEFEAT',to:'COLLECT',trig:'带提示重试',curve:0},
+  ];
+  const HAPPY={COLLECT:'CRAFT',CRAFT:'BATTLE',BATTLE:'VICTORY',VICTORY:'COLLECT',DEFEAT:'COLLECT'};
+  const C={bg:'#1b1611',grid:'#2a2218',node:'#241d15',border:'#3a3026',label:'#c9bdab',
+    active:'#ff3d00',glow:'rgba(255,61,0,.30)',edge:'#3a2f23',edgeOut:'#ff9100',dim:'#9c9081'};
+  const detail=document.getElementById('fsm-detail');
+  const N=id=>NODES.find(n=>n.id===id);
+  let cur='COLLECT',pulse=0,animEdge=-1,animT=0,hoverNode=null,hoverEdge=-1,history=['收集'],
+      raf=0,running=false,autoTimer=null,manual=false,ctx=null,canvas=null;
+
+  function quad(p0,p1,p2,t){const it=1-t;return{x:it*it*p0.x+2*it*t*p1.x+t*t*p2.x,y:it*it*p0.y+2*it*t*p1.y+t*t*p2.y};}
+  function ctrlOf(a,b,c){const mx=(a.x+b.x)/2,my=(a.y+b.y)/2,dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy);if(l<1)return{x:mx,y:my};return{x:mx+(-dy/l)*c*80,y:my+(dx/l)*c*80};}
+  function anchor(n,tx,ty){const dx=tx-n.x,dy=ty-n.y;if(Math.abs(dx)<.01&&Math.abs(dy)<.01)return{x:n.x,y:n.y};const s=Math.min((NW/2)/Math.abs(dx),(NH/2)/Math.abs(dy));return{x:n.x+dx*s,y:n.y+dy*s};}
+  function inNode(n,x,y){return x>=n.x-NW/2&&x<=n.x+NW/2&&y>=n.y-NH/2&&y<=n.y+NH/2;}
+
+  function setState(id){
+    const s=N(id);
+    detail.innerHTML=`<h4>${s.cn} <span>${s.en}</span></h4><p>${s.desc}</p>`;
+  }
+  function go(from,to){
+    const i=TR.findIndex(t=>t.from===from&&t.to===to);if(i<0)return false;
+    cur=to;animEdge=i;animT=0;history.push(N(to).cn);if(history.length>10)history.shift();setState(to);return true;
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);ctx.fillStyle=C.bg;ctx.fillRect(0,0,W,H);
+    ctx.fillStyle=C.grid;for(let y=18;y<H;y+=34)for(let x=18;x<W;x+=34)ctx.fillRect(x,y,1,1);
+    pulse+=0.06;animT+=0.045;
+    TR.forEach((tr,i)=>{
+      const f=N(tr.from),t=N(tr.to),c=ctrlOf(f,t,tr.curve),sa=anchor(f,c.x,c.y),ea=anchor(t,c.x,c.y);
+      const out=cur===tr.from,hov=hoverEdge===i,anim=i===animEdge&&animT<1.2;
+      ctx.strokeStyle=out?C.edgeOut:(hov?'#5a4a38':C.edge);ctx.lineWidth=out||hov?1.6:1;
+      ctx.beginPath();ctx.moveTo(sa.x,sa.y);ctx.quadraticCurveTo(c.x,c.y,ea.x,ea.y);ctx.stroke();
+      const p1=quad(sa,c,ea,.85),p2=quad(sa,c,ea,1),a=Math.atan2(p2.y-p1.y,p2.x-p1.x),ah=7;
+      ctx.fillStyle=out?C.edgeOut:(hov?'#5a4a38':C.edge);ctx.beginPath();ctx.moveTo(p2.x,p2.y);
+      ctx.lineTo(p2.x-Math.cos(a)*ah+Math.cos(a+Math.PI/2)*ah*.6,p2.y-Math.sin(a)*ah+Math.sin(a+Math.PI/2)*ah*.6);
+      ctx.lineTo(p2.x-Math.cos(a)*ah-Math.cos(a+Math.PI/2)*ah*.6,p2.y-Math.sin(a)*ah-Math.sin(a+Math.PI/2)*ah*.6);
+      ctx.closePath();ctx.fill();
+      if(anim){const dd=quad(sa,c,ea,Math.min(1,animT));ctx.fillStyle=C.active;ctx.shadowColor=C.active;ctx.shadowBlur=12;ctx.beginPath();ctx.arc(dd.x,dd.y,5,0,7);ctx.fill();ctx.shadowBlur=0;}
+      if(hov){const m=quad(sa,c,ea,.5);ctx.font='10px "JetBrains Mono",monospace';const tw=ctx.measureText(tr.trig).width+12;
+        ctx.fillStyle='rgba(0,0,0,.88)';ctx.fillRect(m.x-tw/2,m.y-9,tw,18);ctx.strokeStyle=C.edgeOut;ctx.lineWidth=1;ctx.strokeRect(m.x-tw/2+.5,m.y-8.5,tw-1,17);
+        ctx.fillStyle=C.edgeOut;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(tr.trig,m.x,m.y);}
+    });
+    NODES.forEach(n=>{
+      const isCur=cur===n.id,isTgt=TR.some(t=>t.from===cur&&t.to===n.id),hov=hoverNode===n.id;
+      const x=n.x-NW/2,y=n.y-NH/2;
+      if(isCur){const pr=8+Math.sin(pulse)*3;ctx.fillStyle=C.glow;ctx.fillRect(x-pr,y-pr,NW+pr*2,NH+pr*2);}
+      ctx.fillStyle=isCur?C.active:C.node;ctx.fillRect(x,y,NW,NH);
+      ctx.strokeStyle=isCur?'#ffb066':(isTgt?C.edgeOut:(hov?'#6a5640':C.border));ctx.lineWidth=isCur?2:1;ctx.strokeRect(x+.5,y+.5,NW-1,NH-1);
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.font=isCur?'bold 15px "Inter",sans-serif':'15px "Inter",sans-serif';ctx.fillStyle=isCur?'#1b1005':C.label;ctx.fillText(n.cn,n.x,n.y-6);
+      ctx.font='9px "JetBrains Mono",monospace';ctx.fillStyle=isCur?'rgba(27,16,5,.7)':C.dim;ctx.fillText(n.en,n.x,n.y+11);
+    });
+    ctx.font='10px "JetBrains Mono",monospace';ctx.textBaseline='top';ctx.textAlign='left';ctx.fillStyle=C.active;
+    ctx.fillText('FSM · 3-min core loop',12,10);
+    ctx.textAlign='right';ctx.fillStyle=C.dim;ctx.fillText(`${NODES.length} states · ${TR.length} transitions`,W-12,10);
+    ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillStyle=C.dim;
+    const ht='path: '+history.join(' → ');ctx.fillText(ht.length>92?ht.slice(-92):ht,12,H-10);
+  }
+  function loop(){if(!running)return;draw();raf=requestAnimationFrame(loop);}
+  function hitNode(x,y){return NODES.find(n=>inNode(n,x,y))||null;}
+  function hitEdge(x,y){for(let i=0;i<TR.length;i++){const tr=TR[i],f=N(tr.from),t=N(tr.to),c=ctrlOf(f,t,tr.curve),sa=anchor(f,c.x,c.y),ea=anchor(t,c.x,c.y);
+    for(let s=0;s<=1;s+=.05){const p=quad(sa,c,ea,s);if(Math.hypot(p.x-x,p.y-y)<8)return i;}}return -1;}
+  function autoStep(){if(manual)return;const nx=HAPPY[cur];if(nx)go(cur,nx);}
+  function startAuto(){stopAuto();if(!manual)autoTimer=setInterval(autoStep,2400);}
+  function stopAuto(){if(autoTimer){clearInterval(autoTimer);autoTimer=null;}}
+
+  // mount
+  canvas=document.createElement('canvas');
+  const dpr=Math.max(1,Math.min(3,window.devicePixelRatio||1));
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  canvas.style.cssText=`display:block;width:100%;height:auto;max-width:${W}px;margin:0 auto;touch-action:none`;
+  const mount=document.getElementById('fsm-mount');mount.appendChild(canvas);
+  ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  const ctrl=document.createElement('div');
+  ctrl.style.cssText='display:flex;align-items:center;gap:.75rem;margin-top:.6rem;flex-wrap:wrap;font-family:var(--mono);font-size:10px';
+  ctrl.innerHTML='<button class="viz-btn" data-act="reset">▶ 重新演示</button><span style="color:var(--fg-mute);flex:1;text-align:right">点击节点跳转 · 悬停转换边看触发条件</span>';
+  mount.appendChild(ctrl);
+  ctrl.querySelector('[data-act="reset"]').addEventListener('click',()=>{manual=false;cur='COLLECT';history=['收集'];animEdge=-1;setState('COLLECT');startAuto();});
+  const pt=(cx,cy)=>{const r=canvas.getBoundingClientRect();const sx=W/r.width;return{x:(cx-r.left)*sx,y:(cy-r.top)*sx};};
+  canvas.addEventListener('mousemove',e=>{const p=pt(e.clientX,e.clientY);const n=hitNode(p.x,p.y);hoverNode=n?n.id:null;hoverEdge=n?-1:hitEdge(p.x,p.y);
+    const can=hoverNode&&hoverNode!==cur&&TR.some(t=>t.from===cur&&t.to===hoverNode);canvas.style.cursor=(can||hoverEdge>=0)?'pointer':'default';});
+  canvas.addEventListener('mouseleave',()=>{hoverNode=null;hoverEdge=-1;});
+  canvas.addEventListener('click',e=>{const p=pt(e.clientX,e.clientY);const n=hitNode(p.x,p.y);manual=true;stopAuto();
+    if(n&&n.id!==cur&&go(cur,n.id))return;const ei=hitEdge(p.x,p.y);if(ei>=0&&TR[ei].from===cur)go(TR[ei].from,TR[ei].to);});
+  canvas.addEventListener('touchend',e=>{const t=e.changedTouches[0];if(!t)return;const p=pt(t.clientX,t.clientY);const n=hitNode(p.x,p.y);manual=true;stopAuto();if(n&&n.id!==cur)go(cur,n.id);});
+
+  setState('COLLECT');
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){if(!running){running=true;raf=requestAnimationFrame(loop);}startAuto();}
+    else{running=false;if(raf)cancelAnimationFrame(raf);stopAuto();}
+  }),{threshold:.15});
+  io.observe(document.getElementById('fsm'));
+})();
+
+/* ───────── 精灵表切帧动画（canvas，条带+网格通用） ───────── */
+(function(){
+  const SPRITES={
+    idle:   {src:'art/sprites/idle.png',  fw:640, fh:640, frames:5,  cols:5, fps:10},
+    walk:   {src:'art/sprites/walk.png',  fw:640, fh:640, frames:11, cols:6, fps:12},
+    turn:   {src:'art/sprites/turn.png',  fw:640, fh:640, frames:5,  cols:5, fps:10},
+    jump:   {src:'art/sprites/jump.png',  fw:640, fh:640, frames:12, cols:6, fps:12},
+    cloud:  {src:'art/sprites/cloud.png', fw:920, fh:890, frames:10, cols:10,fps:12},
+    stapler:{src:'art/enemies/stapler-sheet.png', fw:1510, fh:1280, frames:9, cols:5, fps:10},
+  };
+  const players=[];
+  document.querySelectorAll('canvas[data-sprite]').forEach(cv=>{
+    const cfg=SPRITES[cv.dataset.sprite]; if(!cfg) return;
+    const ctx=cv.getContext('2d'); ctx.imageSmoothingEnabled=false;
+    const img=new Image(); img.src=cfg.src;
+    const p={cv,ctx,img,cfg,i:0,timer:null,ready:false};
+    img.onload=()=>{p.ready=true; draw(p);};
+    p.draw=()=>draw(p);
+    players.push(p);
+  });
+  function draw(p){
+    const {ctx,img,cfg,cv}=p;
+    const col=p.i%cfg.cols, row=Math.floor(p.i/cfg.cols);
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.drawImage(img, col*cfg.fw, row*cfg.fh, cfg.fw, cfg.fh, 0,0, cv.width, cv.height);
+  }
+  function play(p){ if(p.timer||!p.ready) return; p.timer=setInterval(()=>{p.i=(p.i+1)%p.cfg.frames; draw(p);},1000/p.cfg.fps); }
+  function pause(p){ if(p.timer){clearInterval(p.timer);p.timer=null;} }
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{
+    const p=players.find(x=>x.cv===e.target); if(!p)return;
+    if(e.isIntersecting){ if(p.ready) play(p); else img_wait(p);} else pause(p);
+  });},{threshold:.15});
+  function img_wait(p){ const t=setInterval(()=>{ if(p.ready){clearInterval(t); play(p);} },120); }
+  players.forEach(p=>io.observe(p.cv));
+})();
+</script>
+</body>
+</html>
