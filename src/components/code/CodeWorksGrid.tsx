@@ -10,7 +10,7 @@ export function CodeWorksGrid() {
   return (
     <div className="flex flex-col gap-16 md:gap-20">
       {/* —— 第一组：网页设计 —— */}
-      <div>
+      <div id="code-web" className="scroll-mt-28">
         <div className="flex items-baseline justify-between mb-6 pb-3 border-b border-[#8A8A85]/20">
           <span className="section-label text-[#8A8A85]">
             01 / Web Design ·{' '}
@@ -28,7 +28,7 @@ export function CodeWorksGrid() {
       </div>
 
       {/* —— 第二组：AI 交互界面 —— */}
-      <div>
+      <div id="code-ai" className="scroll-mt-28">
         <div className="flex items-baseline justify-between mb-6 pb-3 border-b border-[#8A8A85]/20">
           <span className="section-label text-[#8A8A85]">
             02 / AI Interface ·{' '}

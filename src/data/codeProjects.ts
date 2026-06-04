@@ -109,15 +109,15 @@ export const webProjects: CodeProject[] = [
   },
 ];
 
-// AI 组：目前 1 个占位项目，等真实素材到位后替换/扩展
+// AI 组：NewFace —— 节点式 AI 工作站（BYOK 实时运行）
 export const aiProjects: CodeProject[] = [
   {
     id: 'ai-001',
-    title: 'AI 交互界面',
+    title: 'NewFace — 节点式 AI 工作站',
     year: '2026',
-    tags: ['AI', 'UX', 'Coming Soon'],
-    // 暂无 cover/hoverVideo，自动 fallback 为深色占位
-    iframeUrl: '/embed/ai-coming-soon/index.html',
+    tags: ['React Flow', 'LLM', 'Canvas', 'BYOK'],
+    cover: '/covers/newface.webp',
+    iframeUrl: '/embed/newface/index.html',
     wide: true,
   },
 ];
