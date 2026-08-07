@@ -1,0 +1,50 @@
+.site-route {
+  min-height: calc(100vh - 4.5rem);
+  will-change: opacity, transform;
+}
+
+.portfolio-cursor {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: 0.55rem;
+  height: 0.55rem;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--site-accent);
+  color: var(--site-bg);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    width 360ms var(--site-ease-out),
+    height 360ms var(--site-ease-out),
+    opacity 180ms ease;
+}
+
+.portfolio-cursor span {
+  font-family: var(--site-font-sans-zh);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: var(--site-tracking-zh);
+  opacity: 0;
+  transition: opacity 160ms ease;
+  white-space: nowrap;
+}
+
+.portfolio-cursor[data-variant="view"] {
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+.portfolio-cursor[data-variant="view"] span {
+  opacity: 1;
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .portfolio-cursor {
+    display: none;
+  }
+}

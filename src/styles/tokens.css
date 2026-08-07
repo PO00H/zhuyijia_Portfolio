@@ -8,6 +8,24 @@
   --site-max-width: 96rem;
   --site-gutter: clamp(1rem, 3vw, 3rem);
   --site-section-space: clamp(5rem, 12vw, 11rem);
-  --site-display: clamp(3.75rem, 12vw, 11rem);
-  --site-title: clamp(2.75rem, 8vw, 7.5rem);
+
+  --site-font-sans-zh: "PingFang SC", "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Microsoft YaHei UI", "Microsoft YaHei", "Hiragino Sans GB", "WenQuanYi Micro Hei", ui-sans-serif, system-ui, sans-serif;
+  --site-font-latin: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+  --site-type-display: clamp(4.5rem, 14vw, 13.5rem);
+  --site-type-section: clamp(2.75rem, 5.8vw, 6.25rem);
+  --site-type-project: clamp(3.25rem, 7vw, 7.5rem);
+  --site-type-role: clamp(1.4rem, 3.6vw, 3.6rem);
+  --site-type-body: clamp(1rem, 1.1vw, 1.125rem);
+  --site-type-nav: clamp(0.72rem, 0.76vw, 0.8rem);
+  --site-type-meta: clamp(0.65rem, 0.7vw, 0.72rem);
+  --site-leading-body: 1.75;
+  --site-tracking-display: -0.045em;
+  --site-tracking-zh: 0.04em;
+  --site-tracking-meta: 0.1em;
+  --site-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --site-display: var(--site-type-display);
+  --site-title: var(--site-type-section);
 }

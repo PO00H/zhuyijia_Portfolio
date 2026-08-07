@@ -65,6 +65,23 @@ describe('app router', () => {
     expect(markup).not.toContain('href="/works/echoflash"');
   });
 
+  it('uses an editorial hero and two distinct project stories', () => {
+    const markup = renderRoute('/');
+
+    expect(markup).toContain('hero-title__characters');
+    expect((markup.match(/<article class="project-story/g) ?? []).length).toBe(2);
+    expect(markup).toContain('project-story__rail');
+    expect(markup).toContain('data-cursor="view"');
+    expect(markup).not.toContain('featured-game__copy');
+  });
+
+  it('mounts the shared interaction shell', () => {
+    const markup = renderRoute('/');
+
+    expect(markup).toContain('data-portfolio-cursor="true"');
+    expect(markup).toContain('class="site-route');
+  });
+
   it('renders the works page directly in Chinese', () => {
     expect(renderRoute('/works')).toContain('全部作品');
   });

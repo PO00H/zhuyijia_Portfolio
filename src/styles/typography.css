@@ -1,0 +1,93 @@
+.site-shell {
+  font-family: var(--site-font-sans-zh);
+  font-kerning: normal;
+  font-synthesis: none;
+  line-break: strict;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hanging-punctuation: allow-end;
+  text-spacing-trim: normal;
+  text-autospace: ideograph-alpha ideograph-numeric;
+}
+
+.site-shell h1,
+.site-shell h2,
+.site-shell h3,
+.site-shell p {
+  margin-block-start: 0;
+}
+
+.site-shell h1,
+.site-shell h2,
+.site-shell h3 {
+  text-wrap: balance;
+}
+
+.site-shell p,
+.site-shell dd {
+  text-wrap: pretty;
+}
+
+.site-header,
+.site-footer,
+.site-identity__cn,
+.site-nav__link,
+.text-link {
+  font-family: var(--site-font-sans-zh);
+  text-transform: none;
+}
+
+.site-identity__en,
+.eyebrow,
+.section-number,
+.hero-stage__kicker,
+.hero-stage__discipline,
+.project-row__index,
+.project-row__meta,
+.project-facts dt,
+.site-footer__meta {
+  font-family: var(--site-font-mono);
+}
+
+.site-identity__en {
+  font-family: var(--site-font-latin);
+}
+
+.site-identity__cn,
+.site-nav__link,
+.text-link {
+  letter-spacing: var(--site-tracking-zh);
+}
+
+.site-nav__link {
+  font-size: var(--site-type-nav);
+}
+
+.text-link {
+  font-size: clamp(0.75rem, 0.78vw, 0.82rem);
+}
+
+.eyebrow,
+.hero-stage__kicker,
+.hero-stage__discipline {
+  font-size: var(--site-type-meta);
+  letter-spacing: var(--site-tracking-meta);
+}
+
+.hero-shell__summary,
+.page-intro > p:last-child,
+.about-grid article > p:last-child,
+.featured-game__summary {
+  font-size: var(--site-type-body);
+  line-height: var(--site-leading-body);
+}
+
+.site-footer__contact {
+  font-family: var(--site-font-latin);
+}
+
+@supports not (text-autospace: ideograph-alpha) {
+  .site-shell {
+    text-autospace: normal;
+  }
+}
