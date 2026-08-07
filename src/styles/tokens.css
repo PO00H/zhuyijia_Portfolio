@@ -1,0 +1,13 @@
+:root {
+  --site-bg: #0b0b0a;
+  --site-surface: #151513;
+  --site-text: #ece9e1;
+  --site-text-muted: #9c998f;
+  --site-line: rgba(236, 233, 225, 0.16);
+  --site-accent: #ff4d26;
+  --site-max-width: 96rem;
+  --site-gutter: clamp(1rem, 3vw, 3rem);
+  --site-section-space: clamp(5rem, 12vw, 11rem);
+  --site-display: clamp(3.75rem, 12vw, 11rem);
+  --site-title: clamp(2.75rem, 8vw, 7.5rem);
+}
