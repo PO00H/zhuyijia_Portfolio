@@ -3,62 +3,9 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpRight } from 'lucide-react';
 import { TextScrambleWithHover } from '@/components/ui/text-scramble';
+import { legacyWorkCategories as workCategories, type LegacyWorkCategory as WorkCategory } from '@/data/legacyProjectAdapters';
 
 gsap.registerPlugin(ScrollTrigger);
-
-interface SubItem {
-  id: string;
-  label: string;
-  targetId: string;
-}
-
-interface WorkCategory {
-  index: string;
-  title: string;
-  mobileTitle: string[];
-  subItems: SubItem[];
-  targetId: string;
-}
-
-const workCategories: WorkCategory[] = [
-  {
-    index: '01',
-    title: 'DESIGN',
-    mobileTitle: ['DESIGN'],
-    subItems: [
-      { id: 'design-001', label: '001 《StoneCity》 石之城', targetId: 'design-001' },
-      { id: 'design-002', label: '002 《Peak》 山崖', targetId: 'design-002' },
-      { id: 'design-003', label: '003 《Blade Runner》 银翼杀手', targetId: 'design-003' },
-      { id: 'design-004', label: '004 Tajima Cutter 美工刀', targetId: 'design-004' },
-      { id: 'design-005', label: '005 Mech Prototype 机械原型', targetId: 'design-005' },
-      { id: 'design-006', label: '006 《风格化柠檬》', targetId: 'design-006' },
-    ],
-    targetId: 'work-design',
-  },
-  {
-    index: '02',
-    title: 'GAME',
-    mobileTitle: ['GAME'],
-    subItems: [
-      { id: 'game-001', label: '001 ECHOFLASH —《白夜瞬闪》', targetId: 'game-001' },
-      { id: 'game-002', label: "002 Eraser's Odyssey — 《橡皮奥德赛》", targetId: 'game-002' },
-      { id: 'game-003', label: '003 IK 重定向', targetId: 'game-003' },
-      { id: 'game-004', label: '004 迭代缩小', targetId: 'game-004' },
-      { id: 'game-005', label: '005 跟随指针', targetId: 'game-005' },
-    ],
-    targetId: 'work-game',
-  },
-  {
-    index: '03',
-    title: 'CODE',
-    mobileTitle: ['CODE'],
-    subItems: [
-      { id: 'code-001', label: '001 网页设计', targetId: 'code-web' },
-      { id: 'code-002', label: '002 AI 交互界面', targetId: 'code-ai' },
-    ],
-    targetId: 'work-code',
-  },
-];
 
 function WorkItem({
   work,
