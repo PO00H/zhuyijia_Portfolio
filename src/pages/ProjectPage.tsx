@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { sitePaths } from '../app/routes';
@@ -6,6 +7,16 @@ import { getPublicProjects } from '../data/projects';
 export function ProjectPage() {
   const { slug } = useParams();
   const project = getPublicProjects().find((candidate) => candidate.slug === slug);
+  const originalGameUrl = project?.primaryCategory === 'game'
+    && project.featuredSections.includes('selected-games')
+    ? project.iframeUrl
+    : undefined;
+
+  useEffect(() => {
+    if (originalGameUrl) {
+      window.location.replace(originalGameUrl);
+    }
+  }, [originalGameUrl]);
 
   if (!project) {
     return (
@@ -15,6 +26,17 @@ export function ProjectPage() {
           <h1>项目不存在</h1>
           <Link className="text-link" to={sitePaths.works}>返回全部作品</Link>
         </header>
+      </div>
+    );
+  }
+
+  if (originalGameUrl) {
+    return (
+      <div className="project-redirect" role="status">
+        <p className="eyebrow">原项目网页 / ORIGINAL PRESENTATION</p>
+        <h1>正在打开原项目网页</h1>
+        <p>如果页面没有自动跳转，请使用下方入口。</p>
+        <a className="text-link" href={originalGameUrl}>直接打开项目</a>
       </div>
     );
   }

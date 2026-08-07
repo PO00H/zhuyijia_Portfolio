@@ -14,20 +14,6 @@ export function HomePage() {
       <Preloader />
       <div className="home-page-v3">
         <section className="hero-stage" aria-labelledby="home-title">
-          <div className="hero-stage__media" aria-hidden="true">
-            <img src="/covers/echoflash.png" alt="" />
-            <video
-              autoPlay={!reduceMotion}
-              loop
-              muted
-              playsInline
-              poster="/covers/echoflash.png"
-              preload="metadata"
-              src="/previews/echoflash.mp4"
-            />
-            <div className="hero-stage__veil" />
-          </div>
-
           <div className="hero-stage__content">
             <p className="hero-stage__kicker">
               <span>个人作品集</span>
@@ -78,6 +64,7 @@ export function HomePage() {
               const rolesZh = project.slug === 'echoflash'
                 ? '游戏设计 / 程序开发 / 像素美术'
                 : '游戏设计 / 像素美术 / 原型开发';
+              const projectHref = project.iframeUrl ?? getProjectPath(project.slug);
 
               return (
                 <motion.article
@@ -88,10 +75,10 @@ export function HomePage() {
                   viewport={{ once: true, amount: 0.18 }}
                   transition={{ duration: 0.9, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <Link
+                  <a
                     className="featured-game__media"
-                    to={getProjectPath(project.slug)}
-                    aria-label={`查看${project.titleZh ?? project.title}`}
+                    href={projectHref}
+                    aria-label={`打开${project.titleZh ?? project.title}原项目网页`}
                   >
                     <img
                       src={project.cover}
@@ -99,8 +86,8 @@ export function HomePage() {
                       loading={index === 0 ? 'eager' : 'lazy'}
                     />
                     <span className="featured-game__number">0{index + 1}</span>
-                    <span className="featured-game__enter">进入项目 ↗</span>
-                  </Link>
+                    <span className="featured-game__enter">打开项目 ↗</span>
+                  </a>
 
                   <div className="featured-game__copy">
                     <p className="featured-game__meta">{project.year} / 个人作品</p>
@@ -119,9 +106,9 @@ export function HomePage() {
                         <dd>独立网页展示</dd>
                       </div>
                     </dl>
-                    <Link className="text-link" to={getProjectPath(project.slug)}>
-                      查看完整项目
-                    </Link>
+                    <a className="text-link" href={projectHref}>
+                      打开原项目网页
+                    </a>
                   </div>
                 </motion.article>
               );

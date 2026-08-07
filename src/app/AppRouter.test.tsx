@@ -47,13 +47,22 @@ describe('app router', () => {
     expect(markup).toContain('id="contact"');
   });
 
-  it('uses real game media and project routes on the home page', () => {
+  it('keeps the hero flat and free of background media', () => {
+    const markup = renderRoute('/');
+
+    expect(markup).not.toContain('<video');
+    expect(markup).not.toContain('/previews/echoflash.mp4');
+    expect(markup).not.toContain('hero-stage__media');
+  });
+
+  it('links both game covers directly to their original web presentations', () => {
     const markup = renderRoute('/');
 
     expect(markup).toContain('src="/covers/echoflash.png"');
     expect(markup).toContain('src="/covers/eraser-odyssey.png"');
-    expect(markup).toContain('href="/works/echoflash"');
-    expect(markup).toContain('href="/works/erasers-odyssey"');
+    expect(markup).toContain('href="/embed/echoflash-detail/index.html"');
+    expect(markup).toContain('href="/embed/eraser-odyssey/index.html"');
+    expect(markup).not.toContain('href="/works/echoflash"');
   });
 
   it('renders the works page directly in Chinese', () => {
@@ -64,18 +73,19 @@ describe('app router', () => {
     expect(renderRoute('/about')).toContain('关于我');
   });
 
-  it('embeds the existing ECHOFLASH web presentation', () => {
+  it('keeps a direct fallback on the old ECHOFLASH project route', () => {
     const markup = renderRoute('/works/echoflash');
 
-    expect(markup).toContain('个人作品');
-    expect(markup).toContain('src="/embed/echoflash-detail/index.html"');
-    expect(markup).toContain('打开独立展示');
+    expect(markup).toContain('正在打开原项目网页');
+    expect(markup).toContain('href="/embed/echoflash-detail/index.html"');
+    expect(markup).not.toContain('<iframe');
   });
 
-  it('embeds the existing Eraser’s Odyssey web presentation', () => {
-    expect(renderRoute('/works/erasers-odyssey')).toContain(
-      'src="/embed/eraser-odyssey/index.html"',
-    );
+  it('keeps a direct fallback on the old Eraser’s Odyssey project route', () => {
+    const markup = renderRoute('/works/erasers-odyssey');
+
+    expect(markup).toContain('正在打开原项目网页');
+    expect(markup).toContain('href="/embed/eraser-odyssey/index.html"');
   });
 
   it('shows a Chinese not-found state for a missing project', () => {
