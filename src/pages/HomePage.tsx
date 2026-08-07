@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { getProjectPath, sitePaths } from '../app/routes';
 import { Preloader } from '../components/Preloader';
 import { getFeaturedProjects, type PortfolioProject } from '../data/projects';
+import { SupportingSections } from '../sections/home/SupportingSections';
 
 const revealEase = [0.22, 1, 0.36, 1] as const;
 const nameCharacters = ['朱', '翊', '嘉'];
@@ -205,6 +206,8 @@ export function HomePage() {
           </Link>
         </section>
 
+        <SupportingSections />
+
         <motion.section
           className="home-about"
           id="contact"
@@ -214,7 +217,7 @@ export function HomePage() {
           viewport={{ once: true, amount: 0.28 }}
           transition={{ duration: 0.8, ease: revealEase }}
         >
-          <span className="section-number">02</span>
+          <span className="section-number">05</span>
           <div className="home-about__copy">
             <p className="eyebrow">关于与联系 / ABOUT &amp; CONTACT</p>
             <h2 id="home-about-title">

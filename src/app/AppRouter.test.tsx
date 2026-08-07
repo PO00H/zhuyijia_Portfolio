@@ -82,6 +82,37 @@ describe('app router', () => {
     expect(markup).toContain('class="site-route');
   });
 
+  it('renders the three Phase 4 support sections from confirmed projects', () => {
+    const markup = renderRoute('/');
+
+    expect(markup).toContain('id="gameplay-lab"');
+    expect(markup).toContain('id="worlds"');
+    expect(markup).toContain('id="tools"');
+    expect((markup.match(/data-support-kind="gameplay"/g) ?? []).length).toBe(3);
+    expect(markup).toContain('data-support-project="stonecity"');
+    expect(markup).toContain('data-support-project="tajima-cutter"');
+    expect(markup).toContain('data-support-project="newface"');
+    expect(markup).toContain('href="/embed/newface/index.html"');
+  });
+
+  it('keeps unconfirmed Phase 4 content off the homepage', () => {
+    const markup = renderRoute('/');
+
+    expect(markup).not.toContain('《Peak》');
+    expect(markup).not.toContain('银翼杀手');
+    expect(markup).not.toContain('Meshy');
+    expect(markup).not.toContain('Synthwave OS');
+  });
+
+  it('does not load support videos or 3D frames before user input', () => {
+    const markup = renderRoute('/');
+
+    expect(markup).not.toContain('<video');
+    expect(markup).not.toContain('<iframe');
+    expect(markup).toContain('data-preview-src="/videos/UE1.mp4"');
+    expect(markup).toContain('data-preview-src="/videos/002.mp4"');
+  });
+
   it('renders the works page directly in Chinese', () => {
     expect(renderRoute('/works')).toContain('全部作品');
   });
