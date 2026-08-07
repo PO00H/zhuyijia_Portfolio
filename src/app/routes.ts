@@ -1,14 +1,18 @@
 export const sitePaths = {
   home: '/',
+  selectedGames: '/#selected-games',
   works: '/works',
   about: '/about',
+  contact: '/#contact',
   legacy: '/legacy',
 } as const;
 
 export const siteNavigation = [
-  { label: 'Home', to: sitePaths.home },
-  { label: 'Works', to: sitePaths.works },
-  { label: 'About', to: sitePaths.about },
+  { label: '首页', to: sitePaths.home },
+  { label: '精选游戏', to: sitePaths.selectedGames },
+  { label: '全部作品', to: sitePaths.works },
+  { label: '关于', to: sitePaths.about },
+  { label: '联系', to: sitePaths.contact },
 ] as const;
 
 export function getProjectPath(slug: string): string {

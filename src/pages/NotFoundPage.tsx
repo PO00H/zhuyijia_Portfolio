@@ -7,8 +7,8 @@ export function NotFoundPage() {
     <div className="page-stack">
       <header className="page-intro">
         <p className="eyebrow">404</p>
-        <h1>Page not found</h1>
-        <Link className="text-link" to={sitePaths.home}>Return home</Link>
+        <h1>页面不存在</h1>
+        <Link className="text-link" to={sitePaths.home}>返回首页</Link>
       </header>
     </div>
   );

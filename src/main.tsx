@@ -5,6 +5,7 @@ import { AppRouter } from './app/AppRouter';
 import './index.css';
 import './styles/tokens.css';
 import './styles/shell.css';
+import './styles/phase3.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

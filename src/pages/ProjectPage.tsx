@@ -11,40 +11,70 @@ export function ProjectPage() {
     return (
       <div className="page-stack">
         <header className="page-intro">
-          <p className="eyebrow">404 / Work</p>
-          <h1>Project not found</h1>
-          <Link className="text-link" to={sitePaths.works}>Return to all works</Link>
+          <p className="eyebrow">404 / 项目</p>
+          <h1>项目不存在</h1>
+          <Link className="text-link" to={sitePaths.works}>返回全部作品</Link>
         </header>
       </div>
     );
   }
 
-  const ownershipLabel = project.ownership === 'personal' ? 'Personal Project' : 'Team Project';
+  const ownershipLabel = project.ownership === 'personal' ? '个人作品' : '团队作品';
 
   return (
     <article className="page-stack project-page">
       <header className="page-intro project-page__intro">
         <p className="eyebrow">{project.year} / {ownershipLabel}</p>
-        <h1>{project.title}</h1>
-        <p>{project.summary}</p>
+        <h1>
+          {project.titleZh ?? project.title}
+          {project.titleZh && <small>{project.title}</small>}
+        </h1>
+        {project.summary && <p>{project.summary}</p>}
       </header>
 
       <dl className="project-facts">
         <div>
-          <dt>Role</dt>
+          <dt>个人职责</dt>
           <dd>{project.roles.join(' / ')}</dd>
         </div>
         <div>
-          <dt>Discipline</dt>
+          <dt>能力方向</dt>
           <dd>{project.disciplines.join(' / ')}</dd>
         </div>
         <div>
-          <dt>Tools</dt>
+          <dt>工具与技术</dt>
           <dd>{project.tools.join(' / ')}</dd>
         </div>
       </dl>
 
-      <Link className="text-link" to={sitePaths.works}>Back to all works</Link>
+      {project.iframeUrl && (
+        <section className="project-webframe" aria-labelledby="project-webframe-title">
+          <div className="project-webframe__bar">
+            <div>
+              <p className="eyebrow">原项目网页 / ORIGINAL WEB PRESENTATION</p>
+              <h2 id="project-webframe-title">保留原有展示与交互</h2>
+            </div>
+            <a
+              className="text-link"
+              href={project.iframeUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              打开独立展示 ↗
+            </a>
+          </div>
+          <iframe
+            className="project-webframe__iframe"
+            src={project.iframeUrl}
+            title={`${project.title}互动展示`}
+            loading="eager"
+            allow="autoplay; fullscreen"
+            allowFullScreen
+          />
+        </section>
+      )}
+
+      <Link className="text-link" to={sitePaths.works}>返回全部作品</Link>
     </article>
   );
 }

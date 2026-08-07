@@ -14,13 +14,15 @@ function renderRoute(pathname: string): string {
 }
 
 describe('portfolio routes', () => {
-  it('keeps home, works, and about as distinct destinations', () => {
+  it('uses Chinese-first navigation with distinct destinations', () => {
     expect(siteNavigation).toEqual([
-      { label: 'Home', to: sitePaths.home },
-      { label: 'Works', to: sitePaths.works },
-      { label: 'About', to: sitePaths.about },
+      { label: '首页', to: sitePaths.home },
+      { label: '精选游戏', to: sitePaths.selectedGames },
+      { label: '全部作品', to: sitePaths.works },
+      { label: '关于', to: sitePaths.about },
+      { label: '联系', to: sitePaths.contact },
     ]);
-    expect(new Set(siteNavigation.map((item) => item.to)).size).toBe(3);
+    expect(new Set(siteNavigation.map((item) => item.to)).size).toBe(5);
   });
 
   it('builds canonical project paths', () => {
@@ -34,39 +36,57 @@ describe('portfolio routes', () => {
 });
 
 describe('app router', () => {
-  it('renders the game-designer home page inside the shared shell', () => {
+  it('renders a Chinese-first game-designer home page', () => {
     const markup = renderRoute('/');
 
-    expect(markup).toContain('Game Designer');
-    expect(markup).toContain('id="main-content"');
-    expect(markup).toContain('href="/works"');
-    expect(markup).toContain('href="/about"');
+    expect(markup).toContain('朱翊嘉');
+    expect(markup).toContain('游戏设计师');
+    expect(markup).toContain('精选游戏');
+    expect(markup).toContain('白夜瞬闪');
+    expect(markup).toContain('橡皮奥德赛');
+    expect(markup).toContain('id="contact"');
   });
 
-  it('renders the works page directly', () => {
-    expect(renderRoute('/works')).toContain('All Works');
+  it('uses real game media and project routes on the home page', () => {
+    const markup = renderRoute('/');
+
+    expect(markup).toContain('src="/covers/echoflash.png"');
+    expect(markup).toContain('src="/covers/eraser-odyssey.png"');
+    expect(markup).toContain('href="/works/echoflash"');
+    expect(markup).toContain('href="/works/erasers-odyssey"');
   });
 
-  it('renders the about page directly', () => {
-    expect(renderRoute('/about')).toContain('About');
+  it('renders the works page directly in Chinese', () => {
+    expect(renderRoute('/works')).toContain('全部作品');
   });
 
-  it('renders a public project from its slug', () => {
+  it('renders the about page directly in Chinese', () => {
+    expect(renderRoute('/about')).toContain('关于我');
+  });
+
+  it('embeds the existing ECHOFLASH web presentation', () => {
     const markup = renderRoute('/works/echoflash');
 
-    expect(markup).toContain('ECHOFLASH');
-    expect(markup).toContain('Personal Project');
+    expect(markup).toContain('个人作品');
+    expect(markup).toContain('src="/embed/echoflash-detail/index.html"');
+    expect(markup).toContain('打开独立展示');
   });
 
-  it('shows a not-found state for a missing project', () => {
-    expect(renderRoute('/works/not-a-project')).toContain('Project not found');
+  it('embeds the existing Eraser’s Odyssey web presentation', () => {
+    expect(renderRoute('/works/erasers-odyssey')).toContain(
+      'src="/embed/eraser-odyssey/index.html"',
+    );
+  });
+
+  it('shows a Chinese not-found state for a missing project', () => {
+    expect(renderRoute('/works/not-a-project')).toContain('项目不存在');
   });
 
   it('keeps the previous site available during migration', () => {
-    expect(renderRoute('/legacy')).toContain('Loading previous portfolio');
+    expect(renderRoute('/legacy')).toContain('正在加载旧版作品集');
   });
 
-  it('shows a not-found page for an unknown route', () => {
-    expect(renderRoute('/missing-page')).toContain('Page not found');
+  it('shows a Chinese not-found page for an unknown route', () => {
+    expect(renderRoute('/missing-page')).toContain('页面不存在');
   });
 });

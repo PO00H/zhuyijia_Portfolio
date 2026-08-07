@@ -7,7 +7,7 @@ export function SiteLayout() {
   return (
     <div className="site-shell">
       <a className="skip-link" href="#main-content">
-        Skip to content
+        跳到主要内容
       </a>
       <div className="site-frame">
         <SiteHeader />
