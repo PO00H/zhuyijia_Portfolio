@@ -13,8 +13,9 @@ export function SiteFooter() {
       </div>
 
       <div className="site-footer__meta">
-        <Link to={sitePaths.legacy}>查看旧版作品集</Link>
-        <span>© 2026 朱翊嘉</span>
+        <Link to={sitePaths.works}>全部作品</Link>
+        <Link to={sitePaths.about}>关于</Link>
+        <span>© {new Date().getFullYear()} 朱翊嘉</span>
       </div>
     </footer>
   );

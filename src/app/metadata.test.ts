@@ -3,10 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { getRouteMetadata } from './routeMetadata';
 
 describe('route metadata', () => {
-  it('describes the game-design positioning in Chinese on the home page', () => {
+  it('uses the requested professional title on the home page', () => {
     expect(getRouteMetadata('/')).toEqual({
-      title: '朱翊嘉｜游戏设计师',
-      description: '朱翊嘉的个人作品集，聚焦游戏设计、玩法原型与技术美术。',
+      title: 'Zhu Yijia — Game Designer & Technical Artist',
+      description: '朱翊嘉的游戏作品集，聚焦玩法系统、交互体验、实时世界与技术实现。',
     });
   });
 

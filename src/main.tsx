@@ -9,7 +9,11 @@ import './styles/phase3.css';
 import './styles/typography.css';
 import './styles/interactions.css';
 import './styles/editorial.css';
-import './styles/phase4-support.css';
+import './styles/redesign-home.css';
+import './styles/redesign-support.css';
+import './styles/redesign-works.css';
+import './styles/redesign-pages.css';
+import './styles/redesign-project.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

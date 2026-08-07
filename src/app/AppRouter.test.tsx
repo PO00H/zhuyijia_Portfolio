@@ -40,7 +40,8 @@ describe('app router', () => {
     const markup = renderRoute('/');
 
     expect(markup).toContain('朱翊嘉');
-    expect(markup).toContain('游戏设计师');
+    expect(markup).toContain('>游戏</span>');
+    expect(markup).toContain('>设计师</span>');
     expect(markup).toContain('精选游戏');
     expect(markup).toContain('白夜瞬闪');
     expect(markup).toContain('橡皮奥德赛');
@@ -65,12 +66,12 @@ describe('app router', () => {
     expect(markup).not.toContain('href="/works/echoflash"');
   });
 
-  it('uses an editorial hero and two distinct project stories', () => {
+  it('uses an editorial hero and two selected-game directory rows', () => {
     const markup = renderRoute('/');
 
-    expect(markup).toContain('hero-title__characters');
-    expect((markup.match(/<article class="project-story/g) ?? []).length).toBe(2);
-    expect(markup).toContain('project-story__rail');
+    expect(markup).toContain('portfolio-hero__title');
+    expect((markup.match(/data-selected-game=/g) ?? []).length).toBe(2);
+    expect(markup).toContain('selected-games-directory');
     expect(markup).toContain('data-cursor="view"');
     expect(markup).not.toContain('featured-game__copy');
   });
@@ -80,9 +81,10 @@ describe('app router', () => {
 
     expect(markup).toContain('data-portfolio-cursor="true"');
     expect(markup).toContain('class="site-route');
+    expect(markup).toContain('aria-label="打开菜单"');
   });
 
-  it('renders the three Phase 4 support sections from confirmed projects', () => {
+  it('renders the three confirmed support sections', () => {
     const markup = renderRoute('/');
 
     expect(markup).toContain('id="gameplay-lab"');
@@ -95,7 +97,7 @@ describe('app router', () => {
     expect(markup).toContain('href="/embed/newface/index.html"');
   });
 
-  it('keeps unconfirmed Phase 4 content off the homepage', () => {
+  it('keeps unconfirmed support content off the homepage', () => {
     const markup = renderRoute('/');
 
     expect(markup).not.toContain('《Peak》');
@@ -113,12 +115,16 @@ describe('app router', () => {
     expect(markup).toContain('data-preview-src="/videos/002.mp4"');
   });
 
-  it('renders the works page directly in Chinese', () => {
-    expect(renderRoute('/works')).toContain('全部作品');
+  it('renders the works archive directly in Chinese', () => {
+    const markup = renderRoute('/works');
+    expect(markup).toContain('全部作品');
+    expect(markup).toContain('class="works-archive"');
   });
 
-  it('renders the about page directly in Chinese', () => {
-    expect(renderRoute('/about')).toContain('关于我');
+  it('renders the about archive directly in Chinese', () => {
+    const markup = renderRoute('/about');
+    expect(markup).toContain('关于我');
+    expect(markup).toContain('北京林业大学');
   });
 
   it('keeps a direct fallback on the old ECHOFLASH project route', () => {

@@ -1,5 +1,5 @@
 export const preloaderCopy = {
-  sequence: ['ZHU YIJIA', '朱翊嘉', '个人作品集'],
-  loading: '正在载入',
-  context: '游戏设计作品集',
+  sequence: ['朱翊嘉', '游戏作品集'],
+  loading: '载入',
+  context: 'GAME DESIGN PORTFOLIO',
 } as const;

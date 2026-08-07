@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type PointerEvent } from 'react';
 import { Link } from 'react-router-dom';
 
 import { getProjectPath } from '../../app/routes';
@@ -8,13 +8,23 @@ import { toggleActiveMedia } from './supportMediaState';
 const confirmedWorldSlugs = new Set(['stonecity', 'tajima-cutter']);
 const confirmedToolSlugs = new Set(['newface']);
 
-const supportCopy: Record<string, string> = {
-  stonecity: '以 UE5 构建“灰岩之邦”遗迹，通过环境、光效与实时特效组织四幕觉醒叙事。',
-  'tajima-cutter': 'PBR 美工刀模型与全套贴图制作。',
-  newface: '节点式 AI 工作站，支持 BYOK 实时运行。',
+const posterBySlug: Record<string, string> = {
+  'ik-retargeting': '/posters/ik-retargeting.jpg',
+  'iterative-shrink': '/posters/iterative-shrink.jpg',
+  'follow-pointer': '/posters/follow-pointer.jpg',
+  stonecity: '/posters/stonecity.jpg',
 };
 
-interface SectionHeadingProps {
+const supportCopy: Record<string, string> = {
+  'ik-retargeting': '验证不同骨骼之间的动作适配与 IK 重定向流程。',
+  'iterative-shrink': '通过蓝图迭代改变尺度，观察空间与操作反馈的变化。',
+  'follow-pointer': '建立指针、空间目标与角色反馈之间的实时关系。',
+  stonecity: '以 UE5 构建“灰岩之邦”遗迹，通过环境、光效与实时特效组织四幕觉醒叙事。',
+  'tajima-cutter': '完成硬表面建模与 PBR 贴图流程，交互模型按需加载。',
+  newface: '节点式 AI 工作站，把模型调用、输入与结果组织为可见的工作流。',
+};
+
+interface ArchiveHeadingProps {
   description: string;
   id: string;
   number: string;
@@ -22,12 +32,15 @@ interface SectionHeadingProps {
   titleEn: string;
 }
 
-function SectionHeading({ description, id, number, title, titleEn }: SectionHeadingProps) {
+function ArchiveHeading({ description, id, number, title, titleEn }: ArchiveHeadingProps) {
   return (
-    <header className="support-section__heading">
-      <span className="section-number">{number}</span>
-      <div>
-        <p className="eyebrow">{title} / {titleEn}</p>
+    <header className="capability-heading">
+      <div className="capability-heading__index">
+        <span>{number}</span>
+        <span>{titleEn}</span>
+      </div>
+      <div className="capability-heading__copy">
+        <p>{title}</p>
         <h2 id={id}>{description}</h2>
       </div>
     </header>
@@ -38,7 +51,9 @@ interface OnDemandPreviewProps {
   active: boolean;
   iframeUrl?: string;
   label: string;
+  onClose: () => void;
   onToggle: () => void;
+  poster?: string;
   previewId: string;
   videoUrl?: string;
 }
@@ -47,21 +62,30 @@ function OnDemandPreview({
   active,
   iframeUrl,
   label,
+  onClose,
   onToggle,
+  poster,
   previewId,
   videoUrl,
 }: OnDemandPreviewProps) {
   const source = videoUrl ?? iframeUrl;
-  const mediaType = videoUrl ? '短视频' : '交互式 3D';
+  const mediaType = videoUrl ? '短视频' : '交互模型';
 
   if (!source) return null;
 
+  const activateOnHover = (event: PointerEvent<HTMLButtonElement>) => {
+    if (videoUrl && event.pointerType === 'mouse') onToggle();
+  };
+
   return (
-    <div className={`support-preview ${active ? 'is-active' : ''}`}>
+    <div
+      className={active ? 'archive-media is-active' : 'archive-media'}
+      onPointerLeave={active && videoUrl ? onClose : undefined}
+    >
       {active ? (
         <>
-          <button className="support-preview__close" type="button" onClick={onToggle}>
-            关闭预览
+          <button className="archive-media__close" type="button" onClick={onClose}>
+            关闭
           </button>
           {videoUrl ? (
             <video
@@ -88,87 +112,99 @@ function OnDemandPreview({
         </>
       ) : (
         <button
-          className="support-preview__trigger"
+          className="archive-media__trigger"
           type="button"
           data-cursor="view"
           data-preview-src={source}
           aria-controls={previewId}
           aria-expanded="false"
           onClick={onToggle}
+          onPointerEnter={activateOnHover}
         >
-          <span>{mediaType}</span>
-          <strong>{videoUrl ? '播放实验' : '加载模型'}</strong>
+          {poster ? <img src={poster} alt={`${label}静态预览`} loading="lazy" /> : null}
+          <span className="archive-media__shade" aria-hidden="true" />
+          <span className="archive-media__type">{mediaType}</span>
+          <strong>{videoUrl ? '播放' : '加载 3D'}</strong>
         </button>
       )}
     </div>
   );
 }
 
-interface GameplayItemProps {
+interface MediaItemProps {
   activeMediaId: string | null;
-  index: number;
+  onCloseMedia: () => void;
   onToggleMedia: (id: string) => void;
   project: PortfolioProject;
 }
 
-function GameplayItem({ activeMediaId, index, onToggleMedia, project }: GameplayItemProps) {
+function GameplayItem({ activeMediaId, onCloseMedia, onToggleMedia, project }: MediaItemProps) {
   return (
-    <article
-      className="lab-item"
-      data-support-kind="gameplay"
-      data-support-project={project.slug}
-    >
-      <div className="lab-item__meta">
-        <span>0{index + 1}</span>
+    <article className="lab-archive__item" data-support-kind="gameplay" data-support-project={project.slug}>
+      <div className="lab-archive__meta">
         <span>{project.year}</span>
+        <span>{project.displayCategory}</span>
       </div>
       <OnDemandPreview
         active={activeMediaId === project.id}
         label={project.titleZh ?? project.title}
+        onClose={onCloseMedia}
         onToggle={() => onToggleMedia(project.id)}
+        poster={posterBySlug[project.slug]}
         previewId={`support-preview-${project.id}`}
         videoUrl={project.previewVideo}
       />
-      <div className="lab-item__copy">
+      <div className="lab-archive__copy">
         <h3>{project.titleZh ?? project.title}</h3>
-        <p>{project.summary}</p>
-        <ul aria-label="技术标签">
-          {project.tools.slice(0, 3).map((tool) => <li key={tool}>{tool}</li>)}
-        </ul>
+        <p>{supportCopy[project.slug] ?? project.summary}</p>
+        <span>{project.tools.slice(0, 3).join(' / ')}</span>
       </div>
     </article>
   );
 }
 
-interface WorldItemProps {
-  activeMediaId: string | null;
-  onToggleMedia: (id: string) => void;
-  project: PortfolioProject;
-}
-
-function WorldItem({ activeMediaId, onToggleMedia, project }: WorldItemProps) {
-  const isStoneCity = project.slug === 'stonecity';
-
+function StoneCityFeature({ activeMediaId, onCloseMedia, onToggleMedia, project }: MediaItemProps) {
   return (
-    <article
-      className={`world-item ${isStoneCity ? 'world-item--primary' : 'world-item--secondary'}`}
-      data-support-project={project.slug}
-    >
+    <article className="world-feature" data-support-project={project.slug}>
       <OnDemandPreview
         active={activeMediaId === project.id}
-        iframeUrl={isStoneCity ? undefined : project.modelUrl}
         label={project.titleZh ?? project.title}
+        onClose={onCloseMedia}
         onToggle={() => onToggleMedia(project.id)}
+        poster={posterBySlug[project.slug]}
         previewId={`support-preview-${project.id}`}
-        videoUrl={isStoneCity ? project.previewVideo : undefined}
+        videoUrl={project.previewVideo}
       />
-      <div className="world-item__copy">
-        <p className="support-item__meta">{project.year} / 个人作品</p>
+      <div className="world-feature__copy">
+        <div>
+          <span>WORLD 01 / {project.year}</span>
+          <span>个人作品</span>
+        </div>
         <h3>{project.titleZh ?? project.title}</h3>
         <p>{supportCopy[project.slug] ?? project.summary}</p>
-        <Link className="text-link" to={getProjectPath(project.slug)}>
-          查看项目信息
-        </Link>
+        <Link to={getProjectPath(project.slug)}>查看项目档案 ↗</Link>
+      </div>
+    </article>
+  );
+}
+
+function TajimaFeature({ activeMediaId, onCloseMedia, onToggleMedia, project }: MediaItemProps) {
+  return (
+    <article className="world-object" data-support-project={project.slug}>
+      <div className="world-object__number" aria-hidden="true">3D</div>
+      <div className="world-object__body">
+        <span>WORLD 02 / {project.year}</span>
+        <h3>{project.titleZh ?? project.title}</h3>
+        <p>{supportCopy[project.slug] ?? project.summary}</p>
+        <OnDemandPreview
+          active={activeMediaId === project.id}
+          iframeUrl={project.modelUrl}
+          label={project.titleZh ?? project.title}
+          onClose={onCloseMedia}
+          onToggle={() => onToggleMedia(project.id)}
+          previewId={`support-preview-${project.id}`}
+        />
+        <Link to={getProjectPath(project.slug)}>查看材质与项目信息 ↗</Link>
       </div>
     </article>
   );
@@ -177,32 +213,34 @@ function WorldItem({ activeMediaId, onToggleMedia, project }: WorldItemProps) {
 export function SupportingSections() {
   const [activeMediaId, setActiveMediaId] = useState<string | null>(null);
   const gameplayProjects = getFeaturedProjects('gameplay-lab');
-  const worldProjects = getFeaturedProjects('worlds').filter((project) =>
-    confirmedWorldSlugs.has(project.slug));
-  const toolProjects = getFeaturedProjects('tools').filter((project) =>
-    confirmedToolSlugs.has(project.slug));
+  const worldProjects = getFeaturedProjects('worlds').filter((project) => confirmedWorldSlugs.has(project.slug));
+  const toolProjects = getFeaturedProjects('tools').filter((project) => confirmedToolSlugs.has(project.slug));
+  const stoneCity = worldProjects.find((project) => project.slug === 'stonecity');
+  const tajima = worldProjects.find((project) => project.slug === 'tajima-cutter');
   const newFace = toolProjects[0];
 
   const handleToggleMedia = (requestedId: string) => {
     setActiveMediaId((currentId) => toggleActiveMedia(currentId, requestedId));
   };
 
+  const closeMedia = () => setActiveMediaId(null);
+
   return (
-    <div className="supporting-sections">
-      <section className="support-section support-section--lab" id="gameplay-lab" aria-labelledby="gameplay-lab-title">
-        <SectionHeading
+    <div className="supporting-archive">
+      <section className="capability-strip capability-strip--lab" id="gameplay-lab" aria-labelledby="gameplay-lab-title">
+        <ArchiveHeading
           description="把一个交互问题，快速做成可以操作的原型。"
           id="gameplay-lab-title"
           number="02"
           title="玩法实验室"
           titleEn="GAMEPLAY LAB"
         />
-        <div className="lab-grid">
-          {gameplayProjects.map((project, index) => (
+        <div className="lab-archive">
+          {gameplayProjects.map((project) => (
             <GameplayItem
               activeMediaId={activeMediaId}
-              index={index}
               key={project.id}
+              onCloseMedia={closeMedia}
               onToggleMedia={handleToggleMedia}
               project={project}
             />
@@ -210,51 +248,56 @@ export function SupportingSections() {
         </div>
       </section>
 
-      <section className="support-section support-section--worlds" id="worlds" aria-labelledby="worlds-title">
-        <SectionHeading
-          description="用场景、材质与实时效果，建立可进入的视觉世界。"
+      <section className="capability-strip capability-strip--worlds" id="worlds" aria-labelledby="worlds-title">
+        <ArchiveHeading
+          description="场景、材质与实时效果，是游戏世界的另一套叙事系统。"
           id="worlds-title"
           number="03"
           title="世界与视觉系统"
           titleEn="WORLDS & VISUAL SYSTEMS"
         />
-        <div className="worlds-grid">
-          {worldProjects.map((project) => (
-            <WorldItem
-              activeMediaId={activeMediaId}
-              key={project.id}
-              onToggleMedia={handleToggleMedia}
-              project={project}
-            />
-          ))}
-        </div>
+        {stoneCity ? (
+          <StoneCityFeature
+            activeMediaId={activeMediaId}
+            onCloseMedia={closeMedia}
+            onToggleMedia={handleToggleMedia}
+            project={stoneCity}
+          />
+        ) : null}
+        {tajima ? (
+          <TajimaFeature
+            activeMediaId={activeMediaId}
+            onCloseMedia={closeMedia}
+            onToggleMedia={handleToggleMedia}
+            project={tajima}
+          />
+        ) : null}
       </section>
 
       {newFace ? (
-        <section className="support-section support-section--tools" id="tools" aria-labelledby="tools-title">
-          <SectionHeading
-            description="把复杂流程整理成清楚、可以运行的工作界面。"
+        <section className="capability-strip capability-strip--tools" id="tools" aria-labelledby="tools-title">
+          <ArchiveHeading
+            description="把复杂流程，整理成清楚而可运行的界面。"
             id="tools-title"
             number="04"
             title="工具与交互系统"
             titleEn="TOOLS & INTERACTIVE SYSTEMS"
           />
           <a
-            className="tool-feature"
+            className="tool-archive"
             href={newFace.iframeUrl ?? getProjectPath(newFace.slug)}
             data-cursor="view"
             data-support-project={newFace.slug}
           >
-            {newFace.cover ? (
-              <div className="tool-feature__media">
-                <img src={newFace.cover} alt="NewFace 节点式 AI 工作站界面" loading="lazy" />
-              </div>
-            ) : null}
-            <div className="tool-feature__copy">
-              <p className="support-item__meta">{newFace.year} / 个人作品</p>
-              <h3>{newFace.title}</h3>
+            <div className="tool-archive__frame">
+              {newFace.cover ? <img src={newFace.cover} alt="NewFace 节点式 AI 工作站界面" loading="lazy" /> : null}
+              <span>打开独立网页 ↗</span>
+            </div>
+            <div className="tool-archive__copy">
+              <span>TOOL 01 / {newFace.year} / 个人作品</span>
+              <h3>NewFace</h3>
               <p>{supportCopy[newFace.slug] ?? newFace.summary}</p>
-              <span className="text-link">打开独立网页</span>
+              <div>{newFace.roles.join(' / ')}</div>
             </div>
           </a>
         </section>

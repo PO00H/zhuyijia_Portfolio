@@ -6,26 +6,24 @@ export interface RouteMetadataValue {
 }
 
 const homeMetadata: RouteMetadataValue = {
-  title: '朱翊嘉｜游戏设计师',
-  description: '朱翊嘉的个人作品集，聚焦游戏设计、玩法原型与技术美术。',
+  title: 'Zhu Yijia — Game Designer & Technical Artist',
+  description: '朱翊嘉的游戏作品集，聚焦玩法系统、交互体验、实时世界与技术实现。',
 };
 
 export function getRouteMetadata(pathname: string): RouteMetadataValue {
-  if (pathname === '/') {
-    return homeMetadata;
-  }
+  if (pathname === '/') return homeMetadata;
 
   if (pathname === '/works') {
     return {
       title: '全部作品｜朱翊嘉',
-      description: '浏览朱翊嘉的游戏、交互系统、技术美术与网页实验。',
+      description: '浏览朱翊嘉的游戏、技术美术、工具与交互系统和网页实验。',
     };
   }
 
   if (pathname === '/about') {
     return {
       title: '关于｜朱翊嘉',
-      description: '了解游戏设计师朱翊嘉的主要方向与辅助能力。',
+      description: '了解游戏设计师朱翊嘉的经历、教育、能力与联系方式。',
     };
   }
 
