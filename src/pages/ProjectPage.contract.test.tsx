@@ -9,14 +9,15 @@ function renderRoute(pathname: string): string {
   return renderToStaticMarkup(<RouterProvider router={router} />);
 }
 
-describe('editorial project archive pages', () => {
-  it('renders StoneCity as a static-first case page', () => {
+describe('supplied archive project detail design', () => {
+  it('renders StoneCity with the dark archive detail hierarchy', () => {
     const markup = renderRoute('/works/stonecity');
 
-    expect(markup).toContain('class="project-case"');
+    expect(markup).toContain('class="archive-project"');
+    expect(markup).toContain('class="archive-project__hero"');
     expect(markup).toContain('src="/posters/stonecity.jpg"');
+    expect(markup).toContain('项目概览');
     expect(markup).toContain('个人职责');
-    expect(markup).toContain('能力方向');
     expect(markup).not.toContain('<video');
     expect(markup).not.toContain('<iframe');
   });
@@ -31,7 +32,7 @@ describe('editorial project archive pages', () => {
     expect(markup).not.toContain('<iframe');
   });
 
-  it('keeps original game presentations as direct destinations', () => {
+  it('keeps both original game presentations as direct documents', () => {
     const echo = renderRoute('/works/echoflash');
     const eraser = renderRoute('/works/erasers-odyssey');
 

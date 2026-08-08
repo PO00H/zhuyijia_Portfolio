@@ -22,10 +22,12 @@ export function SmoothScroll() {
     };
 
     animationFrame = requestAnimationFrame(update);
-    lenis.on('scroll', ScrollTrigger.update);
+    const syncScrollTrigger = () => ScrollTrigger.update();
+    lenis.on('scroll', syncScrollTrigger);
 
     return () => {
       cancelAnimationFrame(animationFrame);
+      lenis.off('scroll', syncScrollTrigger);
       lenis.destroy();
     };
   }, []);

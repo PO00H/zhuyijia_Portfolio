@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@100;200;300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Space+Grotesk:wght@300;400;500;600&display=swap');
+@import url('https://font.emtech.cc/css/GenWanMinTW');
 
 @tailwind base;
 @tailwind components;
@@ -6,214 +7,52 @@
 
 @layer base {
   :root {
-    /* Valiente Style - TA Portfolio */
-    --background: 60 6% 81%; /* #D1D1CB */
-    --foreground: 0 0% 12%;
-    --card: 60 6% 81%;
-    --card-foreground: 0 0% 12%;
-    --popover: 60 6% 81%;
-    --popover-foreground: 0 0% 12%;
-    --primary: 14 100% 50%; /* #FF3D00 荧光红 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 60 4% 75%;
-    --secondary-foreground: 0 0% 12%;
-    --muted: 60 4% 70%;
-    --muted-foreground: 0 0% 35%;
-    --accent: 14 100% 50%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 60 4% 70%;
-    --input: 60 4% 70%;
-    --ring: 14 100% 50%;
-    --radius: 0.25rem;
-    
-    /* Custom Colors */
-    --valiente-bg: #D1D1CB;
-    --valiente-red: #FF3D00;
-    --valiente-dark: #1A1A1A;
-    --valiente-gray: #8A8A85;
-    --valiente-light: #E8E8E5;
+    color-scheme: dark;
+    --archive-ink: #11110f;
+    --archive-surface: #191916;
+    --archive-paper: #d7d3c8;
+    --archive-cream: #eeeae1;
+    --archive-muted: #aaa69d;
+    --archive-rule: #34332e;
+    --archive-accent: #d65336;
+    --archive-max: 1400px;
+    --archive-gutter: clamp(1.25rem, 3.4vw, 3rem);
+    --archive-display: 'Playfair Display', 'GenWanMinTW', Georgia, serif;
+    --archive-body: 'Space Grotesk', system-ui, sans-serif;
+    --archive-zh: 'GenWanMinTW', 'Noto Serif SC', 'Songti SC', serif;
   }
-}
 
-@layer base {
-  * {
-    border-color: hsl(var(--border));
-  }
-  
-  html {
-    scroll-behavior: smooth;
-  }
-  
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; background: var(--archive-ink); }
+
   body {
-    background-color: #D1D1CB;
-    color: #1A1A1A;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0;
+    background: var(--archive-ink);
+    color: var(--archive-cream);
+    font-family: var(--archive-body);
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
-  
-  ::selection {
-    background: var(--valiente-red);
-    color: white;
-  }
+
+  button, a { color: inherit; }
+  button { font: inherit; }
+  img, video { display: block; max-width: 100%; }
+  a { text-decoration: none; }
+  * { border-color: var(--archive-rule); }
+  ::selection { background: var(--archive-accent); color: white; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--archive-ink); }
+  ::-webkit-scrollbar-thumb { background: var(--archive-rule); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--archive-accent); }
 }
 
-@layer components {
-  /* Giant Display Text */
-  .display-giant {
-    font-family: 'Inter', sans-serif;
-    font-size: clamp(3rem, 10vw, 12rem);
-    font-weight: 800;
-    line-height: 0.9;
-    letter-spacing: -0.04em;
-    color: var(--valiente-red);
-  }
-  
-  /* Monospace Body Text */
-  .body-mono {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 300;
-    font-size: 0.75rem;
-    line-height: 1.6;
-    letter-spacing: 0.02em;
-  }
-  
-  /* Section Label */
-  .section-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 400;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--valiente-gray);
-  }
-  
-  /* Work Index Number */
-  .work-index {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 200;
-    font-size: 0.875rem;
-    letter-spacing: 0.05em;
-    color: var(--valiente-gray);
-  }
-  
-  /* Work Title */
-  .work-title {
-    font-family: 'Inter', sans-serif;
-    font-size: clamp(2rem, 6vw, 5rem);
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    color: var(--valiente-dark);
-    transition: color 0.3s ease;
-  }
-  
-  .work-title:hover {
-    color: var(--valiente-red);
-  }
-  
-  /* Navigation Link */
-  .nav-link {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 400;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--valiente-gray);
-    transition: color 0.3s ease;
-  }
-  
-  .nav-link:hover,
-  .nav-link.active {
-    color: var(--valiente-red);
-  }
-  
-  /* Sticky Navigation Container (legacy class - 备用) */
-  .sticky-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    background: rgba(209, 209, 203, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(138, 138, 133, 0.2);
-  }
-
-  /* Sticky Navigation Bar - 桌面带 backdrop blur */
-  .sticky-nav-bar {
-    background: rgba(209, 209, 203, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(138, 138, 133, 0.2);
-  }
-  /* 移动端 / 触屏：去掉 backdrop-filter，避免滚动时每帧高斯模糊重栅格化卡顿 */
-  @media (pointer: coarse), (max-width: 768px) {
-    .sticky-nav,
-    .sticky-nav-bar {
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
-      background: rgba(209, 209, 203, 0.97);
-    }
-  }
-
-  /* 触屏设备：所有 work-item / 按钮 / 链接去掉 300ms click 延迟，根治鬼点击 */
-  @media (pointer: coarse) {
-    .work-item,
-    .work-item *,
-    button,
-    a {
-      touch-action: manipulation;
-    }
-  }
-  
-  /* Section Base */
-  .section-full {
-    min-height: 100vh;
-    width: 100%;
-    position: relative;
-  }
-  
-  /* Text Reveal Animation */
-  .char-reveal {
-    display: inline-block;
-    overflow: hidden;
-  }
-  
-  .char-reveal .char {
-    display: inline-block;
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  
-  /* 原生 scrollbar 样式 */
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: var(--valiente-bg);
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--valiente-gray);
-    border-radius: 3px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--valiente-red);
-  }
-}
-
-@layer utilities {
-  .text-valiente-red {
-    color: var(--valiente-red);
-  }
-  
-  .bg-valiente {
-    background-color: var(--valiente-bg);
-  }
-  
-  .text-balance {
-    text-wrap: balance;
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

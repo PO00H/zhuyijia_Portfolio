@@ -1,90 +1,71 @@
 import { useEffect, useRef } from 'react';
 
-type CursorVariant = 'default' | 'view';
+import { gsap } from '../lib/gsap';
+
+const cursorLabels: Record<string, string> = {
+  view: '查看',
+  play: '播放',
+  copy: '复制',
+  read: '进入',
+};
 
 export function CustomCursor() {
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const stateRef = useRef({
-    variant: 'default' as CursorVariant,
-    overIframe: false,
-    hidden: true,
-  });
+  const rootRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const dotRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const coarsePointer = window.matchMedia('(pointer: coarse)');
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (coarsePointer.matches || reducedMotion.matches) return;
+    const disabled = window.matchMedia('(hover: none), (pointer: coarse), (prefers-reduced-motion: reduce)');
+    if (disabled.matches) return;
 
-    const cursor = cursorRef.current;
-    if (!cursor) return;
+    const root = rootRef.current;
+    const ring = ringRef.current;
+    const dot = dotRef.current;
+    const label = labelRef.current;
+    if (!root || !ring || !dot || !label) return;
 
-    const renderState = () => {
-      const { hidden, overIframe, variant } = stateRef.current;
-      cursor.style.opacity = hidden || overIframe ? '0' : '1';
-      cursor.dataset.variant = variant;
-      document.documentElement.style.cursor = overIframe ? 'auto' : 'none';
+    root.dataset.enabled = 'true';
+    const dotX = gsap.quickTo(dot, 'x', { duration: 0.08, ease: 'power3.out' });
+    const dotY = gsap.quickTo(dot, 'y', { duration: 0.08, ease: 'power3.out' });
+    const ringX = gsap.quickTo(ring, 'x', { duration: 0.26, ease: 'power3.out' });
+    const ringY = gsap.quickTo(ring, 'y', { duration: 0.26, ease: 'power3.out' });
+
+    const onMove = (event: PointerEvent) => {
+      root.dataset.visible = 'true';
+      dotX(event.clientX);
+      dotY(event.clientY);
+      ringX(event.clientX);
+      ringY(event.clientY);
     };
 
-    let lastIframeCheck = 0;
-    const onMove = (event: MouseEvent) => {
-      cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
-
-      let stateChanged = false;
-      if (stateRef.current.hidden) {
-        stateRef.current.hidden = false;
-        stateChanged = true;
-      }
-
-      const now = performance.now();
-      if (now - lastIframeCheck > 80) {
-        lastIframeCheck = now;
-        const elements = document.elementsFromPoint(event.clientX, event.clientY);
-        const overIframe = elements.some((element) => element.tagName === 'IFRAME');
-        if (overIframe !== stateRef.current.overIframe) {
-          stateRef.current.overIframe = overIframe;
-          stateChanged = true;
-        }
-      }
-
-      if (stateChanged) renderState();
-    };
-
-    const onOver = (event: MouseEvent) => {
+    const onOver = (event: PointerEvent) => {
       const target = event.target as HTMLElement | null;
-      const variant = target?.closest('[data-cursor="view"]') ? 'view' : 'default';
-      if (variant !== stateRef.current.variant) {
-        stateRef.current.variant = variant;
-        renderState();
-      }
+      const interactive = target?.closest<HTMLElement>('[data-cursor]');
+      const variant = interactive?.dataset.cursor ?? 'default';
+      root.dataset.variant = variant;
+      label.textContent = cursorLabels[variant] ?? '';
     };
 
-    const onLeave = () => {
-      stateRef.current.hidden = true;
-      renderState();
-    };
-
-    window.addEventListener('mousemove', onMove, { passive: true });
-    document.addEventListener('mouseover', onOver);
+    const onLeave = () => { root.dataset.visible = 'false'; };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    document.addEventListener('pointerover', onOver);
     document.addEventListener('mouseleave', onLeave);
-    renderState();
+    document.documentElement.classList.add('archive-custom-cursor');
 
     return () => {
-      window.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseover', onOver);
+      window.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerover', onOver);
       document.removeEventListener('mouseleave', onLeave);
-      document.documentElement.style.cursor = '';
+      document.documentElement.classList.remove('archive-custom-cursor');
+      gsap.killTweensOf([ring, dot]);
     };
   }, []);
 
   return (
-    <div
-      ref={cursorRef}
-      className="portfolio-cursor"
-      data-portfolio-cursor="true"
-      data-variant="default"
-      aria-hidden="true"
-    >
-      <span>打开</span>
+    <div ref={rootRef} className="archive-cursor" data-portfolio-cursor="true" data-variant="default" data-visible="false" aria-hidden="true">
+      <div ref={ringRef} className="archive-cursor__ring"><span ref={labelRef} /></div>
+      <div ref={dotRef} className="archive-cursor__dot" />
     </div>
   );
 }
