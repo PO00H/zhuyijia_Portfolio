@@ -9,7 +9,15 @@ export function RouteTransition({ children }: PropsWithChildren) {
   const location = useLocation();
   const rootRef = useRef<HTMLDivElement>(null);
   const maskRef = useRef<HTMLDivElement>(null);
+  const transitionsReadyRef = useRef(false);
   const reduced = useReducedMotion();
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      transitionsReadyRef.current = true;
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -20,7 +28,7 @@ export function RouteTransition({ children }: PropsWithChildren) {
     const mask = maskRef.current;
     if (!root || !mask) return;
 
-    if (reduced) {
+    if (reduced || !transitionsReadyRef.current) {
       gsap.set([root, mask], { clearProps: 'all' });
       return;
     }
@@ -31,7 +39,7 @@ export function RouteTransition({ children }: PropsWithChildren) {
       .set(root, { autoAlpha: 0, y: 14 })
       .to(mask, { scaleY: 0, duration: 0.72, transformOrigin: 'bottom' })
       .to(root, { autoAlpha: 1, y: 0, duration: 0.58 }, '-=0.38');
-  }, { scope: rootRef, dependencies: [location.pathname, reduced] });
+  }, { scope: rootRef, dependencies: [location.key, reduced], revertOnUpdate: true });
 
   return (
     <>

@@ -69,7 +69,7 @@ export function SiteHeader() {
     }
 
     if (menuOpen) {
-      gsap.to(header, { yPercent: 0, duration: 0.3, ease: 'power3.out', overwrite: 'auto' });
+      gsap.to(header, { yPercent: 0, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
       return () => gsap.killTweensOf(header);
     }
 
@@ -77,14 +77,14 @@ export function SiteHeader() {
     let hidden = false;
     const sync = () => {
       const nextY = window.scrollY;
-      const shouldHide = nextY > 120 && nextY > previousY;
+      const shouldHide = nextY > 100 && nextY > previousY;
       previousY = nextY;
       if (shouldHide === hidden) return;
       hidden = shouldHide;
       gsap.to(header, {
-        yPercent: shouldHide ? -105 : 0,
-        duration: 0.42,
-        ease: shouldHide ? 'power2.inOut' : 'power3.out',
+        yPercent: shouldHide ? -100 : 0,
+        duration: 0.4,
+        ease: shouldHide ? 'power2.inOut' : 'power2.out',
         overwrite: 'auto',
       });
     };

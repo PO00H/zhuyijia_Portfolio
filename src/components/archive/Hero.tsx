@@ -1,8 +1,11 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../lib/gsap';
+
+const INTRO_SESSION_KEY = 'portfolio_intro_seen_v5';
+const INTRO_COMPLETE_EVENT = 'portfolio:intro-complete';
 
 export function Hero() {
   const rootRef = useRef<HTMLElement>(null);
@@ -12,35 +15,51 @@ export function Hero() {
   const tagsRef = useRef<HTMLDivElement>(null);
   const footRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  const [introReady, setIntroReady] = useState(() => (
+    typeof window === 'undefined' || sessionStorage.getItem(INTRO_SESSION_KEY) === '1'
+  ));
+
+  useEffect(() => {
+    if (introReady) return;
+    const completeIntro = () => setIntroReady(true);
+    window.addEventListener('portfolio:intro-complete', completeIntro);
+    return () => window.removeEventListener(INTRO_COMPLETE_EVENT, completeIntro);
+  }, [introReady]);
 
   useGSAP(() => {
     const titles = [firstTitleRef.current, secondTitleRef.current];
     const supporting = [metaRef.current, tagsRef.current, footRef.current];
+    if (!introReady) {
+      gsap.set(titles, { clipPath: 'inset(100% 0% 0% 0%)', y: 40 });
+      gsap.set(supporting, { opacity: 0, y: 20 });
+      return;
+    }
     if (reduced) {
-      gsap.set([...titles, ...supporting], { clearProps: 'all' });
+      gsap.set([...titles, ...supporting], { opacity: 1, y: 0, clipPath: 'inset(0% 0% 0% 0%)' });
       return;
     }
 
-    gsap.set(titles, { clipPath: 'inset(100% 0 0 0)', y: 48 });
-    gsap.set(supporting, { autoAlpha: 0, y: 18 });
+    gsap.set(titles, { clipPath: 'inset(100% 0% 0% 0%)', y: 40 });
+    gsap.set(supporting, { opacity: 0, y: 20 });
+
     gsap.timeline({ defaults: { ease: 'power3.out' } })
-      .to(metaRef.current, { autoAlpha: 1, y: 0, duration: 0.72 }, 0.12)
-      .to(firstTitleRef.current, { clipPath: 'inset(0 0 0 0)', y: 0, duration: 0.98 }, 0.3)
-      .to(secondTitleRef.current, { clipPath: 'inset(0 0 0 0)', y: 0, duration: 0.98 }, 0.44)
-      .to(tagsRef.current, { autoAlpha: 1, y: 0, duration: 0.68 }, 0.78)
-      .to(footRef.current, { autoAlpha: 1, y: 0, duration: 0.68 }, 0.9);
+      .to(metaRef.current, { opacity: 1, y: 0, duration: 0.8 }, 0.2)
+      .to(firstTitleRef.current, { clipPath: 'inset(0% 0% 0% 0%)', y: 0, duration: 1 }, 0.4)
+      .to(secondTitleRef.current, { clipPath: 'inset(0% 0% 0% 0%)', y: 0, duration: 1 }, 0.55)
+      .to(tagsRef.current, { opacity: 1, y: 0, duration: 0.8 }, 0.9)
+      .to(footRef.current, { opacity: 1, y: 0, duration: 0.8 }, 1.1);
 
     gsap.to(titles, {
-      yPercent: 22,
+      yPercent: 30,
       ease: 'none',
       scrollTrigger: {
         trigger: rootRef.current,
         start: 'top top',
         end: 'bottom top',
-        scrub: 0.5,
+        scrub: true,
       },
     });
-  }, { scope: rootRef, dependencies: [reduced] });
+  }, { scope: rootRef, dependencies: [reduced, introReady], revertOnUpdate: true });
 
   return (
     <section ref={rootRef} className="archive-hero" aria-labelledby="archive-home-title">

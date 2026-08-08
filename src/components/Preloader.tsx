@@ -36,6 +36,7 @@ export function Preloader() {
     if (!exiting) return;
     const timer = window.setTimeout(() => {
       sessionStorage.setItem(SESSION_KEY, '1');
+      window.dispatchEvent(new Event('portfolio:intro-complete'));
       setVisible(false);
     }, EXIT_DURATION);
     return () => window.clearTimeout(timer);

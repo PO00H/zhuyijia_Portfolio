@@ -10,7 +10,7 @@ interface RevealProps extends PropsWithChildren {
   stagger?: number;
 }
 
-export function Reveal({ children, className, itemSelector = ':scope > *', stagger = 0.1 }: RevealProps) {
+export function Reveal({ children, className, itemSelector = ':scope > *', stagger = 0.15 }: RevealProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
@@ -19,18 +19,17 @@ export function Reveal({ children, className, itemSelector = ':scope > *', stagg
     if (!items?.length || reduced) return;
 
     gsap.from(items, {
-      autoAlpha: 0,
-      y: 36,
-      duration: 0.85,
+      opacity: 0,
+      y: 40,
+      duration: 0.8,
       stagger,
       ease: 'power3.out',
       scrollTrigger: {
         trigger: rootRef.current,
-        start: 'top 84%',
-        once: true,
+        start: 'top 85%',
       },
     });
-  }, { scope: rootRef, dependencies: [reduced, itemSelector, stagger] });
+  }, { scope: rootRef, dependencies: [reduced, itemSelector, stagger], revertOnUpdate: true });
 
   return <div ref={rootRef} className={className}>{children}</div>;
 }

@@ -34,9 +34,9 @@ export function ProjectPage() {
 
   useGSAP(() => {
     if (reduced || !project) return;
-    gsap.from('.archive-project__cover', { autoAlpha: 0, scale: .96, duration: 1.05, ease: 'power3.out' });
-    gsap.from('.archive-project__content > *', { autoAlpha: 0, y: 34, duration: .76, stagger: .09, delay: .2, ease: 'power3.out' });
-  }, { scope: rootRef, dependencies: [project?.slug, reduced] });
+    gsap.from('.archive-project__cover', { opacity: 0, scale: 0.95, duration: 1.2, ease: 'power3.out' });
+    gsap.from('.archive-project__content > *', { opacity: 0, y: 40, duration: 0.8, stagger: 0.15, delay: 0.4, ease: 'power3.out' });
+  }, { scope: rootRef, dependencies: [project?.slug, reduced], revertOnUpdate: true });
 
   if (!project) {
     return <div className="archive-project-missing"><span>[404 / PROJECT]</span><h1>项目不存在</h1><Link to={sitePaths.works}>返回全部作品 ↗</Link></div>;

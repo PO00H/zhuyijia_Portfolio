@@ -10,27 +10,36 @@ import { filterWorks, worksFilters, type WorksFilterId } from './worksFilter';
 export function WorksPage() {
   const projects = getPublicProjects();
   const [filter, setFilter] = useState<WorksFilterId>('all');
+  const rootRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLOListElement>(null);
   const reduced = useReducedMotion();
   const filtered = useMemo(() => filterWorks(filter, projects), [filter, projects]);
 
   useGSAP(() => {
+    if (reduced || !headerRef.current) return;
+    gsap.from(headerRef.current, {
+      y: 40,
+      opacity: 0,
+      duration: 1,
+      ease: 'power3.out',
+      delay: 0.1,
+    });
+  }, { scope: rootRef, dependencies: [reduced], revertOnUpdate: true });
+
+  useGSAP(() => {
     if (reduced) return;
     const rows = listRef.current?.children;
     if (!rows?.length) return;
-    gsap.fromTo(rows, { autoAlpha: 0, y: 18 }, {
-      autoAlpha: 1,
-      y: 0,
-      duration: .55,
-      stagger: .035,
-      ease: 'power3.out',
-      overwrite: 'auto',
-    });
-  }, { scope: listRef, dependencies: [filter, reduced] });
+    gsap.fromTo(rows,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out', overwrite: 'auto' },
+    );
+  }, { scope: listRef, dependencies: [filter, reduced], revertOnUpdate: true });
 
   return (
-    <article className="archive-works archive-paper-page">
-      <header className="archive-page-hero">
+    <article ref={rootRef} className="archive-works archive-paper-page">
+      <header ref={headerRef} className="archive-page-hero">
         <div className="archive-page-hero__ledger"><span>ARCHIVE / {projects.length}</span><span>2025—2026</span><span>个人作品</span></div>
         <p>[ALL WORKS]</p>
         <h1>全部<br />作品</h1>

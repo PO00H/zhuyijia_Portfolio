@@ -26,10 +26,12 @@ export function CustomCursor() {
     if (!root || !ring || !dot || !label) return;
 
     root.dataset.enabled = 'true';
-    const dotX = gsap.quickTo(dot, 'x', { duration: 0.08, ease: 'power3.out' });
-    const dotY = gsap.quickTo(dot, 'y', { duration: 0.08, ease: 'power3.out' });
-    const ringX = gsap.quickTo(ring, 'x', { duration: 0.26, ease: 'power3.out' });
-    const ringY = gsap.quickTo(ring, 'y', { duration: 0.26, ease: 'power3.out' });
+    gsap.set(label, { opacity: 0, scale: 0.5 });
+    const dotX = gsap.quickTo(dot, 'x', { duration: 0.1, ease: 'power3' });
+    const dotY = gsap.quickTo(dot, 'y', { duration: 0.1, ease: 'power3' });
+    const ringX = gsap.quickTo(ring, 'x', { duration: 0.25, ease: 'power3' });
+    const ringY = gsap.quickTo(ring, 'y', { duration: 0.25, ease: 'power3' });
+    let currentVariant = 'default';
 
     const onMove = (event: PointerEvent) => {
       root.dataset.visible = 'true';
@@ -43,8 +45,47 @@ export function CustomCursor() {
       const target = event.target as HTMLElement | null;
       const interactive = target?.closest<HTMLElement>('[data-cursor]');
       const variant = interactive?.dataset.cursor ?? 'default';
+      if (variant === currentVariant) return;
+      currentVariant = variant;
       root.dataset.variant = variant;
       label.textContent = cursorLabels[variant] ?? '';
+
+      if (variant !== 'default') {
+        gsap.to(ring, {
+          scale: 2.5,
+          borderWidth: '0.5px',
+          backgroundColor: 'rgba(214, 83, 54, 0.1)',
+          duration: 0.3,
+          ease: 'power2.out',
+          overwrite: 'auto',
+        });
+        gsap.to(label, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.3,
+          delay: 0.1,
+          ease: 'power2.out',
+          overwrite: 'auto',
+        });
+        gsap.to(dot, { opacity: 0, duration: 0.2, overwrite: 'auto' });
+      } else {
+        gsap.to(ring, {
+          scale: 1,
+          borderWidth: '1px',
+          backgroundColor: 'transparent',
+          duration: 0.3,
+          ease: 'power2.out',
+          overwrite: 'auto',
+        });
+        gsap.to(label, {
+          opacity: 0,
+          scale: 0.5,
+          duration: 0.2,
+          ease: 'power2.in',
+          overwrite: 'auto',
+        });
+        gsap.to(dot, { opacity: 1, duration: 0.2, delay: 0.1, overwrite: 'auto' });
+      }
     };
 
     const onLeave = () => { root.dataset.visible = 'false'; };
@@ -58,7 +99,7 @@ export function CustomCursor() {
       document.removeEventListener('pointerover', onOver);
       document.removeEventListener('mouseleave', onLeave);
       document.documentElement.classList.remove('archive-custom-cursor');
-      gsap.killTweensOf([ring, dot]);
+      gsap.killTweensOf([ring, dot, label]);
     };
   }, []);
 

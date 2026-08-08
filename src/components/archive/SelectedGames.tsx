@@ -16,18 +16,17 @@ export function SelectedGames() {
     const rows = listRef.current?.children;
     if (!rows?.length || reduced) return;
     gsap.from(rows, {
-      autoAlpha: 0,
-      y: 38,
-      duration: .78,
-      stagger: .13,
+      opacity: 0,
+      y: 40,
+      duration: 0.8,
+      stagger: 0.15,
       ease: 'power3.out',
       scrollTrigger: {
         trigger: listRef.current,
-        start: 'top 84%',
-        once: true,
+        start: 'top 85%',
       },
     });
-  }, { scope: listRef, dependencies: [reduced] });
+  }, { scope: listRef, dependencies: [reduced], revertOnUpdate: true });
 
   return (
     <section className="archive-section archive-selected" id="selected-games" aria-labelledby="archive-selected-title">

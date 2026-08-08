@@ -12,7 +12,7 @@ export function GameplayLab() {
   return (
     <section className="archive-section archive-lab" id="gameplay-lab" aria-labelledby="archive-lab-title">
       <SectionHeading number="03" label="GAMEPLAY LAB" eyebrow="玩法实验室" title="把一个交互问题，快速做成可操作的原型。" id="archive-lab-title" />
-      <Reveal className="archive-card-grid archive-card-grid--three" itemSelector=":scope > article" stagger={0.12}>
+      <Reveal className="archive-card-grid archive-card-grid--three" itemSelector=":scope > article" stagger={0.15}>
         {projects.map((project) => (
           <ProjectCard key={project.id} project={project} activePreview={activePreview} onActivate={setActivePreview} />
         ))}
