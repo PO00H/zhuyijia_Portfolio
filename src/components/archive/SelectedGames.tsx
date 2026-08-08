@@ -2,7 +2,6 @@ import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 
 import { getFeaturedProjects } from '../../data/projects';
-import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../lib/gsap';
 import { ProjectRow } from './ProjectRow';
 import { SectionHeading } from './SectionHeading';
@@ -10,11 +9,10 @@ import { SectionHeading } from './SectionHeading';
 export function SelectedGames() {
   const games = getFeaturedProjects('selected-games');
   const listRef = useRef<HTMLOListElement>(null);
-  const reduced = useReducedMotion();
 
   useGSAP(() => {
     const rows = listRef.current?.children;
-    if (!rows?.length || reduced) return;
+    if (!rows?.length) return;
     gsap.from(rows, {
       opacity: 0,
       y: 40,
@@ -26,7 +24,7 @@ export function SelectedGames() {
         start: 'top 85%',
       },
     });
-  }, { scope: listRef, dependencies: [reduced], revertOnUpdate: true });
+  }, { scope: listRef });
 
   return (
     <section className="archive-section archive-selected" id="selected-games" aria-labelledby="archive-selected-title">

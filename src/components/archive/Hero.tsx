@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 
-import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../lib/gsap';
 
 const INTRO_SESSION_KEY = 'portfolio_intro_seen_v5';
@@ -14,7 +13,6 @@ export function Hero() {
   const secondTitleRef = useRef<HTMLSpanElement>(null);
   const tagsRef = useRef<HTMLDivElement>(null);
   const footRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
   const [introReady, setIntroReady] = useState(() => (
     typeof window === 'undefined' || sessionStorage.getItem(INTRO_SESSION_KEY) === '1'
   ));
@@ -32,10 +30,6 @@ export function Hero() {
     if (!introReady) {
       gsap.set(titles, { clipPath: 'inset(100% 0% 0% 0%)', y: 40 });
       gsap.set(supporting, { opacity: 0, y: 20 });
-      return;
-    }
-    if (reduced) {
-      gsap.set([...titles, ...supporting], { opacity: 1, y: 0, clipPath: 'inset(0% 0% 0% 0%)' });
       return;
     }
 
@@ -59,7 +53,7 @@ export function Hero() {
         scrub: true,
       },
     });
-  }, { scope: rootRef, dependencies: [reduced, introReady], revertOnUpdate: true });
+  }, { scope: rootRef, dependencies: [introReady], revertOnUpdate: true });
 
   return (
     <section ref={rootRef} className="archive-hero" aria-labelledby="archive-home-title">

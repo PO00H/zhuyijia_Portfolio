@@ -1,7 +1,6 @@
 import { useRef, type PropsWithChildren } from 'react';
 import { useGSAP } from '@gsap/react';
 
-import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../lib/gsap';
 
 interface RevealProps extends PropsWithChildren {
@@ -12,11 +11,10 @@ interface RevealProps extends PropsWithChildren {
 
 export function Reveal({ children, className, itemSelector = ':scope > *', stagger = 0.15 }: RevealProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
 
   useGSAP(() => {
     const items = rootRef.current?.querySelectorAll(itemSelector);
-    if (!items?.length || reduced) return;
+    if (!items?.length) return;
 
     gsap.from(items, {
       opacity: 0,
@@ -29,7 +27,7 @@ export function Reveal({ children, className, itemSelector = ':scope > *', stagg
         start: 'top 85%',
       },
     });
-  }, { scope: rootRef, dependencies: [reduced, itemSelector, stagger], revertOnUpdate: true });
+  }, { scope: rootRef, dependencies: [itemSelector, stagger], revertOnUpdate: true });
 
   return <div ref={rootRef} className={className}>{children}</div>;
 }

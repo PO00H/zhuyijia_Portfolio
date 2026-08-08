@@ -5,7 +5,6 @@ import { Link, useParams } from 'react-router-dom';
 import { sitePaths } from '../app/routes';
 import { getProjectHref, getProjectPreview } from '../data/projectMedia';
 import { getPublicProjects, type PortfolioProject } from '../data/projects';
-import { useReducedMotion } from '../hooks/useReducedMotion';
 import { gsap } from '../lib/gsap';
 
 function ProjectLink({ project, children, className }: { project: PortfolioProject; children: React.ReactNode; className?: string }) {
@@ -21,7 +20,6 @@ export function ProjectPage() {
   const [openVideoSlug, setOpenVideoSlug] = useState<string | null>(null);
   const [openModelSlug, setOpenModelSlug] = useState<string | null>(null);
   const rootRef = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
   const originalGameUrl = project?.primaryCategory === 'game' && project.featuredSections.includes('selected-games') ? project.iframeUrl : undefined;
 
   useEffect(() => {
@@ -33,10 +31,10 @@ export function ProjectPage() {
   }, [slug]);
 
   useGSAP(() => {
-    if (reduced || !project) return;
+    if (!project) return;
     gsap.from('.archive-project__cover', { opacity: 0, scale: 0.95, duration: 1.2, ease: 'power3.out' });
     gsap.from('.archive-project__content > *', { opacity: 0, y: 40, duration: 0.8, stagger: 0.15, delay: 0.4, ease: 'power3.out' });
-  }, { scope: rootRef, dependencies: [project?.slug, reduced], revertOnUpdate: true });
+  }, { scope: rootRef, dependencies: [project?.slug], revertOnUpdate: true });
 
   if (!project) {
     return <div className="archive-project-missing"><span>[404 / PROJECT]</span><h1>项目不存在</h1><Link to={sitePaths.works}>返回全部作品 ↗</Link></div>;

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 
 import { sitePaths } from '../../app/routes';
 import { profile } from '../../data/profile';
-import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../lib/gsap';
 
 type CopyState = 'idle' | 'copied' | 'failed';
@@ -13,10 +12,9 @@ export function ContactPanel() {
   const rootRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [copyState, setCopyState] = useState<CopyState>('idle');
-  const reduced = useReducedMotion();
 
   useGSAP(() => {
-    if (reduced || !contentRef.current) return;
+    if (!contentRef.current) return;
     gsap.from(contentRef.current, {
       y: 40,
       opacity: 0,
@@ -27,7 +25,7 @@ export function ContactPanel() {
         start: 'top 85%',
       },
     });
-  }, { scope: rootRef, dependencies: [reduced], revertOnUpdate: true });
+  }, { scope: rootRef });
 
   const copyEmail = async () => {
     try {

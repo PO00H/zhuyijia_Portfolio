@@ -20,8 +20,7 @@ export function Preloader() {
 
   useEffect(() => {
     if (!visible) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const timer = window.setTimeout(finish, reduced ? 120 : DISPLAY_DURATION);
+    const timer = window.setTimeout(finish, DISPLAY_DURATION);
     const skip = () => finish();
     window.addEventListener('wheel', skip, { passive: true, once: true });
     window.addEventListener('keydown', skip, { once: true });

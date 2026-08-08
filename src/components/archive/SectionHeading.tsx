@@ -1,7 +1,6 @@
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 
-import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../lib/gsap';
 
 interface SectionHeadingProps {
@@ -15,10 +14,9 @@ interface SectionHeadingProps {
 
 export function SectionHeading({ number, label, title, eyebrow, dark = false, id }: SectionHeadingProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
 
   useGSAP(() => {
-    if (reduced || !rootRef.current) return;
+    if (!rootRef.current) return;
     gsap.from(rootRef.current, {
       y: 30,
       opacity: 0,
@@ -29,7 +27,7 @@ export function SectionHeading({ number, label, title, eyebrow, dark = false, id
         start: 'top 80%',
       },
     });
-  }, { scope: rootRef, dependencies: [reduced], revertOnUpdate: true });
+  }, { scope: rootRef });
 
   return (
     <div ref={rootRef} className={dark ? 'archive-section-heading is-dark' : 'archive-section-heading'}>

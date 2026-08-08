@@ -3,7 +3,6 @@ import { useGSAP } from '@gsap/react';
 
 import { ProjectRow } from '../components/archive/ProjectRow';
 import { getPublicProjects } from '../data/projects';
-import { useReducedMotion } from '../hooks/useReducedMotion';
 import { gsap } from '../lib/gsap';
 import { filterWorks, worksFilters, type WorksFilterId } from './worksFilter';
 
@@ -13,11 +12,10 @@ export function WorksPage() {
   const rootRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLOListElement>(null);
-  const reduced = useReducedMotion();
   const filtered = useMemo(() => filterWorks(filter, projects), [filter, projects]);
 
   useGSAP(() => {
-    if (reduced || !headerRef.current) return;
+    if (!headerRef.current) return;
     gsap.from(headerRef.current, {
       y: 40,
       opacity: 0,
@@ -25,17 +23,16 @@ export function WorksPage() {
       ease: 'power3.out',
       delay: 0.1,
     });
-  }, { scope: rootRef, dependencies: [reduced], revertOnUpdate: true });
+  }, { scope: rootRef });
 
   useGSAP(() => {
-    if (reduced) return;
     const rows = listRef.current?.children;
     if (!rows?.length) return;
     gsap.fromTo(rows,
       { opacity: 0, y: 20 },
       { opacity: 1, y: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out', overwrite: 'auto' },
     );
-  }, { scope: listRef, dependencies: [filter, reduced], revertOnUpdate: true });
+  }, { scope: listRef, dependencies: [filter], revertOnUpdate: true });
 
   return (
     <article ref={rootRef} className="archive-works archive-paper-page">

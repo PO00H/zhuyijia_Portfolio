@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 
 import { getProjectHref, getProjectPreview } from '../../data/projectMedia';
 import type { PortfolioProject } from '../../data/projects';
-import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../lib/gsap';
 
 interface ProjectRowProps {
@@ -19,7 +18,6 @@ export function ProjectRow({ number, project, selected = false, placeholder = fa
   const moveYRef = useRef<ReturnType<typeof gsap.quickTo> | null>(null);
   const [previewMounted, setPreviewMounted] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
-  const reduced = useReducedMotion();
   const preview = project ? getProjectPreview(project) : undefined;
 
   useEffect(() => {
@@ -51,8 +49,7 @@ export function ProjectRow({ number, project, selected = false, placeholder = fa
   }, [previewMounted, previewVisible]);
 
   const showPreview = () => {
-    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    if (!preview || reduced || !finePointer) return;
+    if (!preview) return;
     setPreviewMounted(true);
     setPreviewVisible(true);
   };

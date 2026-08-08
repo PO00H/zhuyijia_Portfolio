@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { siteNavigation } from '../../app/routes';
-import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../lib/gsap';
 
 const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -12,7 +11,6 @@ export function SiteHeader() {
   const headerRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
-  const reduced = useReducedMotion();
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -63,11 +61,6 @@ export function SiteHeader() {
     const header = headerRef.current;
     if (!header) return;
 
-    if (reduced) {
-      gsap.set(header, { yPercent: 0 });
-      return () => gsap.killTweensOf(header);
-    }
-
     if (menuOpen) {
       gsap.to(header, { yPercent: 0, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
       return () => gsap.killTweensOf(header);
@@ -94,7 +87,7 @@ export function SiteHeader() {
       window.removeEventListener('scroll', sync);
       gsap.killTweensOf(header);
     };
-  }, [menuOpen, reduced]);
+  }, [menuOpen]);
 
   return (
     <>

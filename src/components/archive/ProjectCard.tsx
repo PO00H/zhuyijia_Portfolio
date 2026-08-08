@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
+import type { KeyboardEvent as ReactKeyboardEvent, MouseEvent as ReactMouseEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { getProjectHref, getProjectPreview } from '../../data/projectMedia';
 import type { PortfolioProject } from '../../data/projects';
-import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 interface ProjectCardProps {
   project: PortfolioProject;
@@ -12,18 +12,43 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, activePreview, onActivate, prominent = false }: ProjectCardProps) {
+  const navigate = useNavigate();
   const preview = getProjectPreview(project);
   const active = activePreview === project.slug;
   const href = getProjectHref(project);
   const title = project.titleZh ?? project.title;
-  const reduced = useReducedMotion();
   const link = project.iframeUrl ? <a href={href} data-cursor="view">查看项目 ↗</a> : <Link to={href} data-cursor="view">查看项目 ↗</Link>;
+  const openProject = () => {
+    if (project.iframeUrl) {
+      window.location.assign(href);
+      return;
+    }
+    navigate(href);
+  };
+  const handleCardClick = (event: ReactMouseEvent<HTMLElement>) => {
+    if ((event.target as HTMLElement).closest('a, button')) return;
+    openProject();
+  };
+  const handleCardKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
+    if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' ')) return;
+    event.preventDefault();
+    openProject();
+  };
 
   return (
-    <article className={prominent ? 'archive-card is-prominent' : 'archive-card'} data-archive-project={project.slug}>
+    <article
+      className={prominent ? 'archive-card is-prominent' : 'archive-card'}
+      data-archive-project={project.slug}
+      data-cursor="view"
+      role="link"
+      tabIndex={0}
+      aria-label={`查看${title}项目`}
+      onClick={handleCardClick}
+      onKeyDown={handleCardKeyDown}
+    >
       <div
         className="archive-card__media"
-        onMouseEnter={() => !reduced && project.previewVideo && onActivate(project.slug)}
+        onMouseEnter={() => project.previewVideo && onActivate(project.slug)}
         onMouseLeave={() => active && onActivate(null)}
       >
         {active && project.previewVideo ? (

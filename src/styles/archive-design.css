@@ -90,7 +90,7 @@
 .archive-card-grid { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); }
 .archive-card-grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .archive-card-grid--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.archive-card { min-width: 0; }
+.archive-card { min-width: 0; cursor: pointer; }
 .archive-card__media { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--archive-surface); border: 1px solid var(--archive-rule); border-radius: .7rem; }
 .archive-card__media img, .archive-card__media video { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease-out; }
 .archive-card:hover .archive-card__media img { transform: scale(1.05); }
@@ -180,7 +180,7 @@
   .portfolio-intro__meta { grid-column: auto; justify-self: start; }
 }
 
-@media (hover: none), (pointer: coarse) {
+@media (pointer: coarse) {
   .archive-cursor { display: none; }
   .archive-project-list:hover .archive-project-row-wrap:not(:hover) { opacity: 1; }
   .archive-project-row__preview { display: none; }

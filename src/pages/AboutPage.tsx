@@ -2,7 +2,6 @@ import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 
 import { profile } from '../data/profile';
-import { useReducedMotion } from '../hooks/useReducedMotion';
 import { gsap } from '../lib/gsap';
 
 function SectionTitle({ number, label, title }: { number: string; label: string; title: string }) {
@@ -14,10 +13,8 @@ export function AboutPage() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const bioRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
 
   useGSAP(() => {
-    if (reduced) return;
     gsap.from(titleRef.current, {
       y: 40, opacity: 0, duration: 1, ease: 'power3.out', delay: 0.1,
     });
@@ -27,7 +24,7 @@ export function AboutPage() {
     gsap.from(timelineRef.current?.children || [], {
       y: 40, opacity: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out', delay: 0.5,
     });
-  }, { scope: rootRef, dependencies: [reduced], revertOnUpdate: true });
+  }, { scope: rootRef });
 
   return (
     <article ref={rootRef} className="archive-about archive-paper-page">

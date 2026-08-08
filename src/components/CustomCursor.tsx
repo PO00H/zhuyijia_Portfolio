@@ -16,7 +16,7 @@ export function CustomCursor() {
   const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const disabled = window.matchMedia('(hover: none), (pointer: coarse), (prefers-reduced-motion: reduce)');
+    const disabled = window.matchMedia('(pointer: coarse)');
     if (disabled.matches) return;
 
     const root = rootRef.current;
