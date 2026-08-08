@@ -12,8 +12,16 @@ interface ProjectRowProps {
   placeholder?: boolean;
 }
 
+const roleNames: Record<string, string> = {
+  'Game Design': '游戏设计',
+  Programming: '程序开发',
+  'Pixel Art': '像素美术',
+  Prototyping: '原型设计',
+};
+
 export function ProjectRow({ number, project, selected = false, placeholder = false }: ProjectRowProps) {
   const previewRef = useRef<HTMLDivElement>(null);
+  const pointerPositionRef = useRef({ x: 0, y: 0 });
   const moveXRef = useRef<ReturnType<typeof gsap.quickTo> | null>(null);
   const moveYRef = useRef<ReturnType<typeof gsap.quickTo> | null>(null);
   const [previewMounted, setPreviewMounted] = useState(false);
@@ -24,6 +32,7 @@ export function ProjectRow({ number, project, selected = false, placeholder = fa
     const element = previewRef.current;
     if (!previewMounted || !element) return;
 
+    gsap.set(element, pointerPositionRef.current);
     moveXRef.current = gsap.quickTo(element, 'x', { duration: 0.4, ease: 'power3.out' });
     moveYRef.current = gsap.quickTo(element, 'y', { duration: 0.4, ease: 'power3.out' });
     const tween = previewVisible
@@ -48,8 +57,9 @@ export function ProjectRow({ number, project, selected = false, placeholder = fa
     };
   }, [previewMounted, previewVisible]);
 
-  const showPreview = () => {
+  const showPreview = (event: ReactPointerEvent<HTMLLIElement>) => {
     if (!preview) return;
+    pointerPositionRef.current = { x: event.clientX + 20, y: event.clientY - 60 };
     setPreviewMounted(true);
     setPreviewVisible(true);
   };
@@ -62,21 +72,39 @@ export function ProjectRow({ number, project, selected = false, placeholder = fa
 
   if (placeholder || !project) {
     return (
-      <li className="archive-project-row is-placeholder" data-project-placeholder="true">
-        <span className="archive-project-row__number">{number}</span>
-        <span className="archive-project-row__title"><b>待公开作品</b><small>[COMING SOON]</small></span>
-        <span className="archive-project-row__meta">下一项个人游戏项目</span>
+      <li className="archive-project-row-wrap is-placeholder-wrap">
+        <div className={`archive-project-row is-placeholder${selected ? ' is-selected' : ''}`} data-project-placeholder="true">
+          <span className="archive-project-row__number">{number}</span>
+          <span className="archive-project-row__title">
+            <b>待公开作品</b>
+            <small>{selected ? 'NEXT GAME / 开发中' : '[COMING SOON]'}</small>
+          </span>
+          <span className="archive-project-row__meta">下一项个人游戏项目</span>
+        </div>
       </li>
     );
   }
 
   const href = getProjectHref(project);
+  const displayTitle = selected ? project.title.split(' — ')[0] : (project.titleZh ?? project.title);
+  const subtitle = selected ? project.titleZh : project.title;
+  const roles = selected
+    ? project.roles.map((role) => roleNames[role] ?? role).join(' / ')
+    : project.roles.join(' / ');
   const content = (
     <>
       <span className="archive-project-row__number">{number}</span>
-      <span className="archive-project-row__title"><b>{project.titleZh ?? project.title}</b><small>{project.title}</small></span>
-      <span className="archive-project-row__meta"><small>{project.year} / {project.displayCategory}</small><small>{project.roles.join(' / ')}</small></span>
-      <span className="archive-project-row__action">查看 ↗</span>
+      <span className="archive-project-row__title"><b>{displayTitle}</b><small>{subtitle}</small></span>
+      {selected ? (
+        <span className="archive-project-row__meta">
+          <small><i>年份</i><span>{project.year}</span></small>
+          <small><i>类型</i><span>{project.displayCategory}</span></small>
+          <small><i>职责</i><span>{roles}</span></small>
+        </span>
+      ) : (
+        <span className="archive-project-row__meta"><small>{project.year} / {project.displayCategory}</small><small>{roles}</small></span>
+      )}
+      <span className="archive-project-row__action">{selected ? '进入项目 ↗' : '查看 ↗'}</span>
       {preview ? <span className="archive-project-row__mobile"><img src={preview} alt="" loading="lazy" /></span> : null}
     </>
   );
@@ -88,14 +116,14 @@ export function ProjectRow({ number, project, selected = false, placeholder = fa
       onPointerMove={movePreview}
     >
       {project.iframeUrl ? (
-        <a className="archive-project-row" href={href} data-cursor="view" data-selected-game={selected ? project.slug : undefined}>{content}</a>
+        <a className={`archive-project-row${selected ? ' is-selected' : ''}`} href={href} data-cursor="view" data-selected-game={selected ? project.slug : undefined}>{content}</a>
       ) : (
-        <Link className="archive-project-row" to={href} data-cursor="view" data-selected-game={selected ? project.slug : undefined}>{content}</Link>
+        <Link className={`archive-project-row${selected ? ' is-selected' : ''}`} to={href} data-cursor="view" data-selected-game={selected ? project.slug : undefined}>{content}</Link>
       )}
       {preview && previewMounted ? (
         <div ref={previewRef} className="archive-project-row__preview" aria-hidden="true">
           <img src={preview} alt="" loading="lazy" />
-          <span>{project.titleZh ?? project.title}</span>
+          <span><b>{project.titleZh ?? project.title}</b><small>{displayTitle}</small></span>
         </div>
       ) : null}
     </li>
