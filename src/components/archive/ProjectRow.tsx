@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 
 import { getProjectHref, getProjectPreview } from '../../data/projectMedia';
 import type { PortfolioProject } from '../../data/projects';
 import { gsap } from '../../lib/gsap';
+import { getProjectPreviewPosition } from './projectPreviewPosition';
 
 interface ProjectRowProps {
   number: string;
@@ -59,15 +61,21 @@ export function ProjectRow({ number, project, selected = false, placeholder = fa
 
   const showPreview = (event: ReactPointerEvent<HTMLLIElement>) => {
     if (!preview) return;
-    pointerPositionRef.current = { x: event.clientX + 20, y: event.clientY - 60 };
+    pointerPositionRef.current = getProjectPreviewPosition(
+      event.clientX,
+      event.clientY,
+      window.innerWidth,
+      window.innerHeight,
+    );
     setPreviewMounted(true);
     setPreviewVisible(true);
   };
   const hidePreview = () => setPreviewVisible(false);
   const movePreview = (event: ReactPointerEvent<HTMLLIElement>) => {
     if (!previewVisible) return;
-    moveXRef.current?.(event.clientX + 20);
-    moveYRef.current?.(event.clientY - 60);
+    const position = getProjectPreviewPosition(event.clientX, event.clientY, window.innerWidth, window.innerHeight);
+    moveXRef.current?.(position.x);
+    moveYRef.current?.(position.y);
   };
 
   if (placeholder || !project) {
@@ -120,12 +128,15 @@ export function ProjectRow({ number, project, selected = false, placeholder = fa
       ) : (
         <Link className={`archive-project-row${selected ? ' is-selected' : ''}`} to={href} data-cursor="view" data-selected-game={selected ? project.slug : undefined}>{content}</Link>
       )}
-      {preview && previewMounted ? (
-        <div ref={previewRef} className="archive-project-row__preview" aria-hidden="true">
-          <img src={preview} alt="" loading="lazy" />
-          <span><b>{project.titleZh ?? project.title}</b><small>{displayTitle}</small></span>
-        </div>
-      ) : null}
+      {preview && previewMounted && typeof document !== 'undefined'
+        ? createPortal(
+            <div ref={previewRef} className="archive-project-row__preview" data-selected-preview={selected ? 'true' : undefined} aria-hidden="true">
+              <img src={preview} alt="" loading="lazy" />
+              <span><b>{project.titleZh ?? project.title}</b><small>{displayTitle}</small></span>
+            </div>,
+            document.body,
+          )
+        : null}
     </li>
   );
 }

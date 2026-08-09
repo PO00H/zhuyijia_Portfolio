@@ -51,8 +51,8 @@ describe('reference-source motion contract', () => {
     expect(cursor).toContain('scale: 2.5');
     expect(cursor).toContain("delay: 0.1");
     expect(row).toContain("duration: 0.4, ease: 'power3.out'");
-    expect(row).toContain('event.clientX + 20');
-    expect(row).toContain('event.clientY - 60');
+    expect(row).toContain('getProjectPreviewPosition(event.clientX, event.clientY');
+    expect(row).toContain('document.body');
     expect(row).toContain("ease: 'back.out(1.2)'");
     expect(css).toContain('width: 240px');
     expect(css).toContain('aspect-ratio: 16 / 9');

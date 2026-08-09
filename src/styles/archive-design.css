@@ -69,7 +69,6 @@
 
 .archive-project-list { border-top: 1px solid var(--archive-rule); list-style: none; margin: 0; padding: 0; }
 .archive-project-row-wrap { position: relative; list-style: none; transition: opacity .25s ease; }
-.archive-selected .archive-project-list:hover .archive-project-row-wrap:not(:hover) { opacity: .3; }
 .archive-works .archive-project-list:hover .archive-project-row-wrap:not(:hover) { opacity: .4; }
 .archive-project-row { position: relative; z-index: 2; min-height: 8.5rem; display: grid; grid-template-columns: 4rem minmax(0, 1.5fr) minmax(14rem, 1fr) 6rem; align-items: center; gap: 1.5rem; border-bottom: 1px solid var(--archive-rule); transition: background .25s ease, opacity .25s ease; }
 .archive-project-row:not(.is-placeholder):hover { background: var(--archive-surface); }

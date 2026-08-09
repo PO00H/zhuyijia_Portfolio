@@ -165,18 +165,18 @@
   font-size: clamp(2.3rem, 4.2vw, 4.4rem);
 }
 
-.archive-selected .archive-project-row__preview > span {
+.archive-project-row__preview[data-selected-preview='true'] > span {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: .75rem;
 }
 
-.archive-selected .archive-project-row__preview > span b {
+.archive-project-row__preview[data-selected-preview='true'] > span b {
   font-weight: 500;
 }
 
-.archive-selected .archive-project-row__preview > span small {
+.archive-project-row__preview[data-selected-preview='true'] > span small {
   overflow: hidden;
   max-width: 9rem;
   font-family: var(--archive-body);
