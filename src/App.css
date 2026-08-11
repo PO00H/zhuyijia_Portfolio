@@ -1,5 +1,28 @@
 /* App-specific styles */
 
+.site-skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 1000;
+  padding: 0.7rem 0.9rem;
+  transform: translateY(calc(-100% - 1rem));
+  background: var(--valiente-red);
+  color: white;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+
+.site-skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+.site-main:focus {
+  outline: none;
+}
+
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;

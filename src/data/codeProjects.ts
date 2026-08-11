@@ -17,7 +17,7 @@ export interface CodeProject {
 export const webProjects: CodeProject[] = [
   {
     id: 'frontend-001',
-    title: 'Synthwave OS',
+    title: '音频工具网站 — 模块化工作站界面',
     year: '2026',
     tags: ['HTML', 'CSS', 'JS', 'GSAP'],
     cover: '/covers/frontend-001.webp',
@@ -27,7 +27,7 @@ export const webProjects: CodeProject[] = [
   },
   {
     id: 'frontend-002',
-    title: 'Waitlist — Join Now',
+    title: '创意平台网站 — 等候名单',
     year: '2026',
     tags: ['HTML', 'CSS', 'JS'],
     cover: '/covers/frontend-002.webp',
@@ -36,7 +36,7 @@ export const webProjects: CodeProject[] = [
   },
   {
     id: 'frontend-003',
-    title: 'Synth Dashboard — Memphis Console',
+    title: '数据控制台 — 孟菲斯风格系统看板',
     year: '2026',
     tags: ['HTML', 'CSS', 'JS'],
     cover: '/covers/frontend-003.webp',
@@ -45,7 +45,7 @@ export const webProjects: CodeProject[] = [
   },
   {
     id: 'frontend-004',
-    title: 'Outsource Consultants',
+    title: '企业服务网站 — 建筑合规咨询与审批',
     year: '2026',
     tags: ['HTML', 'CSS', 'JS'],
     cover: '/covers/frontend-004.webp',
@@ -54,7 +54,7 @@ export const webProjects: CodeProject[] = [
   },
   {
     id: 'frontend-005',
-    title: 'Exat — Hot Type Replica',
+    title: '字体品牌网站 — EXAT 页面复现',
     year: '2026',
     tags: ['HTML', 'CSS', 'JS'],
     cover: '/covers/frontend-005.webp',
@@ -63,7 +63,7 @@ export const webProjects: CodeProject[] = [
   },
   {
     id: 'frontend-006',
-    title: 'Exat Typeface I',
+    title: '互动字体网站 — EXAT 动态排版实验',
     year: '2026',
     tags: ['HTML', 'CSS', 'JS'],
     cover: '/covers/frontend-006.webp',
@@ -73,7 +73,7 @@ export const webProjects: CodeProject[] = [
   },
   {
     id: 'frontend-007',
-    title: 'Exat Typeface II',
+    title: '创作工具网站 — 终端式智能创作系统',
     year: '2026',
     tags: ['HTML', 'CSS', 'JS'],
     cover: '/covers/frontend-007.webp',
@@ -82,7 +82,7 @@ export const webProjects: CodeProject[] = [
   },
   {
     id: 'frontend-008',
-    title: 'Dev.Engineer — Frontend',
+    title: '开发者作品集 — 创意前端与交互项目',
     year: '2026',
     tags: ['HTML', 'CSS', 'JS'],
     cover: '/covers/frontend-008.webp',
@@ -91,7 +91,7 @@ export const webProjects: CodeProject[] = [
   },
   {
     id: 'frontend-009',
-    title: 'Nexus Analytics — 数据可视化',
+    title: '系统监控平台 — 实时基础设施数据看板',
     year: '2026',
     tags: ['HTML', 'CSS', 'JS', 'D3'],
     cover: '/covers/frontend-009.webp',
@@ -100,7 +100,7 @@ export const webProjects: CodeProject[] = [
   },
   {
     id: 'frontend-010',
-    title: 'Yijia.Zhu — Portfolio',
+    title: '创意开发作品集 — 代码与视觉项目',
     year: '2026',
     tags: ['HTML', 'CSS', 'JS'],
     cover: '/covers/frontend-010.webp',
@@ -109,11 +109,11 @@ export const webProjects: CodeProject[] = [
   },
 ];
 
-// AI 组：NewFace —— 节点式 AI 工作站（BYOK 实时运行）
+// AI 组：NewFace —— 分支式 AI 推演画布（BYOK 实时运行）
 export const aiProjects: CodeProject[] = [
   {
     id: 'ai-001',
-    title: 'NewFace — 节点式 AI 工作站',
+    title: 'NewFace — 分支式 AI 推演画布',
     year: '2026',
     tags: ['React Flow', 'LLM', 'Canvas', 'BYOK'],
     cover: '/covers/newface.webp',

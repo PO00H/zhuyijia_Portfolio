@@ -56,7 +56,7 @@ const workDetails: WorkDetail[] = [
     projects: [
       {
         id: 'design-001',
-        title: '《StoneCity》 石之城',
+        title: 'StoneCity — 石之城',
         category: 'UE5 LEVEL ART',
         year: '2025',
         wide: true,
@@ -71,7 +71,7 @@ const workDetails: WorkDetail[] = [
       },
       {
         id: 'design-002',
-        title: '《Peak》 山崖',
+        title: 'Peak — 山崖',
         category: 'UE5 LEVEL ART',
         year: '2025',
         description:
@@ -82,7 +82,7 @@ const workDetails: WorkDetail[] = [
       },
       {
         id: 'design-003',
-        title: '《Blade Runner》 银翼杀手',
+        title: 'Blade Runner — 银翼杀手',
         category: 'UE5 LEVEL ART',
         year: '2025',
         description:
@@ -92,7 +92,7 @@ const workDetails: WorkDetail[] = [
       },
       {
         id: 'design-004',
-        title: 'Tajima Cutter 美工刀',
+        title: 'TAJIMA Cutter — PBR 美工刀',
         category: 'Hard Surface',
         year: '2025',
         description: 'PBR 美工刀，全套贴图制作',
@@ -107,18 +107,8 @@ const workDetails: WorkDetail[] = [
         ],
       },
       {
-        id: 'design-005',
-        title: 'Mech Prototype 机械原型',
-        category: 'Hard Surface',
-        year: '2025',
-        description: '白模 多足机器人',
-        tools: ['Blender', 'C4D'],
-        modelUrl:
-          'https://sketchfab.com/models/a5407920f5f24dcea82311788aa87765/embed?autostart=1&ui_controls=1&ui_infos=0&ui_inspector=0&ui_stop=0&ui_watermark=0&ui_watermark_link=0',
-      },
-      {
         id: 'design-006',
-        title: '《风格化柠檬》',
+        title: 'Stylized Lemon — 风格化练习',
         category: 'STYLIZED',
         year: '2025',
         description: '风格化着色器',
