@@ -2465,6 +2465,7 @@
   .portfolio-hero,
   .portfolio-section:not(.portfolio-game-section) {
     background: rgba(245, 247, 245, 0.84);
+    box-shadow: 0 0 0 100vmax rgba(245, 247, 245, 0.84);
   }
 }
 
@@ -3530,6 +3531,9 @@
 .portfolio-hero,
 .portfolio-section:not(.portfolio-game-section) {
   background: rgba(245, 247, 245, 0.74);
+  /* Full-bleed: paint the section background edge-to-edge like the game section. */
+  box-shadow: 0 0 0 100vmax rgba(245, 247, 245, 0.74);
+  clip-path: inset(0 -100vmax);
 }
 
 .portfolio-game-section {
@@ -3591,6 +3595,7 @@
   .portfolio-hero,
   .portfolio-section:not(.portfolio-game-section) {
     background: rgba(245, 247, 245, 0.84);
+    box-shadow: 0 0 0 100vmax rgba(245, 247, 245, 0.84);
   }
 }
 
