@@ -739,5 +739,5 @@
 /* Typography study: keep the archive in the same pixel family as the homepage. */
 .archive-shell,
 .archive-shell * {
-  font-family: var(--portfolio-pixel-font);
+  font-family: var(--portfolio-pixel-font) !important;
 }

@@ -2262,7 +2262,7 @@
 .portfolio-shell *,
 .portfolio-floating-preview,
 .portfolio-floating-preview * {
-  font-family: var(--portfolio-pixel-font, 'Fusion Pixel 12', 'JetBrains Mono', monospace);
+  font-family: var(--portfolio-pixel-font, 'Fusion Pixel 12', 'JetBrains Mono', monospace) !important;
 }
 
 @media (hover: hover) and (pointer: fine) {
