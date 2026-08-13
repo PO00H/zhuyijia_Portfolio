@@ -328,9 +328,11 @@ export function FeaturedGamesSection() {
               start: 'top 82%',
               once: true,
               onEnter: () => {
-                const tabletTimeline = gsap
+                const tabletTimeline: gsap.core.Timeline = gsap
                   .timeline({
-                    onComplete: () => tabletTimelines.delete(tabletTimeline),
+                    onComplete: (): void => {
+                      tabletTimelines.delete(tabletTimeline);
+                    },
                   })
                   .fromTo(
                     localPixels,
