@@ -25,8 +25,7 @@ npm run build
 - 已确认的派生素材映射：`src/data/portfolioDerivedAssets.json`
 - 首页核心游戏区：`src/sections/portfolio/FeaturedGamesSection.tsx`
 - Archive 页面：`src/sections/archive/ArchivePage.tsx`
-- 视觉规范：`docs/portfolio-visual-direction.md`
-- 动效规范：`docs/portfolio-motion-design.md`
+- 当前唯一设计与动效规范：`docs/portfolio-design-system.md`
 
 ## 加入真实 UE / C++ 项目
 
@@ -42,3 +41,4 @@ npm run build
 - 不直接覆盖 `public/derived/asset-lab-v1`；该目录是已验收裁切结果。
 - 不在组件里重复写项目事实，标题、年份、标签、媒体和入口统一从项目清单读取。
 - 新增动效先更新动效规范，并提供触屏与 `prefers-reduced-motion` 降级。
+- 历史实验与旧提案不作为执行依据；任何设计调整先更新 `docs/portfolio-design-system.md`。

@@ -3,6 +3,7 @@
 > 适用位置：GAME WORK 第 01 项
 > 当前数据 ID：`ue-project-upcoming`
 > 原则：只替换真实内容，不重做首页结构，不覆盖旧素材和已验收派生素材。
+> 配套规范：[`portfolio-design-system.md`](portfolio-design-system.md)
 
 ## 1. 替换前准备
 
@@ -98,8 +99,8 @@ public/embed/<project-slug>/index.html
 ## 6. 交给 Codex 时的指令
 
 ```text
-请完整读取 CODEX_TODO.md、docs/portfolio-restructure-plan.md 和 docs/adding-real-ue-project.md。
+请完整读取 CODEX_TODO.md、docs/portfolio-design-system.md 和 docs/adding-real-ue-project.md。
 只使用我提供的真实项目名称、说明、标签、素材和入口，替换 ue-project-upcoming 预留位。
-不要移动旧素材，不要覆盖 public/derived/asset-lab-v1，不要修改已验收的页面结构、配色和 560ms 切换。
+不要移动旧素材，不要覆盖 public/derived/asset-lab-v1，不要修改已验收的页面结构、ASCII + Dithering 背景、全站像素字体和 560ms 切换。
 完成后检查桌面、手机、键盘、reduced-motion、所有新增链接与生产构建，然后停下来等我验收。
 ```

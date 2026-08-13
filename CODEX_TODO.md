@@ -1,16 +1,16 @@
 # Codex 执行清单：UE / C++ 作品集改版
 
-> 本文件是 Codex 的执行控制表。设计目标与信息架构以 [`docs/portfolio-restructure-plan.md`](docs/portfolio-restructure-plan.md) 为唯一依据。
+> 本文件保留分轮实施记录。当前唯一可执行的设计、动效与信息架构规范是 [`docs/portfolio-design-system.md`](docs/portfolio-design-system.md)；下方历史日志中的旧提案、旧阶段状态和旧文档路径仅用于追溯。
 >
-> 当前状态：Motion Study 01–06 已通过；背景、事件、内突与点击参数已冻结
-> 当前允许阶段：首页背景接入 01 — `BLOCKED_BY_REVIEW`；先确认浅灰青色场与现有黑 / 酸绿首页的配色关系，再改正式首页
+> 当前状态：ASCII + Dithering 正式背景、同源点击波、像素字体和 03 / 05 悬浮预览已接入开发支线并通过构建
+> 当前允许阶段：只修复或微调当前系统；下一阶段必须由用户明确指定，不进入旧 Round 9B–9E
 > 当前分支：`codex/redesign/interactive-portfolio`
 
 ## 1. Codex 每轮工作协议
 
 每次开始修改前必须：
 
-1. 完整读取本文件和 `docs/portfolio-restructure-plan.md`。
+1. 完整读取本文件顶部状态和 `docs/portfolio-design-system.md`；涉及真实 UE 项目时再读取 `docs/adding-real-ue-project.md`。
 2. 检查当前分支与未提交更改，保留用户已有修改。
 3. 只执行“当前允许阶段”，不得顺手进入下一阶段。
 4. 先复用现有内容、素材和独立 HTML，不擅自改写项目事实。
@@ -23,8 +23,8 @@
 
 - 不删除或搬动 `public/embed` 中现有独立项目页面。
 - 不删除现有图片、视频、材质或预览文件。
-- 不在结构阶段更换配色和字体。
-- 不在结构阶段加入大规模滚动动画、3D、Canvas 或 WebGL。
+- 不恢复已否决的终端网站、线路图、CTA 扩散、随机流体或酸性黄绿 Pixel Signal 方向。
+- 不把真实项目图片、视频、截图或 Sketchfab 转换为 ASCII / Dither / 像素画面。
 - 不把 Upcoming UE / C++ Project 伪造成已经完成的项目。
 - 不让 Design / Game / Code 恢复为同等权重的首页主导航。
 - 不用动画掩盖尚未确认的信息层级。
@@ -745,3 +745,8 @@ Motion Study 06 验收：用户确认点击定位版本通过；Study 06 标记�
 2026-08-13 — 中文像素字体覆盖修复 — DONE
 问题：Hero 正文、项目摘要、实习说明、教育与奖项列表仍显示为非像素字体。原因不是 Fusion Pixel 缺少简体中文字形，而是这些组件原有的高优先级 `JetBrains Mono` 声明覆盖了上一轮的通用字体规则。
 修复：将简体中文 Fusion Pixel 字体声明提升到全局加载层，并把正式首页、Archive 与浮动预览的最终字体锁定设为最高优先级。页面 DOM 文本统一使用 Fusion Pixel；项目图片、视频、截图、Sketchfab 与独立嵌入作品仍保持自身字体和原始画面。
+
+2026-08-13 — Docs 规范整合 — DONE
+结果：将已经实施的结构、ASCII + Dithering 视觉、背景呼吸、同源点击波、03 / 05 预览、Fusion Pixel 字体、导航与响应式边界合并为 `docs/portfolio-design-system.md`，并把它设为当前唯一可执行规范。`docs/adding-real-ue-project.md` 继续作为唯一专项维护指南。
+清理：删除已实施的结构计划、拆分的旧视觉 / 动效稿、两份废止提案、项目盘点快照、Archive 命名草案，以及未被引用且代表已否决方向的 6 张实验截图。删除内容均仍可从 Git 历史恢复。
+约束：历史日志只用于追溯，不能覆盖新规范；下一阶段仍须用户明确指定，不进入旧 Round 9B–9E，不改 main。
