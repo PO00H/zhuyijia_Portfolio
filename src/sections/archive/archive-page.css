@@ -1,4 +1,16 @@
 .archive-shell {
+  --portfolio-pixel-font: 'Fusion Pixel 12', 'JetBrains Mono', monospace;
+  --portfolio-signal-acid: #d8ff32;
+  --portfolio-signal-void: #090a09;
+  --portfolio-signal-surface: #111510;
+  --portfolio-signal-white: #f1f3eb;
+  --portfolio-signal-muted: #949c90;
+  --portfolio-signal-line: rgba(241, 243, 235, 0.18);
+  --valiente-bg: var(--portfolio-signal-void);
+  --valiente-red: var(--portfolio-signal-acid);
+  --valiente-dark: var(--portfolio-signal-white);
+  --valiente-gray: var(--portfolio-signal-muted);
+
   min-height: 100vh;
   background: var(--valiente-bg);
   color: var(--valiente-dark);
@@ -18,8 +30,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 clamp(1.5rem, 5vw, 6rem);
-  background: rgba(209, 209, 203, 0.96);
-  border-bottom: 1px solid rgba(138, 138, 133, 0.32);
+  background: rgba(9, 10, 9, 0.94);
+  border-bottom: 1px solid var(--portfolio-signal-line);
+  backdrop-filter: blur(12px);
 }
 
 .archive-brand,
@@ -32,17 +45,19 @@
 
 .archive-brand {
   gap: 0.75rem;
-  font-size: 0.8rem;
-  font-weight: 800;
+  font-family: var(--portfolio-pixel-font);
+  font-size: 16px;
+  font-weight: 400;
 }
 
 .archive-brand small,
 .archive-back {
   color: var(--valiente-gray);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.62rem;
+  font-family: var(--portfolio-pixel-font);
+  font-size: 12px;
   font-weight: 400;
-  letter-spacing: 0.11em;
+  letter-spacing: 0;
+  line-height: 24px;
   text-transform: uppercase;
 }
 
@@ -81,20 +96,22 @@
   align-items: center;
   justify-content: space-between;
   color: var(--valiente-gray);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
+  font-family: var(--portfolio-pixel-font);
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 24px;
   text-transform: uppercase;
 }
 
 .archive-intro h1 {
   margin: clamp(1.5rem, 3vw, 3rem) 0 0;
   color: var(--valiente-red);
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(4.2rem, 15vw, 14rem);
-  font-weight: 800;
-  letter-spacing: -0.07em;
-  line-height: 0.72;
+  font-family: var(--portfolio-pixel-font);
+  font-size: clamp(72px, 12vw, 144px);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 0.84;
+  font-synthesis: none;
 }
 
 .archive-intro > p {
@@ -125,9 +142,10 @@
   border-right: 1px solid rgba(138, 138, 133, 0.35);
   background: transparent;
   color: var(--valiente-gray);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.64rem;
-  letter-spacing: 0.1em;
+  font-family: var(--portfolio-pixel-font);
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 24px;
   text-align: left;
   text-transform: uppercase;
   cursor: pointer;
@@ -171,9 +189,10 @@
 .archive-list-labels {
   padding: 0.65rem 0;
   color: var(--valiente-gray);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.56rem;
-  letter-spacing: 0.12em;
+  font-family: var(--portfolio-pixel-font);
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 24px;
 }
 
 .archive-list-labels span:nth-child(2) {
@@ -198,6 +217,9 @@
   color: var(--valiente-dark);
   text-align: left;
   cursor: pointer;
+  transition:
+    color 120ms ease-out,
+    background-color 120ms ease-out;
 }
 
 .archive-project-name {
@@ -212,10 +234,11 @@
 .archive-project-track,
 .archive-project-year {
   color: var(--valiente-gray);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.58rem;
-  font-weight: 300;
-  letter-spacing: 0.08em;
+  font-family: var(--portfolio-pixel-font);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 24px;
   text-transform: uppercase;
 }
 
@@ -239,6 +262,7 @@
 .archive-project-row:focus-visible,
 .archive-project-row.is-selected {
   color: var(--valiente-red);
+  background: rgba(216, 255, 50, 0.065);
 }
 
 .archive-project-row:hover .archive-project-name small,
@@ -320,9 +344,10 @@
   height: 100%;
   place-items: center;
   color: rgba(232, 232, 229, 0.62);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
+  font-family: var(--portfolio-pixel-font);
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 24px;
 }
 
 .archive-preview-meta {
@@ -374,9 +399,10 @@
   padding: 0.45rem 0.6rem;
   border: 1px solid rgba(138, 138, 133, 0.35);
   color: var(--valiente-gray);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.5rem;
-  letter-spacing: 0.06em;
+  font-family: var(--portfolio-pixel-font);
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 18px;
   text-transform: uppercase;
 }
 
@@ -389,10 +415,11 @@
   padding: 0.65rem 0.8rem;
   border: 1px solid var(--valiente-red);
   background: var(--valiente-red);
-  color: white;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.58rem;
-  letter-spacing: 0.08em;
+  color: var(--portfolio-signal-void);
+  font-family: var(--portfolio-pixel-font);
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 24px;
   text-decoration: none;
 }
 
@@ -456,7 +483,7 @@
   }
 
   .archive-intro h1 {
-    font-size: clamp(3.65rem, 18vw, 6rem);
+    font-size: clamp(60px, 18vw, 84px);
   }
 
   .archive-intro > p {
@@ -569,5 +596,97 @@
 
   .archive-footer {
     justify-content: flex-end;
+  }
+}
+
+/* Round 6C: Archive inherits the restrained Pixel Signal system. */
+.archive-shell {
+  background: rgba(9, 10, 9, 0.94);
+}
+
+.archive-intro {
+  position: relative;
+}
+
+.archive-intro::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: min(288px, 54vw);
+  height: 6px;
+  content: '';
+  background: repeating-linear-gradient(
+    90deg,
+    var(--portfolio-signal-acid) 0 12px,
+    transparent 12px 24px
+  );
+  transform-origin: right center;
+  animation: archive-signal-in 180ms ease-out both;
+}
+
+@keyframes archive-signal-in {
+  from {
+    opacity: 0.32;
+    transform: scaleX(0.34);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+.archive-filters button.is-active {
+  background: rgba(216, 255, 50, 0.08);
+}
+
+.archive-preview {
+  animation: archive-preview-in 180ms ease-out both;
+}
+
+@keyframes archive-preview-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.archive-preview-footer a,
+.archive-back,
+.archive-brand,
+.archive-filters button {
+  transition:
+    color 120ms ease-out,
+    background-color 120ms ease-out,
+    border-color 120ms ease-out,
+    transform 120ms ease-out;
+}
+
+.archive-preview-footer a:active,
+.archive-back:active,
+.archive-brand:active,
+.archive-filters button:active {
+  transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .archive-shell *,
+  .archive-shell *::before,
+  .archive-shell *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .archive-preview-footer a:active,
+  .archive-back:active,
+  .archive-brand:active,
+  .archive-filters button:active {
+    transform: none;
   }
 }

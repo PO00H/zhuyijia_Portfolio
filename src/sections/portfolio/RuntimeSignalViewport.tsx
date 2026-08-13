@@ -1,8 +1,13 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, Ref } from 'react';
 import type { PortfolioProject } from '@/data/portfolioProjects';
+import {
+  RuntimeDitherTransition,
+  type RuntimeDitherTransitionHandle,
+} from './RuntimeDitherTransition';
 
 interface RuntimeSignalViewportProps {
   projects: PortfolioProject[];
+  ditherTransitionRef: Ref<RuntimeDitherTransitionHandle>;
 }
 
 interface SignalPixelsProps {
@@ -58,7 +63,10 @@ function ReservedSignal({ project }: { project: PortfolioProject }) {
   );
 }
 
-export function RuntimeSignalViewport({ projects }: RuntimeSignalViewportProps) {
+export function RuntimeSignalViewport({
+  projects,
+  ditherTransitionRef,
+}: RuntimeSignalViewportProps) {
   return (
     <aside className="portfolio-runtime-viewport" aria-hidden="true">
       <header className="portfolio-runtime-chrome">
@@ -81,7 +89,7 @@ export function RuntimeSignalViewport({ projects }: RuntimeSignalViewportProps) 
           </div>
         ))}
 
-        <SignalPixels count={42} className="portfolio-runtime-pixels" />
+        <RuntimeDitherTransition ref={ditherTransitionRef} projects={projects} />
         <div className="portfolio-runtime-crt" />
         <span className="portfolio-runtime-corner is-top-left" />
         <span className="portfolio-runtime-corner is-bottom-right" />

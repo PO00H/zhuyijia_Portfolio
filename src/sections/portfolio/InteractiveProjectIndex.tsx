@@ -65,8 +65,6 @@ export function InteractiveProjectIndex({
       : window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
   const previewRef = useRef<HTMLDivElement>(null);
-  const frameRef = useRef<number | null>(null);
-  const pointerRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -75,36 +73,25 @@ export function InteractiveProjectIndex({
     return () => media.removeEventListener('change', handleChange);
   }, []);
 
-  useEffect(
-    () => () => {
-      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
-    },
-    [],
-  );
-
   const positionPreview = (x: number, y: number) => {
-    pointerRef.current = { x, y };
-    if (frameRef.current !== null) return;
+    const preview = previewRef.current;
+    if (!preview) return;
 
-    frameRef.current = requestAnimationFrame(() => {
-      frameRef.current = null;
-      const preview = previewRef.current;
-      if (!preview) return;
+    const previewWidth = Math.min(400, window.innerWidth - 48);
+    const previewHeight = 286;
+    const offset = 24;
+    const hasRoomOnRight = x + offset + previewWidth <= window.innerWidth - offset;
+    const preferredX = hasRoomOnRight ? x + offset : x - previewWidth - offset;
+    const nextX = Math.min(
+      Math.max(offset, preferredX),
+      window.innerWidth - previewWidth - offset,
+    );
+    const nextY = Math.min(
+      Math.max(offset, y - previewHeight / 2),
+      window.innerHeight - previewHeight - offset,
+    );
 
-      const previewWidth = Math.min(400, window.innerWidth - 48);
-      const previewHeight = 286;
-      const offset = 24;
-      const nextX = Math.min(
-        Math.max(offset, pointerRef.current.x + offset),
-        window.innerWidth - previewWidth - offset,
-      );
-      const nextY = Math.min(
-        Math.max(offset, pointerRef.current.y - previewHeight / 2),
-        window.innerHeight - previewHeight - offset,
-      );
-
-      preview.style.transform = `translate3d(${nextX}px, ${nextY}px, 0)`;
-    });
+    preview.style.transform = `translate3d(${nextX}px, ${nextY}px, 0)`;
   };
 
   const handlePointerEnter = (
@@ -138,9 +125,6 @@ export function InteractiveProjectIndex({
                 aria-expanded={isExpanded}
                 aria-controls={`portfolio-project-${project.id}`}
                 onPointerEnter={(event) => handlePointerEnter(event, project)}
-                onPointerMove={(event) => {
-                  if (event.pointerType === 'mouse') positionPreview(event.clientX, event.clientY);
-                }}
                 onFocus={(event) => {
                   setActiveId(project.id);
                   const bounds = event.currentTarget.getBoundingClientRect();

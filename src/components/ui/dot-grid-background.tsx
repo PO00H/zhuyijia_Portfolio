@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React from "react";
 
 export const DotGridBackground = ({
   children,
@@ -11,84 +11,45 @@ export const DotGridBackground = ({
   className?: string;
   containerClassName?: string;
 }) => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  }, []);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    container.addEventListener('mousemove', handleMouseMove);
-    return () => {
-      container.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, [handleMouseMove]);
-
-  // 基础淡灰色点 - 0.375px，间距6px
   const baseDotStyle: React.CSSProperties = {
-    backgroundImage: `radial-gradient(circle, rgba(140, 140, 135, 0.4) 0.375px, transparent 0.375px)`,
-    backgroundSize: '6px 6px',
+    backgroundImage: `radial-gradient(circle, rgba(241, 243, 235, 0.16) 0 1px, transparent 1px)`,
+    backgroundSize: '12px 12px',
   };
 
-  // 橙色点遮罩样式 - 200px范围
-  const orangeMaskStyle: React.CSSProperties = isHovering ? {
-    backgroundImage: `radial-gradient(circle, rgba(255, 61, 0, 0.8) 0.375px, transparent 0.375px)`,
-    backgroundSize: '6px 6px',
-    WebkitMaskImage: `radial-gradient(200px circle at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
-    maskImage: `radial-gradient(200px circle at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
-    opacity: 1,
-  } : {
-    opacity: 0,
+  const gridLineStyle: React.CSSProperties = {
+    backgroundImage: `linear-gradient(rgba(216, 255, 50, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(216, 255, 50, 0.035) 1px, transparent 1px)`,
+    backgroundSize: '48px 48px',
   };
 
-  // 中心放大点遮罩样式 - 80px范围，点大小0.75px
-  const centerMaskStyle: React.CSSProperties = isHovering ? {
-    backgroundImage: `radial-gradient(circle, rgba(255, 61, 0, 0.8) 0.75px, transparent 0.75px)`,
-    backgroundSize: '6px 6px',
-    WebkitMaskImage: `radial-gradient(80px circle at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
-    maskImage: `radial-gradient(80px circle at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
-    opacity: 1,
-  } : {
-    opacity: 0,
+  const signalFieldStyle: React.CSSProperties = {
+    backgroundImage: `radial-gradient(circle, rgba(216, 255, 50, 0.14) 0 1px, transparent 1px)`,
+    backgroundSize: '24px 24px',
+    WebkitMaskImage: 'linear-gradient(135deg, black 0%, transparent 34%)',
+    maskImage: 'linear-gradient(135deg, black 0%, transparent 34%)',
   };
 
   return (
     <div
-      ref={containerRef}
       className={cn(
         "fixed inset-0 w-full h-full",
         containerClassName
       )}
       style={{ zIndex: 0 }}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
     >
-      {/* 默认状态：淡灰色小点 */}
-      <div 
-        className="absolute inset-0 pointer-events-none" 
+      <div
+        className="absolute inset-0 pointer-events-none"
+        aria-hidden="true"
         style={baseDotStyle}
       />
-      
-      {/* 悬停时的橙色点效果 - 200px渐变范围 */}
       <div
-        className="pointer-events-none absolute inset-0 transition-opacity duration-300"
-        style={orangeMaskStyle}
+        className="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+        style={gridLineStyle}
       />
-
-      {/* 中心放大点效果 - 80px范围 */}
       <div
-        className="pointer-events-none absolute inset-0 transition-opacity duration-300"
-        style={centerMaskStyle}
+        className="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+        style={signalFieldStyle}
       />
 
       <div className={cn("relative", className)}>{children}</div>

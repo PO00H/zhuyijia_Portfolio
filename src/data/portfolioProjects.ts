@@ -222,7 +222,7 @@ export const sourcePortfolioProjects: PortfolioProject[] = [
     enabled: true,
     year: '2026',
     summary:
-      '三维美术部门技术美术实习：研发部门工具箱，处理材质、资产与 API 接入，搭建 Blender PBR 与 UV 顶点组合插件。现有履历记录产研提效 30%。',
+      '三维美术部门技术美术实习：研发部门工具箱，处理材质、资产与 API 接入，搭建 Blender PBR 与 UV 顶点组合插件，将重复操作整理为可复用工具流程。',
     assetPaths: [],
   },
   {

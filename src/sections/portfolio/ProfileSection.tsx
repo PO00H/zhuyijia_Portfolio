@@ -22,14 +22,16 @@ export function ProfileSection() {
     <section id="profile" className="portfolio-section portfolio-profile-section">
       <SectionHeading
         index="07"
-        eyebrow="Profile / 精简履历"
-        title="PROFILE"
-        description="保留招聘方快速判断所需的信息；详细工作内容已经放在 Industry Experience，不在这里重复。"
+        eyebrow="履历摘要 / PROFILE"
+        title="个人履历"
+        description="保留招聘方快速判断所需的信息；详细工作内容已经放在实习项目经历中，不在这里重复。"
+        variant="resume"
+        meta={{ label: '履历模块', value: '04' }}
       />
 
       <div className="portfolio-profile-grid">
         <div className="portfolio-profile-block">
-          <p className="section-label">EDUCATION</p>
+          <p className="section-label">教育经历 / EDUCATION</p>
           <dl className="portfolio-profile-list">
             <div>
               <dt>2025 — 2028</dt>
@@ -43,7 +45,7 @@ export function ProfileSection() {
         </div>
 
         <div className="portfolio-profile-block">
-          <p className="section-label">RELEVANT EXPERIENCE</p>
+          <p className="section-label">相关经历 / EXPERIENCE</p>
           <dl className="portfolio-profile-list">
             <div>
               <dt>2026</dt>
@@ -57,7 +59,7 @@ export function ProfileSection() {
         </div>
 
         <div className="portfolio-profile-block">
-          <p className="section-label">CORE SKILLS</p>
+          <p className="section-label">核心技能 / SKILLS</p>
           <ul className="portfolio-profile-skills">
             {skills.map((skill) => (
               <li key={skill}>{skill}</li>
@@ -66,7 +68,7 @@ export function ProfileSection() {
         </div>
 
         <div className="portfolio-profile-block">
-          <p className="section-label">SELECTED AWARDS</p>
+          <p className="section-label">精选奖项 / AWARDS</p>
           <ul className="portfolio-profile-awards">
             {awards.map((award) => (
               <li key={award}>{award}</li>

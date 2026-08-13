@@ -6,6 +6,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { useLightbox } from '@/components/code/LightboxContext';
 import { getPortfolioProjectById, type PortfolioProject } from '@/data/portfolioProjects';
 import { RuntimeSignalViewport, SignalPixels } from './RuntimeSignalViewport';
+import type { RuntimeDitherTransitionHandle } from './RuntimeDitherTransition';
 import { SectionHeading } from './SectionHeading';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -78,6 +79,7 @@ function FeaturedProject({ project, index }: { project: PortfolioProject; index:
 export function FeaturedGamesSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const activeTimelineRef = useRef<gsap.core.Timeline | null>(null);
+  const ditherTransitionRef = useRef<RuntimeDitherTransitionHandle>(null);
   const projects = [
     getPortfolioProjectById('ue-project-upcoming'),
     getPortfolioProjectById('game-001'),
@@ -110,10 +112,6 @@ export function FeaturedGamesSection() {
             const railSegments = Array.from(
               root.querySelectorAll<HTMLElement>('[data-runtime-rail-index]'),
             );
-            const pixels = Array.from(
-              root.querySelectorAll<HTMLElement>('.portfolio-runtime-pixels [data-signal-pixel]'),
-            );
-
             if (
               entries.length !== projects.length ||
               layers.length !== projects.length ||
@@ -146,6 +144,7 @@ export function FeaturedGamesSection() {
             const showImmediately = (nextIndex: number) => {
               activeTimelineRef.current?.kill();
               activeTimelineRef.current = null;
+              ditherTransitionRef.current?.cancel();
               activeIndex = nextIndex;
               updateActiveState(nextIndex);
               gsap.set(layers, {
@@ -156,7 +155,6 @@ export function FeaturedGamesSection() {
                 autoAlpha: (index) => (index === nextIndex ? 1 : 0),
                 y: 0,
               });
-              gsap.set(pixels, { autoAlpha: 0, x: 0, y: 0, scale: 0.45 });
             };
 
             const activate = (nextIndex: number, animate = true) => {
@@ -174,6 +172,11 @@ export function FeaturedGamesSection() {
               }
 
               activeTimelineRef.current?.kill();
+              const previousIndex = activeIndex;
+              const ditherStarted = ditherTransitionRef.current?.play(
+                previousIndex,
+                nextIndex,
+              ) ?? false;
               activeIndex = nextIndex;
               updateActiveState(nextIndex);
 
@@ -187,63 +190,21 @@ export function FeaturedGamesSection() {
               const timeline = gsap.timeline({
                 defaults: { overwrite: 'auto' },
                 onComplete: () => {
-                  gsap.set([...pixels, ...layers], { willChange: 'auto' });
+                  gsap.set(layers, { willChange: 'auto' });
                   activeTimelineRef.current = null;
                 },
               });
 
               activeTimelineRef.current = timeline;
               timeline
-                .addLabel('scatter', 0)
-                .addLabel('incoming', 0.16)
-                .addLabel('rebuild', 0.18)
+                .addLabel('handoff', 0)
+                .addLabel('diagnostics', 0.16)
                 .addLabel('settled', 0.56)
-                .set([...pixels, ...layers], { willChange: 'transform, opacity' }, 'scatter')
-                .set(pixels, { autoAlpha: 0, x: 0, y: 0, scale: 0.45 }, 'scatter')
-                .to(
-                  outgoingLayers,
-                  {
-                    autoAlpha: 0,
-                    scale: 0.992,
-                    duration: 0.18,
-                    ease: 'power2.inOut',
-                  },
-                  'scatter',
-                )
-                .to(
-                  pixels,
-                  {
-                    autoAlpha: 0.88,
-                    x: (_, element) => Number((element as HTMLElement).dataset.signalX ?? 0),
-                    y: (_, element) => Number((element as HTMLElement).dataset.signalY ?? 0),
-                    scale: 1,
-                    duration: 0.18,
-                    ease: 'power2.inOut',
-                    stagger: { amount: 0.06, from: 'edges' },
-                  },
-                  'scatter',
-                )
+                .set(layers, { willChange: 'transform, opacity' }, 'handoff')
                 .to(
                   outgoingDiagnostics,
                   { autoAlpha: 0, y: -4, duration: 0.12, ease: 'power1.out' },
-                  'incoming',
-                )
-                .to(
-                  incomingLayer,
-                  { autoAlpha: 1, scale: 1, duration: 0.4, ease: 'power2.inOut' },
-                  'incoming',
-                )
-                .to(
-                  pixels,
-                  {
-                    autoAlpha: 0,
-                    x: 0,
-                    y: 0,
-                    scale: 0.45,
-                    duration: 0.38,
-                    ease: 'power2.inOut',
-                  },
-                  'rebuild',
+                  'handoff',
                 )
                 .fromTo(
                   incomingDiagnostics,
@@ -255,8 +216,39 @@ export function FeaturedGamesSection() {
                     ease: 'power2.out',
                     immediateRender: false,
                   },
-                  'rebuild',
+                  'diagnostics',
                 );
+
+              if (ditherStarted) {
+                timeline
+                  .set(outgoingLayers, { autoAlpha: 0, scale: 1 }, 'handoff')
+                  .set(incomingLayer, { autoAlpha: 1, scale: 1 }, 'handoff');
+              } else {
+                timeline
+                  .set(incomingLayer, { autoAlpha: 0, scale: 0.992 }, 'handoff')
+                  .to(
+                    incomingLayer,
+                    {
+                      autoAlpha: 1,
+                      scale: 1,
+                      duration: 0.4,
+                      ease: 'power2.inOut',
+                    },
+                    'handoff',
+                  )
+                  .to(
+                    outgoingLayers,
+                    {
+                      autoAlpha: 0,
+                      scale: 0.992,
+                      duration: 0.4,
+                      ease: 'power2.inOut',
+                    },
+                    'handoff',
+                  );
+              }
+
+              timeline.call(() => undefined, [], 'settled');
             };
 
             const activationLine = window.innerHeight * 0.58;
@@ -302,6 +294,7 @@ export function FeaturedGamesSection() {
               }
               activeTimelineRef.current?.kill();
               activeTimelineRef.current = null;
+              ditherTransitionRef.current?.cancel();
               focusHandlers.forEach(({ entry, handler }) =>
                 entry.removeEventListener('focusin', handler),
               );
@@ -391,13 +384,16 @@ export function FeaturedGamesSection() {
       <div className="portfolio-game-inner">
         <SectionHeading
           index="02"
-          eyebrow="Featured Game Development / 核心游戏开发项目"
-          title="GAME WORK"
+          eyebrow="GAME WORK / 核心项目"
+          title="核心游戏开发"
           description="先展示能够证明编程、系统设计与完整游戏生产能力的项目。真实 UE / C++ 项目将在同一结构中直接替换预留内容。"
         />
 
         <div className="portfolio-runtime-layout">
-          <RuntimeSignalViewport projects={projects} />
+          <RuntimeSignalViewport
+            projects={projects}
+            ditherTransitionRef={ditherTransitionRef}
+          />
 
           <div className="portfolio-featured-grid">
             {projects.map((project, index) => (

@@ -39,7 +39,7 @@ const experienceData: TimelineItem[] = [
     title: '北京格拉菲克斯 — Meshy.ai',
     subtitle: '三维美术部门 · 技术美术实习生',
     description:
-      '独立研发三维产品部门专用工具箱，实现材质与资产自动处理、各家 API 链接，大幅提升产研协同效率（公司提效 30%）；搭建 blender-pbr 插件与 uv 顶点组合插件。',
+      '独立研发三维产品部门专用工具箱，实现材质与资产自动处理、各家 API 接入，并搭建 Blender PBR 与 UV 顶点组合插件，将重复操作整理为可复用工具流程。',
   },
   {
     period: '24.06 — 24.08',

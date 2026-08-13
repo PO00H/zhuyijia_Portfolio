@@ -7,10 +7,10 @@ export function UnrealSystemsSection() {
 
   return (
     <section id="systems" className="portfolio-section portfolio-systems-section">
-      <SectionHeading
-        index="03"
-        eyebrow="Unreal Systems Lab / UE 技术实验"
-        title="SYSTEMS LAB"
+        <SectionHeading
+          index="03"
+          eyebrow="UNREAL SYSTEMS / 技术实验"
+          title="UE 技术实验"
         description="三个练习作为紧凑的 Unreal 技术证据索引。悬停快速预览，点击在当前词条下展开内容。"
       />
 
@@ -40,9 +40,9 @@ export function UnrealSystemsSection() {
       />
 
       <div className="portfolio-systems-capabilities">
-        <span>Animation / IK</span>
-        <span>Blueprint Interaction</span>
-        <span>Gameplay Prototyping</span>
+        <span>动画 / IK</span>
+        <span>蓝图交互</span>
+        <span>玩法原型</span>
         <span>Unreal Workflow</span>
       </div>
     </section>

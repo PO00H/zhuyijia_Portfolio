@@ -9,20 +9,22 @@ export function IndustryExperienceSection() {
     <section id="experience" className="portfolio-section portfolio-experience-section">
       <SectionHeading
         index="04"
-        eyebrow="Industry Experience / 实习与生产实践"
-        title="INDUSTRY EXPERIENCE"
+        eyebrow="EXPERIENCE / 生产实践"
+        title="实习项目经历"
         description="行业经历不是履历复述，而是生产问题、承担职责、使用技术与结果之间的证据链。"
+        variant="record"
+        meta={{ label: '02 CASES', value: '2024—2026' }}
       />
 
       <div className="portfolio-experience-layout">
         <article className="portfolio-experience-primary">
           <div className="portfolio-experience-title-row">
             <div>
-              <p className="section-label">26.04 — 26.08 · PRIMARY CASE</p>
+              <p className="section-label">26.04 — 26.08 · 核心案例</p>
               <h3>{meshy.title}</h3>
-              <p className="portfolio-experience-role">Technical Art Intern / Tools & Pipeline</p>
+              <p className="portfolio-experience-role">技术美术实习 / 工具与管线</p>
             </div>
-            <strong>30%</strong>
+            <strong>工具链</strong>
           </div>
 
           <dl className="portfolio-evidence-grid">
@@ -40,15 +42,15 @@ export function IndustryExperienceSection() {
             </div>
             <div>
               <dt>结果</dt>
-              <dd>现有履历记录产研协同效率提升 30%。</dd>
+              <dd>将重复的材质与资产处理整理为可复用工具流程，减少手工操作。</dd>
             </div>
           </dl>
         </article>
 
         <article className="portfolio-experience-secondary">
-          <p className="section-label">24.06 — 24.08 · GAME TEAM</p>
+          <p className="section-label">24.06 — 24.08 · 游戏团队</p>
           <h3>{wildfire.title}</h3>
-          <p className="portfolio-experience-role">Game Interaction Intern / UX Research</p>
+          <p className="portfolio-experience-role">游戏交互实习 / 用户体验研究</p>
           <p>{wildfire.summary}</p>
           <ul className="portfolio-tags">
             {wildfire.tags.map((tag) => (

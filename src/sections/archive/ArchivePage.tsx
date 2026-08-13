@@ -16,19 +16,19 @@ const archiveProjects = projectEntries.filter((project) =>
 );
 
 const filters: { id: ArchiveFilter; label: string; shortLabel: string }[] = [
-  { id: 'all', label: 'ALL WORK', shortLabel: 'ALL' },
-  { id: 'visual-pipeline', label: '3D / VISUAL', shortLabel: '3D' },
-  { id: 'web-design', label: 'WEB DESIGN', shortLabel: 'WEB' },
-  { id: 'ai-interface', label: 'AI INTERFACE', shortLabel: 'AI' },
+  { id: 'all', label: '全部作品', shortLabel: '全部' },
+  { id: 'visual-pipeline', label: '三维 / 视觉', shortLabel: '三维' },
+  { id: 'web-design', label: '网站应用', shortLabel: '网站' },
+  { id: 'ai-interface', label: 'AI 界面', shortLabel: 'AI' },
 ];
 
 const trackLabels: Record<PortfolioTrack, string> = {
-  'game-development': 'GAME DEVELOPMENT',
-  'unreal-systems': 'UNREAL SYSTEMS',
-  'industry-experience': 'INDUSTRY EXPERIENCE',
-  'visual-pipeline': '3D / VISUAL',
-  'web-design': 'WEB DESIGN',
-  'ai-interface': 'AI INTERFACE',
+  'game-development': '游戏开发',
+  'unreal-systems': 'UE 技术实验',
+  'industry-experience': '实习经历',
+  'visual-pipeline': '三维 / 视觉',
+  'web-design': '网站应用',
+  'ai-interface': 'AI 界面',
 };
 
 function getProjectUrl(project: PortfolioProject) {
@@ -93,7 +93,7 @@ function ArchiveMedia({ project }: { project: PortfolioProject }) {
     );
   }
 
-  return <div className="archive-media-empty">PREVIEW UNAVAILABLE</div>;
+  return <div className="archive-media-empty">暂无预览</div>;
 }
 
 function ProjectPreview({ project, mobile = false }: { project: PortfolioProject; mobile?: boolean }) {
@@ -122,7 +122,7 @@ function ProjectPreview({ project, mobile = false }: { project: PortfolioProject
 
         {projectUrl && (
           <a href={projectUrl} target="_blank" rel="noreferrer">
-            OPEN PROJECT
+            查看项目
             <ArrowUpRight aria-hidden="true" />
           </a>
         )}
@@ -161,21 +161,21 @@ export function ArchivePage() {
       <header className="archive-navigation">
         <a className="archive-brand" href="/">
           <span>ZHU YIJIA</span>
-          <small>PROJECT ARCHIVE</small>
+          <small>作品档案</small>
         </a>
         <a className="archive-back" href="/">
           <ArrowLeft aria-hidden="true" />
-          BACK TO HOME
+          返回首页
         </a>
       </header>
 
       <main id="archive-main-content" className="archive-main site-main" tabIndex={-1}>
         <section className="archive-intro" aria-labelledby="archive-title">
           <div className="archive-intro-meta">
-            <span>FULL INDEX / 2025—2026</span>
-            <span>{archiveProjects.length.toString().padStart(2, '0')} PROJECTS</span>
+            <span>完整索引 / 2025—2026</span>
+            <span>{archiveProjects.length.toString().padStart(2, '0')} 个项目</span>
           </div>
-          <h1 id="archive-title">ARCHIVE</h1>
+          <h1 id="archive-title">作品档案</h1>
           <p>
             完整作品索引。首页只保留与 UE / C++ 求职最相关的项目，这里集中收录视觉、网页与 AI 界面实验。
           </p>
@@ -207,9 +207,9 @@ export function ArchivePage() {
         <section className="archive-browser" aria-label="作品档案浏览器">
           <div className="archive-list">
             <div className="archive-list-labels" aria-hidden="true">
-              <span>NO. / PROJECT</span>
-              <span>TYPE</span>
-              <span>YEAR</span>
+              <span>编号 / 项目</span>
+              <span>类型</span>
+              <span>年份</span>
             </div>
 
             <div className="archive-list-rows">
@@ -249,7 +249,9 @@ export function ArchivePage() {
           </div>
 
           <aside className="archive-desktop-preview" aria-live="polite">
-            {selectedProject && <ProjectPreview project={selectedProject} />}
+            {selectedProject && (
+              <ProjectPreview key={selectedProject.id} project={selectedProject} />
+            )}
           </aside>
         </section>
       </main>

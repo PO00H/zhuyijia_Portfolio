@@ -12,28 +12,30 @@ export function ArchivePreviewSection() {
     <section id="archive" className="portfolio-section portfolio-archive-section">
       <SectionHeading
         index="06"
-        eyebrow="Archive / 完整作品档案"
-        title="ARCHIVE"
-        description={`${archiveCount} 个辅助项目集中收录于独立档案，通过分类列表快速浏览，不再拉长首页。`}
+        eyebrow="作品索引 / ARCHIVE"
+        title="完整作品档案"
+        description="辅助项目集中收录于独立档案，通过分类列表快速浏览，不再拉长首页。"
+        variant="catalog"
+        meta={{ label: '收录项目', value: archiveCount.toString().padStart(2, '0') }}
       />
 
       <a className="portfolio-archive-entry" href="/archive" aria-label="打开完整作品档案">
         <div className="portfolio-archive-index" aria-label="档案分类摘要">
           <div>
-            <span>3D / VISUAL</span>
+            <span>三维 / 视觉</span>
             <strong>{visualCount.toString().padStart(2, '0')}</strong>
           </div>
           <div>
-            <span>WEB DESIGN</span>
+            <span>网站应用</span>
             <strong>{webCount.toString().padStart(2, '0')}</strong>
           </div>
           <div>
-            <span>AI INTERFACE</span>
+            <span>AI 界面</span>
             <strong>{aiCount.toString().padStart(2, '0')}</strong>
           </div>
         </div>
         <span className="portfolio-archive-open">
-          OPEN FULL ARCHIVE
+          打开完整档案
           <ArrowUpRight aria-hidden="true" />
         </span>
       </a>
