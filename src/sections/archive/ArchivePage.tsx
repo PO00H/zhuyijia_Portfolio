@@ -5,6 +5,7 @@ import {
   type PortfolioProject,
   type PortfolioTrack,
 } from '@/data/portfolioProjects';
+import { PortfolioDitherBackground } from '@/sections/portfolio/PortfolioDitherBackground';
 import './archive-page.css';
 
 type ArchiveFilter = 'all' | 'visual-pipeline' | 'web-design' | 'ai-interface';
@@ -155,9 +156,7 @@ export function ArchivePage() {
 
   return (
     <div className="archive-shell">
-      <a className="site-skip-link" href="#archive-main-content">
-        跳到主要内容
-      </a>
+      <PortfolioDitherBackground />
       <header className="archive-navigation">
         <a className="archive-brand" href="/">
           <span>ZHU YIJIA</span>

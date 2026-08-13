@@ -1,19 +1,27 @@
 .archive-shell {
   --portfolio-pixel-font: 'Fusion Pixel 12', 'JetBrains Mono', monospace;
-  --portfolio-signal-acid: #d8ff32;
-  --portfolio-signal-void: #090a09;
-  --portfolio-signal-surface: #111510;
-  --portfolio-signal-white: #f1f3eb;
-  --portfolio-signal-muted: #949c90;
-  --portfolio-signal-line: rgba(241, 243, 235, 0.18);
+  --portfolio-signal-acid: #169eae;
+  --portfolio-signal-void: #f3f5f3;
+  --portfolio-signal-surface: rgba(248, 249, 248, 0.92);
+  --portfolio-signal-white: #172125;
+  --portfolio-signal-muted: #69777a;
+  --portfolio-signal-line: rgba(23, 33, 37, 0.18);
   --valiente-bg: var(--portfolio-signal-void);
   --valiente-red: var(--portfolio-signal-acid);
   --valiente-dark: var(--portfolio-signal-white);
   --valiente-gray: var(--portfolio-signal-muted);
 
   min-height: 100vh;
-  background: var(--valiente-bg);
+  padding-top: 64px;
+  position: relative;
+  isolation: isolate;
+  background: rgba(243, 245, 243, 0.88);
   color: var(--valiente-dark);
+}
+
+.archive-shell > :not(.portfolio-dither-background):not(.archive-navigation) {
+  position: relative;
+  z-index: 1;
 }
 
 .archive-shell button,
@@ -22,15 +30,17 @@
 }
 
 .archive-navigation {
-  position: sticky;
+  position: fixed;
   top: 0;
+  right: 0;
+  left: 0;
   z-index: 100;
   display: flex;
   min-height: 64px;
   align-items: center;
   justify-content: space-between;
   padding: 0 clamp(1.5rem, 5vw, 6rem);
-  background: rgba(9, 10, 9, 0.94);
+  background: rgba(245, 247, 245, 0.94);
   border-bottom: 1px solid var(--portfolio-signal-line);
   backdrop-filter: blur(12px);
 }
@@ -674,6 +684,41 @@
   transform: scale(0.985);
 }
 
+/* Palette integration 01: shared retro-future fresh surface. */
+.archive-shell {
+  background: rgba(243, 245, 243, 0.86);
+}
+
+.archive-navigation {
+  background: rgba(245, 247, 245, 0.94);
+  border-bottom-color: rgba(45, 146, 155, 0.42);
+  box-shadow: 0 1px 0 rgba(245, 247, 245, 0.72);
+}
+
+.archive-intro,
+.archive-browser,
+.archive-footer {
+  background: rgba(245, 247, 245, 0.74);
+}
+
+.archive-project-row.is-selected,
+.archive-filters button.is-active {
+  background: rgba(40, 182, 195, 0.1);
+}
+
+.archive-preview,
+.archive-list,
+.archive-filters {
+  background: rgba(245, 247, 245, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.archive-preview-media,
+.archive-video-stage,
+.archive-media-empty {
+  background: #172125;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .archive-shell *,
   .archive-shell *::before,
@@ -689,4 +734,10 @@
   .archive-filters button:active {
     transform: none;
   }
+}
+
+/* Typography study: keep the archive in the same pixel family as the homepage. */
+.archive-shell,
+.archive-shell * {
+  font-family: var(--portfolio-pixel-font);
 }

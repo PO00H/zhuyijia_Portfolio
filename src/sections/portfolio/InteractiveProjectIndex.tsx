@@ -6,6 +6,7 @@ import {
   type ReactNode,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown } from 'lucide-react';
 import type { PortfolioProject } from '@/data/portfolioProjects';
 
@@ -58,6 +59,7 @@ export function InteractiveProjectIndex({
   renderExpandedProject,
 }: InteractiveProjectIndexProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [intentId, setIntentId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(() =>
     typeof window === 'undefined'
@@ -65,12 +67,23 @@ export function InteractiveProjectIndex({
       : window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
   const previewRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const previewTimerRef = useRef<number | null>(null);
+  const pointerRef = useRef({ x: 0, y: 0 });
+
+  const clearPreviewTimer = () => {
+    if (previewTimerRef.current) window.clearTimeout(previewTimerRef.current);
+    previewTimerRef.current = null;
+  };
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
     const handleChange = (event: MediaQueryListEvent) => setReducedMotion(event.matches);
     media.addEventListener('change', handleChange);
-    return () => media.removeEventListener('change', handleChange);
+    return () => {
+      media.removeEventListener('change', handleChange);
+      clearPreviewTimer();
+    };
   }, []);
 
   const positionPreview = (x: number, y: number) => {
@@ -79,19 +92,25 @@ export function InteractiveProjectIndex({
 
     const previewWidth = Math.min(400, window.innerWidth - 48);
     const previewHeight = 286;
-    const offset = 24;
-    const hasRoomOnRight = x + offset + previewWidth <= window.innerWidth - offset;
-    const preferredX = hasRoomOnRight ? x + offset : x - previewWidth - offset;
+    const offset = 32;
+    const preferredX = x + offset;
     const nextX = Math.min(
       Math.max(offset, preferredX),
       window.innerWidth - previewWidth - offset,
     );
     const nextY = Math.min(
-      Math.max(offset, y - previewHeight / 2),
+      Math.max(offset, y + 18),
       window.innerHeight - previewHeight - offset,
     );
 
     preview.style.transform = `translate3d(${nextX}px, ${nextY}px, 0)`;
+  };
+
+  const positionCursor = (x: number, y: number) => {
+    pointerRef.current = { x, y };
+    const cursor = cursorRef.current;
+    if (cursor) cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    if (activeId) positionPreview(x, y);
   };
 
   const handlePointerEnter = (
@@ -99,14 +118,27 @@ export function InteractiveProjectIndex({
     project: PortfolioProject,
   ) => {
     if (event.pointerType !== 'mouse') return;
-    setActiveId(project.id);
-    positionPreview(event.clientX, event.clientY);
+    clearPreviewTimer();
+    setActiveId(null);
+    setIntentId(project.id);
+    positionCursor(event.clientX, event.clientY);
+    previewTimerRef.current = window.setTimeout(() => {
+      setActiveId(project.id);
+      positionPreview(pointerRef.current.x, pointerRef.current.y);
+      previewTimerRef.current = null;
+    }, reducedMotion ? 0 : 1000);
+  };
+
+  const dismissPreview = () => {
+    clearPreviewTimer();
+    setIntentId(null);
+    setActiveId(null);
   };
 
   const activeProject = projects.find((project) => project.id === activeId) ?? null;
 
   return (
-    <div className="portfolio-interactive-index" onPointerLeave={() => setActiveId(null)}>
+    <div className="portfolio-interactive-index" onPointerLeave={dismissPreview}>
       <div className="portfolio-index-labels" aria-hidden="true">
         <span>PROJECT</span>
         <span>FOCUS</span>
@@ -125,12 +157,17 @@ export function InteractiveProjectIndex({
                 aria-expanded={isExpanded}
                 aria-controls={`portfolio-project-${project.id}`}
                 onPointerEnter={(event) => handlePointerEnter(event, project)}
+                onPointerMove={(event) => {
+                  if (event.pointerType === 'mouse') positionCursor(event.clientX, event.clientY);
+                }}
                 onFocus={(event) => {
+                  clearPreviewTimer();
+                  setIntentId(null);
                   setActiveId(project.id);
                   const bounds = event.currentTarget.getBoundingClientRect();
                   positionPreview(bounds.right - 24, bounds.top + bounds.height / 2);
                 }}
-                onBlur={() => setActiveId(null)}
+                onBlur={dismissPreview}
                 onClick={() => setExpandedId(isExpanded ? null : project.id)}
               >
                 <span className="portfolio-index-project">
@@ -155,23 +192,40 @@ export function InteractiveProjectIndex({
         })}
       </div>
 
-      <div
-        ref={previewRef}
-        className={`portfolio-floating-preview ${activeProject ? 'is-visible' : ''}`}
-        aria-hidden="true"
-      >
-        {activeProject && (
-          <>
-            <div className="portfolio-floating-media">
-              <ProjectPreviewMedia project={activeProject} reducedMotion={reducedMotion} />
-            </div>
-            <div className="portfolio-floating-caption">
-              <span>{activeProject.title}</span>
-              <small>CLICK TO EXPAND</small>
-            </div>
-          </>
-        )}
-      </div>
+      {createPortal(
+        <>
+          <div
+            key={intentId ?? 'idle'}
+            ref={cursorRef}
+            className={`portfolio-preview-cursor ${intentId ? 'is-visible' : ''} ${activeProject ? 'is-complete' : ''}`}
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 32 32">
+              <circle className="portfolio-preview-cursor-track" cx="16" cy="16" r="12" />
+              <circle className="portfolio-preview-cursor-progress" cx="16" cy="16" r="12" />
+            </svg>
+          </div>
+
+          <div
+            ref={previewRef}
+            className={`portfolio-floating-preview ${activeProject ? 'is-visible' : ''}`}
+            aria-hidden="true"
+          >
+            {activeProject && (
+              <>
+                <div className="portfolio-floating-media">
+                  <ProjectPreviewMedia project={activeProject} reducedMotion={reducedMotion} />
+                </div>
+                <div className="portfolio-floating-caption">
+                  <span>{activeProject.title}</span>
+                  <small>CLICK TO EXPAND</small>
+                </div>
+              </>
+            )}
+          </div>
+        </>,
+        document.body,
+      )}
 
     </div>
   );

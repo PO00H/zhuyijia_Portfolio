@@ -9,14 +9,16 @@
 
 .portfolio-shell {
   --portfolio-pixel-font: 'Fusion Pixel 12', 'JetBrains Mono', monospace;
-  --portfolio-signal-acid: #d8ff32;
-  --portfolio-signal-void: #090a09;
-  --portfolio-signal-surface: #111510;
-  --portfolio-signal-surface-raised: #171c15;
-  --portfolio-signal-white: #f1f3eb;
-  --portfolio-signal-muted: #949c90;
-  --portfolio-signal-line: rgba(241, 243, 235, 0.18);
-  --portfolio-signal-line-strong: rgba(241, 243, 235, 0.32);
+  --portfolio-signal-acid: #169eae;
+  --portfolio-signal-void: #f3f5f3;
+  --portfolio-signal-surface: rgba(248, 249, 248, 0.9);
+  --portfolio-signal-surface-raised: rgba(255, 255, 255, 0.96);
+  --portfolio-signal-white: #172125;
+  --portfolio-signal-muted: #69777a;
+  --portfolio-signal-line: rgba(23, 33, 37, 0.18);
+  --portfolio-signal-line-strong: rgba(23, 33, 37, 0.3);
+  --portfolio-signal-cyan: #28b6c3;
+  --portfolio-signal-teal: #2d929b;
   --valiente-bg: var(--portfolio-signal-void);
   --valiente-red: var(--portfolio-signal-acid);
   --valiente-dark: var(--portfolio-signal-white);
@@ -24,8 +26,16 @@
   --valiente-light: var(--portfolio-signal-surface-raised);
 
   min-height: 100vh;
-  background: var(--valiente-bg);
+  padding-top: 64px;
+  position: relative;
+  isolation: isolate;
+  background: rgba(243, 245, 243, 0.88);
   color: var(--valiente-dark);
+}
+
+.portfolio-shell > :not(.portfolio-dither-background):not(.portfolio-navigation) {
+  position: relative;
+  z-index: 1;
 }
 
 .portfolio-shell button,
@@ -67,15 +77,17 @@
 }
 
 .portfolio-navigation {
-  position: sticky;
+  position: fixed;
   top: 0;
+  right: 0;
+  left: 0;
   z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
   min-height: 64px;
   padding: 0 3rem;
-  background: rgba(9, 10, 9, 0.94);
+  background: rgba(245, 247, 245, 0.94);
   border-bottom: 1px solid var(--portfolio-signal-line);
   backdrop-filter: blur(12px);
 }
@@ -397,13 +409,13 @@
 }
 
 .portfolio-game-section {
-  --signal-void: #090a09;
-  --signal-surface: #0f110f;
-  --signal-white: #f1f2ed;
-  --signal-acid: #d8ff32;
-  --signal-moss: #48540f;
-  --signal-gray: #777b74;
-  --signal-line: rgba(241, 242, 237, 0.22);
+  --signal-void: rgba(238, 243, 242, 0.92);
+  --signal-surface: rgba(250, 251, 250, 0.94);
+  --signal-white: #172125;
+  --signal-acid: #169eae;
+  --signal-moss: #2d929b;
+  --signal-gray: #69777a;
+  --signal-line: rgba(23, 33, 37, 0.22);
   --signal-pixel-font: 'Fusion Pixel 12', 'JetBrains Mono', monospace;
   --signal-pixel-unit: 12px;
 
@@ -1848,6 +1860,10 @@
 }
 
 @media (max-width: 720px) {
+  .portfolio-shell {
+    padding-top: 58px;
+  }
+
   .portfolio-navigation {
     min-height: 58px;
     padding-right: 1.5rem;
@@ -2116,6 +2132,339 @@
 @media (hover: none), (pointer: coarse) {
   .portfolio-floating-preview {
     display: none;
+  }
+}
+
+/* Palette integration 01: airy retro-future pixel system. */
+.portfolio-shell {
+  background: rgba(243, 245, 243, 0.86);
+}
+
+/* Preview study: one-second cursor charge and pixel-field reveal. */
+.portfolio-navigation-brand {
+  align-items: center;
+  transform: translateY(3px);
+}
+
+.portfolio-preview-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2147483001;
+  width: 32px;
+  height: 32px;
+  margin-top: -16px;
+  margin-left: -16px;
+  display: none;
+  pointer-events: none;
+  color: #169eae;
+}
+
+.portfolio-preview-cursor.is-visible {
+  display: block;
+}
+
+.portfolio-preview-cursor svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+  transform: rotate(-90deg);
+}
+
+.portfolio-preview-cursor circle {
+  fill: rgba(243, 245, 243, 0.82);
+  stroke-width: 2;
+}
+
+.portfolio-preview-cursor-track {
+  stroke: rgba(23, 33, 37, 0.22);
+}
+
+.portfolio-preview-cursor-progress {
+  stroke: currentColor;
+  stroke-linecap: square;
+  stroke-dasharray: 75.4;
+  stroke-dashoffset: 75.4;
+  animation: portfolio-preview-charge 1000ms linear forwards;
+}
+
+.portfolio-preview-cursor.is-complete .portfolio-preview-cursor-progress {
+  stroke-dashoffset: 0;
+}
+
+.portfolio-floating-preview {
+  z-index: 2147483000;
+  border-color: rgba(23, 33, 37, 0.72);
+  background: rgba(245, 247, 245, 0.98);
+  box-shadow: 10px 10px 0 rgba(45, 146, 155, 0.16);
+  contain: paint;
+  will-change: transform, opacity, clip-path;
+}
+
+.portfolio-floating-preview::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(40, 182, 195, 0.28) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(40, 182, 195, 0.28) 1px, transparent 1px);
+  background-size: 8px 8px;
+  mix-blend-mode: multiply;
+  opacity: 0;
+}
+
+.portfolio-floating-preview.is-visible {
+  animation: portfolio-preview-pixel-open 280ms steps(6, end) both;
+}
+
+.portfolio-floating-preview.is-visible::after {
+  animation: portfolio-preview-grid-release 320ms steps(5, end) both;
+}
+
+@keyframes portfolio-preview-charge {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes portfolio-preview-pixel-open {
+  0% {
+    clip-path: polygon(0 0, 16% 0, 16% 16%, 0 16%);
+    opacity: 0;
+  }
+  34% {
+    clip-path: polygon(0 0, 58% 0, 58% 35%, 34% 35%, 34% 58%, 0 58%);
+    opacity: 0.76;
+  }
+  68% {
+    clip-path: polygon(0 0, 84% 0, 84% 58%, 66% 58%, 66% 82%, 0 82%);
+    opacity: 0.92;
+  }
+  100% {
+    clip-path: inset(0);
+    opacity: 1;
+  }
+}
+
+@keyframes portfolio-preview-grid-release {
+  0%, 48% {
+    opacity: 0.82;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Typography study: the formal portfolio uses one pixel family everywhere. */
+.portfolio-shell,
+.portfolio-shell *,
+.portfolio-floating-preview,
+.portfolio-floating-preview * {
+  font-family: var(--portfolio-pixel-font, 'Fusion Pixel 12', 'JetBrains Mono', monospace);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .portfolio-index-row {
+    cursor: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .portfolio-navigation-brand,
+  .portfolio-navigation-toggle {
+    transform: translateY(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-preview-cursor-progress,
+  .portfolio-floating-preview.is-visible,
+  .portfolio-floating-preview.is-visible::after {
+    animation: none;
+  }
+
+  .portfolio-preview-cursor-progress {
+    stroke-dashoffset: 0;
+  }
+}
+
+.portfolio-navigation {
+  background: rgba(245, 247, 245, 0.94);
+  border-bottom-color: rgba(45, 146, 155, 0.42);
+  box-shadow: 0 1px 0 rgba(245, 247, 245, 0.72);
+}
+
+.portfolio-navigation-links a.is-current {
+  border-color: rgba(22, 158, 174, 0.52);
+  background: rgba(40, 182, 195, 0.1);
+}
+
+.portfolio-hero,
+.portfolio-section:not(.portfolio-game-section) {
+  background: rgba(245, 247, 245, 0.74);
+}
+
+.portfolio-hero-main h1 {
+  color: var(--portfolio-signal-teal);
+  text-shadow: 1px 0 0 rgba(245, 247, 245, 0.78);
+}
+
+.portfolio-primary-action {
+  border-color: var(--portfolio-signal-cyan);
+  background: var(--portfolio-signal-cyan);
+  color: #f5f7f5;
+}
+
+.portfolio-secondary-action {
+  border-color: rgba(23, 33, 37, 0.36);
+  color: var(--portfolio-signal-white);
+  background: rgba(245, 247, 245, 0.44);
+}
+
+.portfolio-hero-statement,
+.portfolio-hero-capabilities,
+.portfolio-section,
+.portfolio-hero-capabilities span,
+.portfolio-contact-card,
+.portfolio-archive-index > div,
+.portfolio-index-row,
+.portfolio-evidence-grid > div,
+.portfolio-profile-list > div,
+.portfolio-profile-awards li {
+  border-color: rgba(23, 33, 37, 0.2);
+}
+
+.portfolio-game-section {
+  background: rgba(238, 243, 242, 0.9);
+}
+
+.portfolio-game-section .portfolio-section-heading-copy h2,
+.portfolio-game-section .portfolio-featured-copy h3,
+.portfolio-runtime-diagnostic-panel strong {
+  color: var(--signal-white);
+}
+
+.portfolio-featured-card {
+  clip-path: none;
+  box-shadow: 8px 8px 0 rgba(45, 146, 155, 0.08);
+}
+
+.portfolio-reserved-field,
+.portfolio-runtime-reserved {
+  background-image:
+    linear-gradient(rgba(40, 182, 195, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(40, 182, 195, 0.14) 1px, transparent 1px);
+}
+
+.portfolio-card-pixel-layer span,
+.portfolio-runtime-pixels span {
+  box-shadow: 6px 6px 0 rgba(45, 146, 155, 0.42);
+}
+
+.portfolio-game-section .portfolio-project-meta span:last-child,
+.portfolio-game-section .portfolio-project-status,
+.portfolio-index-row:hover,
+.portfolio-index-row.is-active {
+  background: rgba(40, 182, 195, 0.1);
+}
+
+.portfolio-runtime-chrome {
+  background: var(--portfolio-signal-teal);
+  color: #f5f7f5;
+}
+
+.portfolio-runtime-chrome span:first-child {
+  background: var(--portfolio-signal-cyan);
+  color: #f5f7f5;
+}
+
+.portfolio-runtime-chrome span:last-child {
+  color: rgba(245, 247, 245, 0.72);
+}
+
+.portfolio-runtime-reserved-mark {
+  background:
+    linear-gradient(90deg, transparent 25%, var(--signal-acid) 25% 50%, transparent 50% 75%, var(--signal-moss) 75%),
+    linear-gradient(transparent 25%, rgba(40, 182, 195, 0.46) 25% 50%, transparent 50% 75%, rgba(45, 146, 155, 0.72) 75%);
+  background-blend-mode: multiply;
+  background-size: 24px 24px;
+}
+
+.portfolio-runtime-crt {
+  display: none;
+}
+
+.portfolio-runtime-diagnostic-label {
+  background:
+    linear-gradient(90deg, transparent 0 calc(100% - 12px), rgba(40, 182, 195, 0.1) calc(100% - 12px)),
+    var(--signal-surface);
+}
+
+.portfolio-shell[data-active-section='systems'] #systems .portfolio-section-heading,
+.portfolio-shell[data-active-section='experience'] #experience .portfolio-section-heading,
+.portfolio-shell[data-active-section='relevant-work'] #relevant-work .portfolio-section-heading,
+.portfolio-shell[data-active-section='archive'] #archive .portfolio-section-heading,
+.portfolio-shell[data-active-section='profile'] #profile .portfolio-section-heading,
+.portfolio-shell[data-active-section='contact'] #contact .portfolio-section-heading {
+  border-color: rgba(22, 158, 174, 0.48);
+  background: rgba(40, 182, 195, 0.07);
+}
+
+.portfolio-section:not(.portfolio-game-section) .portfolio-section-heading-copy h2,
+.portfolio-shell[data-active-section='systems'] #systems .portfolio-section-heading-copy h2,
+.portfolio-shell[data-active-section='experience'] #experience .portfolio-section-heading-copy h2,
+.portfolio-shell[data-active-section='relevant-work'] #relevant-work .portfolio-section-heading-copy h2,
+.portfolio-shell[data-active-section='archive'] #archive .portfolio-section-heading-copy h2,
+.portfolio-shell[data-active-section='profile'] #profile .portfolio-section-heading-copy h2,
+.portfolio-shell[data-active-section='contact'] #contact .portfolio-section-heading-copy h2 {
+  color: var(--portfolio-signal-white);
+}
+
+.portfolio-game-section .portfolio-featured-copy > p,
+.portfolio-game-section[data-runtime-signal='ready'] .portfolio-featured-copy > p {
+  color: var(--signal-gray);
+}
+
+.portfolio-game-section[data-runtime-signal='ready'] .portfolio-featured-card[aria-current='true'] {
+  border-bottom-color: rgba(22, 158, 174, 0.72);
+  background: rgba(40, 182, 195, 0.08);
+}
+
+.portfolio-floating-preview {
+  background: rgba(245, 247, 245, 0.94);
+}
+
+.portfolio-system-card,
+.portfolio-experience-primary,
+.portfolio-experience-secondary,
+.portfolio-profile-block,
+.portfolio-expanded-layout,
+.portfolio-contact-panel,
+.portfolio-archive-index,
+.portfolio-relevant-card,
+.portfolio-interactive-index {
+  backdrop-filter: blur(10px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .portfolio-primary-action:hover,
+  .portfolio-primary-action:focus-visible {
+    border-color: var(--portfolio-signal-teal);
+    background: var(--portfolio-signal-teal);
+    color: #f5f7f5;
+  }
+}
+
+@media (max-width: 720px) {
+  .portfolio-navigation-mobile-menu {
+    background: rgba(245, 247, 245, 0.98);
+  }
+
+  .portfolio-hero,
+  .portfolio-section:not(.portfolio-game-section) {
+    background: rgba(245, 247, 245, 0.84);
   }
 }
 
@@ -3160,5 +3509,114 @@
   .portfolio-contact-link:active,
   .portfolio-archive-entry:active {
     transform: none;
+  }
+}
+
+/* Final cascade lock for the approved light palette. */
+.portfolio-shell {
+  background: rgba(243, 245, 243, 0.86);
+}
+
+.portfolio-navigation {
+  background: rgba(245, 247, 245, 0.94);
+  border-bottom-color: rgba(45, 146, 155, 0.42);
+}
+
+.portfolio-navigation-links a.is-current {
+  border-color: rgba(22, 158, 174, 0.52);
+  background: rgba(40, 182, 195, 0.1);
+}
+
+.portfolio-hero,
+.portfolio-section:not(.portfolio-game-section) {
+  background: rgba(245, 247, 245, 0.74);
+}
+
+.portfolio-game-section {
+  background: rgba(238, 243, 242, 0.9);
+}
+
+.portfolio-section:not(.portfolio-game-section) .portfolio-section-heading-copy h2,
+.portfolio-shell[data-active-section='systems'] #systems .portfolio-section-heading-copy h2,
+.portfolio-shell[data-active-section='experience'] #experience .portfolio-section-heading-copy h2,
+.portfolio-shell[data-active-section='relevant-work'] #relevant-work .portfolio-section-heading-copy h2,
+.portfolio-shell[data-active-section='archive'] #archive .portfolio-section-heading-copy h2,
+.portfolio-shell[data-active-section='profile'] #profile .portfolio-section-heading-copy h2,
+.portfolio-shell[data-active-section='contact'] #contact .portfolio-section-heading-copy h2 {
+  color: var(--portfolio-signal-white);
+}
+
+.portfolio-shell[data-active-section='systems'] #systems .portfolio-section-heading,
+.portfolio-shell[data-active-section='experience'] #experience .portfolio-section-heading,
+.portfolio-shell[data-active-section='relevant-work'] #relevant-work .portfolio-section-heading,
+.portfolio-shell[data-active-section='archive'] #archive .portfolio-section-heading,
+.portfolio-shell[data-active-section='profile'] #profile .portfolio-section-heading,
+.portfolio-shell[data-active-section='contact'] #contact .portfolio-section-heading {
+  border-color: rgba(22, 158, 174, 0.48);
+  background: rgba(40, 182, 195, 0.07);
+}
+
+.portfolio-game-section[data-runtime-signal='ready'] .portfolio-featured-copy h3 {
+  color: rgba(23, 33, 37, 0.58);
+}
+
+.portfolio-game-section[data-runtime-signal='ready']
+  .portfolio-featured-card[aria-current='true']
+  .portfolio-featured-copy
+  h3,
+.portfolio-game-section .portfolio-featured-copy h3,
+.portfolio-runtime-diagnostic-panel strong {
+  color: var(--signal-white);
+}
+
+.portfolio-game-section .portfolio-featured-copy > p,
+.portfolio-game-section[data-runtime-signal='ready'] .portfolio-featured-copy > p {
+  color: var(--signal-gray);
+}
+
+.portfolio-game-section[data-runtime-signal='ready'] .portfolio-featured-card[aria-current='true'] {
+  border-bottom-color: rgba(22, 158, 174, 0.72);
+  background: rgba(40, 182, 195, 0.08);
+}
+
+.portfolio-section:not(.portfolio-game-section) .portfolio-marker-line {
+  background: linear-gradient(180deg, var(--portfolio-signal-teal), var(--portfolio-signal-cyan));
+}
+
+@media (max-width: 720px) {
+  .portfolio-navigation-mobile-menu {
+    background: rgba(245, 247, 245, 0.98);
+  }
+
+  .portfolio-hero,
+  .portfolio-section:not(.portfolio-game-section) {
+    background: rgba(245, 247, 245, 0.84);
+  }
+}
+
+/* Final interaction/type lock: portal preview + one-family typography. */
+.portfolio-navigation-brand {
+  align-items: center;
+  transform: translateY(3px);
+}
+
+.portfolio-shell,
+.portfolio-shell *,
+.portfolio-floating-preview,
+.portfolio-floating-preview * {
+  font-family: var(--portfolio-pixel-font, 'Fusion Pixel 12', 'JetBrains Mono', monospace);
+}
+
+.portfolio-floating-preview {
+  z-index: 2147483000;
+  border-color: rgba(23, 33, 37, 0.72);
+  background: rgba(245, 247, 245, 0.98);
+  box-shadow: 10px 10px 0 rgba(45, 146, 155, 0.16);
+}
+
+@media (max-width: 720px) {
+  .portfolio-navigation-brand,
+  .portfolio-navigation-toggle {
+    transform: translateY(2px);
   }
 }

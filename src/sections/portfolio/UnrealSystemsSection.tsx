@@ -11,7 +11,7 @@ export function UnrealSystemsSection() {
           index="03"
           eyebrow="UNREAL SYSTEMS / 技术实验"
           title="UE 技术实验"
-        description="三个练习作为紧凑的 Unreal 技术证据索引。悬停快速预览，点击在当前词条下展开内容。"
+        description="三个练习作为紧凑的 Unreal 技术证据索引。悬浮一秒预览，点击在当前词条下展开内容。"
       />
 
       <InteractiveProjectIndex

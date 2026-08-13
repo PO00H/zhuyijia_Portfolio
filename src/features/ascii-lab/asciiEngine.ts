@@ -1,344 +1,315 @@
-export type AsciiVariant = 'characters' | 'blocks' | 'dither';
-export type PointerMode = 'luminance' | 'flow' | 'repel';
-
-export interface AsciiPalette {
-  id: 'warm' | 'cool' | 'violet';
-  label: string;
-  background: string;
-  base: string;
-  highlight: string;
-  event: string;
-  muted: string;
+interface VerticalBreathingFrame {
+  width: number;
+  height: number;
+  elapsedSeconds: number;
+  compact: boolean;
+  settings: MotionStudySettings;
+  dotEventProgress: number | null;
+  dotEventOrigin: { x: number; y: number };
+  dotEventIntensity?: number;
+  dotEventMode?: 'cell' | 'wave';
 }
 
-export interface AsciiSourceField {
-  columns: number;
-  rows: number;
-  luminance: Float32Array;
-  edges: Float32Array;
+export type GeometryMode = 'flat' | 'shallow' | 'inset' | 'saddle' | 'twist';
+export type MotionDirection =
+  | 'top-to-bottom'
+  | 'bottom-to-top'
+  | 'left-to-right'
+  | 'right-to-left'
+  | 'top-left-to-bottom-right'
+  | 'top-right-to-bottom-left';
+
+export interface MotionStudyPalette {
+  paper: string;
+  coral: string;
+  cyan: string;
 }
 
-export interface AsciiRenderSettings {
-  variant: AsciiVariant;
-  palette: AsciiPalette;
-  glyphRamp: string;
-  contrast: number;
-  edge: number;
+export interface MotionStudySettings {
+  geometry: GeometryMode;
   density: number;
+  fisheye: number;
+  direction: MotionDirection;
+  palette: MotionStudyPalette;
 }
 
-export interface AsciiRenderState {
-  spreadProgress: number | null;
-  spreadOrigin: { x: number; y: number };
-  pointer: {
-    active: boolean;
-    x: number;
-    y: number;
-    velocityX: number;
-    velocityY: number;
-    strength: number;
-    radius: number;
-    mode: PointerMode;
-  };
-}
-
-export const ASCII_PALETTES: AsciiPalette[] = [
-  {
-    id: 'warm',
-    label: '暖琥珀',
-    background: '#0b0907',
-    base: '#a9844f',
-    highlight: '#d5b77f',
-    event: '#77658f',
-    muted: '#564630',
+export const DEFAULT_MOTION_STUDY_SETTINGS: MotionStudySettings = {
+  geometry: 'flat',
+  density: 1.05,
+  fisheye: 0.08,
+  direction: 'top-right-to-bottom-left',
+  palette: {
+    paper: '#e0e0e0',
+    coral: '#28b6c3',
+    cyan: '#2d929b',
   },
-  {
-    id: 'cool',
-    label: '冷青灰',
-    background: '#07100f',
-    base: '#5f8781',
-    highlight: '#9bb8b0',
-    event: '#a77a55',
-    muted: '#344d49',
-  },
-  {
-    id: 'violet',
-    label: '灰紫',
-    background: '#0d0a10',
-    base: '#796a8d',
-    highlight: '#b2a3bf',
-    event: '#a78658',
-    muted: '#483e52',
-  },
-];
-
-const BAYER_4 = [
-  0, 8, 2, 10,
-  12, 4, 14, 6,
-  3, 11, 1, 9,
-  15, 7, 13, 5,
-];
-
-const sourceCache = new Map<string, Promise<AsciiSourceField>>();
-
-const clamp = (value: number, minimum = 0, maximum = 1) =>
-  Math.min(maximum, Math.max(minimum, value));
-
-const smoothstep = (value: number) => {
-  const amount = clamp(value);
-  return amount * amount * (3 - 2 * amount);
 };
 
-const hash = (x: number, y: number) => {
-  const value = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+const FALLBACK_COLORS = {
+  paper: '#fafbf8',
+  coral: '#ee8f89',
+  cyan: '#2d929b',
+} as const;
+
+const GEOMETRY = {
+  flat: { pinch: 1, curve: 0, curveFalloff: 0, twist: 0 },
+  shallow: { pinch: 0.9, curve: 0.018, curveFalloff: 0.008, twist: 0 },
+  inset: { pinch: 0.74, curve: 0.028, curveFalloff: 0.018, twist: 0 },
+  saddle: { pinch: 0.84, curve: -0.018, curveFalloff: -0.012, twist: 0 },
+  twist: { pinch: 0.84, curve: 0.018, curveFalloff: 0.012, twist: 0.055 },
+} as const;
+
+const BAYER_8 = [
+  0, 48, 12, 60, 3, 51, 15, 63,
+  32, 16, 44, 28, 35, 19, 47, 31,
+  8, 56, 4, 52, 11, 59, 7, 55,
+  40, 24, 36, 20, 43, 27, 39, 23,
+  2, 50, 14, 62, 1, 49, 13, 61,
+  34, 18, 46, 30, 33, 17, 45, 29,
+  10, 58, 6, 54, 9, 57, 5, 53,
+  42, 26, 38, 22, 41, 25, 37, 21,
+] as const;
+
+const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
+const smoothstep = (edge0: number, edge1: number, value: number) => {
+  const t = clamp01((value - edge0) / Math.max(0.0001, edge1 - edge0));
+  return t * t * (3 - 2 * t);
+};
+
+const parseHex = (value: string) => {
+  const normalized = /^#[0-9a-f]{6}$/i.test(value) ? value : FALLBACK_COLORS.paper;
+  return [1, 3, 5].map((start) => Number.parseInt(normalized.slice(start, start + 2), 16));
+};
+
+const mixHex = (from: string, to: string, amount: number) => {
+  const a = parseHex(from);
+  const b = parseHex(to);
+  const mixed = a.map((channel, index) => Math.round(channel + (b[index] - channel) * amount));
+  return `#${mixed.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
+};
+
+const getDirectionCoordinate = (
+  direction: MotionDirection,
+  horizontal: number,
+  vertical: number,
+) => {
+  switch (direction) {
+    case 'bottom-to-top': return -vertical;
+    case 'left-to-right': return horizontal;
+    case 'right-to-left': return -horizontal;
+    case 'top-left-to-bottom-right': return (horizontal + vertical) * Math.SQRT1_2;
+    case 'top-right-to-bottom-left': return (-horizontal + vertical) * Math.SQRT1_2;
+    default: return vertical;
+  }
+};
+
+const drawCell = (
+  path: Path2D,
+  x: number,
+  y: number,
+  cell: number,
+  amount: number,
+  phaseOffset: number,
+) => {
+  const strength = clamp01(amount);
+  if (strength < 0.025) return;
+
+  const size = cell * (0.2 + strength * 0.48);
+  const pulse = 0.95 + 0.05 * Math.sin(phaseOffset);
+  const side = Math.max(0.65, size * pulse);
+  path.rect(x - side * 0.5, y - side * 0.5, side, side);
+};
+
+const hashCell = (column: number, row: number) => {
+  const value = Math.sin(column * 127.1 + row * 311.7) * 43758.5453;
   return value - Math.floor(value);
 };
 
-const loadImage = (source: string) =>
-  new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new Image();
-    image.decoding = 'async';
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`Unable to load ASCII source: ${source}`));
-    image.src = source;
-  });
-
-const cropImageToField = (
-  image: HTMLImageElement,
-  columns: number,
-  rows: number,
-  visualRatio: number,
-) => {
-  const canvas = document.createElement('canvas');
-  canvas.width = columns;
-  canvas.height = rows;
-  const context = canvas.getContext('2d', { alpha: false, willReadFrequently: true });
-  if (!context) throw new Error('ASCII source canvas is unavailable.');
-
-  const sourceRatio = image.naturalWidth / image.naturalHeight;
-  const targetRatio = visualRatio;
-  let sourceX = 0;
-  let sourceY = 0;
-  let sourceWidth = image.naturalWidth;
-  let sourceHeight = image.naturalHeight;
-
-  if (sourceRatio > targetRatio) {
-    sourceWidth = image.naturalHeight * targetRatio;
-    sourceX = (image.naturalWidth - sourceWidth) / 2;
-  } else {
-    sourceHeight = image.naturalWidth / targetRatio;
-    sourceY = (image.naturalHeight - sourceHeight) / 2;
-  }
-
-  context.imageSmoothingEnabled = true;
-  context.drawImage(
-    image,
-    sourceX,
-    sourceY,
-    sourceWidth,
-    sourceHeight,
-    0,
-    0,
-    columns,
-    rows,
-  );
-
-  return context.getImageData(0, 0, columns, rows);
-};
-
-const buildSourceField = (
-  pixels: ImageData,
-  columns: number,
-  rows: number,
-): AsciiSourceField => {
-  const luminance = new Float32Array(columns * rows);
-  const edges = new Float32Array(columns * rows);
-
-  for (let index = 0; index < luminance.length; index += 1) {
-    const pixel = index * 4;
-    luminance[index] = (
-      pixels.data[pixel] * 0.2126
-      + pixels.data[pixel + 1] * 0.7152
-      + pixels.data[pixel + 2] * 0.0722
-    ) / 255;
-  }
-
-  const sample = (x: number, y: number) => {
-    const sampleX = Math.max(0, Math.min(columns - 1, x));
-    const sampleY = Math.max(0, Math.min(rows - 1, y));
-    return luminance[sampleY * columns + sampleX];
-  };
-
-  for (let y = 0; y < rows; y += 1) {
-    for (let x = 0; x < columns; x += 1) {
-      const gradientX =
-        -sample(x - 1, y - 1) + sample(x + 1, y - 1)
-        - 2 * sample(x - 1, y) + 2 * sample(x + 1, y)
-        - sample(x - 1, y + 1) + sample(x + 1, y + 1);
-      const gradientY =
-        -sample(x - 1, y - 1) - 2 * sample(x, y - 1) - sample(x + 1, y - 1)
-        + sample(x - 1, y + 1) + 2 * sample(x, y + 1) + sample(x + 1, y + 1);
-      edges[y * columns + x] = clamp(Math.hypot(gradientX, gradientY) * 0.75);
-    }
-  }
-
-  return { columns, rows, luminance, edges };
-};
-
-export function loadAsciiSource(
-  source: string,
-  columns: number,
-  rows: number,
-  visualRatio = columns / rows,
-) {
-  const key = `${source}|${columns}x${rows}|${visualRatio.toFixed(3)}`;
-  const cached = sourceCache.get(key);
-  if (cached) return cached;
-
-  const request = loadImage(source).then((image) =>
-    buildSourceField(cropImageToField(image, columns, rows, visualRatio), columns, rows),
-  );
-  sourceCache.set(key, request);
-  return request;
-}
-
-const hexToRgb = (hex: string) => ({
-  r: Number.parseInt(hex.slice(1, 3), 16),
-  g: Number.parseInt(hex.slice(3, 5), 16),
-  b: Number.parseInt(hex.slice(5, 7), 16),
-});
-
-const mixColor = (from: string, to: string, amount: number) => {
-  const start = hexToRgb(from);
-  const end = hexToRgb(to);
-  const progress = clamp(amount);
-  return `rgb(${Math.round(start.r + (end.r - start.r) * progress)} ${Math.round(start.g + (end.g - start.g) * progress)} ${Math.round(start.b + (end.b - start.b) * progress)})`;
-};
-
-const getSpreadState = (
+const drawBloomCell = (
+  path: Path2D,
   x: number,
   y: number,
-  progress: number | null,
-  origin: { x: number; y: number },
+  cell: number,
+  amount: number,
+  phaseOffset: number,
+  eventAmount: number,
+  targetScale: number,
 ) => {
-  if (progress === null) return { revealed: 1, front: 0 };
-  const eased = 1 - Math.pow(1 - clamp(progress), 3);
-  const distance = Math.hypot(x - origin.x, y - origin.y);
-  const maximumDistance = Math.max(
-    Math.hypot(origin.x, origin.y),
-    Math.hypot(1 - origin.x, origin.y),
-    Math.hypot(origin.x, 1 - origin.y),
-    Math.hypot(1 - origin.x, 1 - origin.y),
-  );
-  const noise = (hash(Math.floor(x * 401), Math.floor(y * 397)) - 0.5) * 0.13;
-  const threshold = eased * (maximumDistance + 0.12) + noise;
-  const signedDistance = threshold - distance;
-  return {
-    revealed: smoothstep((signedDistance + 0.035) / 0.08),
-    front: 1 - smoothstep(Math.abs(signedDistance) / 0.075),
-  };
+  const strength = clamp01(amount);
+  const pulse = 0.95 + 0.05 * Math.sin(phaseOffset);
+  const sourceSide = Math.max(0.65, cell * (0.2 + strength * 0.48) * pulse);
+  const targetSide = cell * targetScale;
+  const side = sourceSide + (targetSide - sourceSide) * eventAmount;
+  path.rect(x - side * 0.5, y - side * 0.5, side, side);
 };
 
-const getFlowCharacter = (velocityX: number, velocityY: number) => {
-  const angle = Math.atan2(velocityY, velocityX);
-  const direction = Math.round(((angle + Math.PI) / (Math.PI * 2)) * 8) % 8;
-  return ['-', '/', '|', '\\', '-', '/', '|', '\\'][direction];
-};
-
-export function renderAsciiField(
+export function renderVerticalBreathingFrame(
   context: CanvasRenderingContext2D,
-  field: AsciiSourceField,
-  settings: AsciiRenderSettings,
-  state: AsciiRenderState,
+  frame: VerticalBreathingFrame,
 ) {
-  const width = context.canvas.width;
-  const height = context.canvas.height;
-  const cellWidth = width / field.columns;
-  const cellHeight = height / field.rows;
-  const ramp = settings.variant === 'blocks'
-    ? ' ░▒▓█'
-    : (settings.glyphRamp || ' .,:;i1tfLCG08@');
-  const fontSize = Math.max(5, Math.ceil(cellHeight * 1.02));
+  const {
+    width,
+    height,
+    elapsedSeconds,
+    compact,
+    settings,
+    dotEventProgress,
+    dotEventOrigin,
+    dotEventIntensity = 1,
+    dotEventMode = 'cell',
+  } = frame;
+  const palette = settings.palette;
+  const coralLight = mixHex(palette.coral, palette.paper, 0.38);
+  const cyanLight = mixHex(palette.cyan, palette.paper, 0.34);
+  const cyanDeep = mixHex(palette.cyan, '#000000', 0.12);
+  const geometry = GEOMETRY[settings.geometry];
+  const shorterSide = Math.min(width, height);
+  const density = Math.max(0.65, Math.min(1.5, settings.density));
+  const cell = Math.max(compact ? 3.4 : 2.8, shorterSide / (compact ? 96 : 230)) / density;
+  const columns = Math.ceil((width / cell) * 1.34);
+  const rows = Math.ceil((height / cell) * 1.2);
+  const phase = (elapsedSeconds / 4.2) * Math.PI * 2;
+  const exchange = Math.cos(phase);
+  const transfer = Math.sin(phase);
+  const inhale = (1 - Math.cos(phase * 2)) * 0.5;
+  const aspect = width / Math.max(1, height);
 
   context.save();
-  context.fillStyle = settings.palette.background;
+  context.fillStyle = palette.paper;
   context.fillRect(0, 0, width, height);
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
-  context.font = `${fontSize}px Consolas, "Courier New", monospace`;
 
-  for (let row = 0; row < field.rows; row += 1) {
-    for (let column = 0; column < field.columns; column += 1) {
-      const index = row * field.columns + column;
-      const normalizedX = (column + 0.5) / field.columns;
-      const normalizedY = (row + 0.5) / field.rows;
-      const spread = getSpreadState(
-        normalizedX,
-        normalizedY,
-        state.spreadProgress,
-        state.spreadOrigin,
+  const coralPath = new Path2D();
+  const coralLightPath = new Path2D();
+  const cyanPath = new Path2D();
+  const cyanDeepPath = new Path2D();
+
+  for (let row = -1; row < rows; row += 1) {
+    for (let column = -1; column < columns; column += 1) {
+      const sourceU = ((column + 0.5) / columns - 0.5) * 2.72;
+      const sourceV = ((row + 0.5) / rows - 0.5) * 2.38;
+      const lensX = sourceU / 1.36;
+      const lensY = sourceV / 1.19;
+      const lensRadius = Math.min(1.7, lensX * lensX + lensY * lensY);
+      const lensScale = 1
+        - Math.max(0, Math.min(0.18, settings.fisheye)) * lensRadius * 0.45;
+      const u = sourceU * lensScale;
+      const v = sourceV * lensScale;
+      const absoluteV = Math.min(1, Math.abs(v));
+      const pinchScale = geometry.pinch
+        + smoothstep(0.02, 1, absoluteV) * (1 - geometry.pinch);
+      const localX = u * width * 0.5 * pinchScale;
+      const arcLift = -v
+        * u * u
+        * height
+        * (geometry.curve + (1 - absoluteV) * geometry.curveFalloff);
+      const localY = v * height * 0.46 + arcLift;
+      const twist = geometry.twist * Math.sin(phase) * (1 - absoluteV);
+      const cosTwist = Math.cos(twist);
+      const sinTwist = Math.sin(twist);
+      const x = width * 0.5 + localX * cosTwist - localY * sinTwist;
+      const y = height * 0.5 + localX * sinTwist + localY * cosTwist;
+      if (x < -cell || x > width + cell || y < -cell || y > height + cell) continue;
+
+      const nx = u * 0.48;
+      const ny = v * 0.42;
+      const radialX = nx * Math.min(1.35, aspect * 0.82);
+      const arch = (Math.pow(Math.abs(radialX), 1.72) - 0.08) * (0.16 + inhale * 0.07);
+      const bowedY = ny + arch * (0.72 + Math.abs(exchange) * 0.28);
+      const directionCoordinate = getDirectionCoordinate(settings.direction, nx, bowedY);
+      const eventProgress = dotEventProgress ?? 0;
+      const eventX = dotEventOrigin.x;
+      const eventY = dotEventOrigin.y;
+      const normalizedX = x / width;
+      const normalizedY = y / height;
+      const eventDistance = Math.hypot(
+        (normalizedX - eventX) * aspect,
+        normalizedY - eventY,
       );
+      let waveAmount = 0;
+      let waveWake = 0;
 
-      let value = clamp(
-        (field.luminance[index] - 0.5) * settings.contrast + 0.5
-        + field.edges[index] * settings.edge,
+      if (dotEventMode === 'wave' && dotEventProgress !== null) {
+        const easedProgress = 1 - Math.pow(1 - eventProgress, 3);
+        const waveRadius = 0.015 + easedProgress * 0.78 * Math.min(1.25, dotEventIntensity);
+        const waveWidth = 0.075 + eventProgress * 0.045;
+        const eventEnvelope = smoothstep(0, 0.1, eventProgress)
+          * (1 - smoothstep(0.68, 1, eventProgress));
+        const waveOffset = (eventDistance - waveRadius) / waveWidth;
+        const wakeOffset = (eventDistance - (waveRadius - 0.14)) / (waveWidth * 1.55);
+        waveAmount = Math.exp(-(waveOffset * waveOffset)) * eventEnvelope;
+        waveWake = Math.exp(-(wakeOffset * wakeOffset)) * eventEnvelope * 0.32;
+      }
+
+      const signedColorBase = exchange * 0.88
+        - transfer * directionCoordinate * 2.18;
+      const waveDirection = transfer >= 0 ? 1 : -1;
+      const signedColor = signedColorBase
+        + (waveAmount - waveWake) * 0.62 * waveDirection;
+
+      const coverageThreshold = (BAYER_8[(row & 7) * 8 + (column & 7)] + 0.5) / 64;
+      const colorThreshold = (BAYER_8[((row + 3) & 7) * 8 + ((column + 5) & 7)] + 0.5) / 64;
+      const microPhase = phase + column * 0.17 - row * 0.11;
+      const fieldStrength = smoothstep(0.025, 0.92, Math.abs(signedColor));
+      const coverage = Math.min(1, 0.28 + fieldStrength * 0.66 + waveAmount * 0.24 - waveWake * 0.06);
+      if (coverage <= coverageThreshold) continue;
+
+      const coralShare = smoothstep(-0.24, 0.24, signedColor);
+      const isCoral = coralShare > colorThreshold;
+      const cellStrength = Math.min(1, 0.42 + fieldStrength * 0.58 + waveAmount * 0.16);
+      const projectedCell = cell * (0.78 + pinchScale * 0.22) * (1 + waveAmount * 0.08);
+      const eventEnvelope = dotEventProgress === null
+        ? 0
+        : eventProgress < 0.364
+          ? smoothstep(0, 0.364, eventProgress)
+          : eventProgress < 0.473
+            ? 1
+            : 1 - smoothstep(0.473, 1, eventProgress);
+      const cellEventDistance = Math.hypot(
+        (normalizedX - eventX) / (0.18 * Math.min(1.35, dotEventIntensity)),
+        (normalizedY - eventY) / (0.22 * Math.min(1.35, dotEventIntensity)),
       );
-      const pointerX = state.pointer.x * width;
-      const pointerY = state.pointer.y * height;
-      const cellX = (column + 0.5) * cellWidth;
-      const cellY = (row + 0.5) * cellHeight;
-      const pointerDistance = Math.hypot(cellX - pointerX, cellY - pointerY);
-      const pointerAmount = state.pointer.active
-        ? clamp(1 - pointerDistance / state.pointer.radius) * state.pointer.strength
-        : 0;
+      const selectionSeed = hashCell(column, row);
+      const sizeSeed = hashCell(column + 37, row - 29);
+      const irregularEdge = Math.sin(column * 0.31 + row * 0.17) * 0.07;
+      const eventCell = dotEventMode === 'cell'
+        && dotEventProgress !== null
+        && cellEventDistance + irregularEdge < 1
+        && selectionSeed > 0.905 - Math.max(0, dotEventIntensity - 1) * 0.1 + cellEventDistance * 0.045;
 
-      if (state.pointer.mode === 'luminance') value = clamp(value + pointerAmount * 0.42);
-      const densityThreshold = (1 - settings.density) * 0.58;
-      const visibleValue = clamp((value - densityThreshold) / Math.max(0.001, 1 - densityThreshold));
-      const revealedValue = visibleValue * (0.12 + spread.revealed * 0.88);
-      const displayValue = Math.max(revealedValue, spread.front * 0.72);
-
-      if (settings.variant === 'dither') {
-        const threshold = BAYER_4[(column % 4) + (row % 4) * 4] / 15;
-        if (displayValue <= threshold * 0.86) continue;
-        const color = spread.front > 0.12
-          ? mixColor(settings.palette.base, settings.palette.event, spread.front)
-          : mixColor(settings.palette.muted, settings.palette.highlight, displayValue);
-        context.globalAlpha = 0.2 + displayValue * 0.8;
-        context.fillStyle = color;
-        context.fillRect(
-          Math.floor(column * cellWidth),
-          Math.floor(row * cellHeight),
-          Math.ceil(cellWidth + 0.25),
-          Math.ceil(cellHeight + 0.25),
+      if (eventCell) {
+        const targetScale = sizeSeed > 0.88
+          ? 1
+          : sizeSeed > 0.38
+            ? 0.72
+            : 0.28;
+        const targetPath = isCoral
+          ? coralShare > 0.68 ? coralPath : coralLightPath
+          : coralShare < 0.32 ? cyanDeepPath : cyanPath;
+        drawBloomCell(
+          targetPath,
+          x,
+          y,
+          projectedCell,
+          cellStrength,
+          microPhase,
+          eventEnvelope,
+          targetScale,
         );
-        continue;
+      } else if (isCoral) {
+        drawCell(coralShare > 0.68 ? coralPath : coralLightPath, x, y, projectedCell, cellStrength, microPhase);
+      } else {
+        drawCell(coralShare < 0.32 ? cyanDeepPath : cyanPath, x, y, projectedCell, cellStrength, microPhase);
       }
-
-      const rampIndex = Math.min(ramp.length - 1, Math.floor(displayValue * ramp.length));
-      let glyph = ramp[rampIndex] ?? ramp[ramp.length - 1];
-      if (!glyph || glyph === ' ') continue;
-      if (state.pointer.mode === 'flow' && pointerAmount > 0.12) {
-        glyph = getFlowCharacter(state.pointer.velocityX, state.pointer.velocityY);
-      }
-
-      let offsetX = 0;
-      let offsetY = 0;
-      if (state.pointer.mode === 'repel' && pointerAmount > 0) {
-        const directionX = (cellX - pointerX) / Math.max(1, pointerDistance);
-        const directionY = (cellY - pointerY) / Math.max(1, pointerDistance);
-        offsetX = directionX * pointerAmount * 2.2;
-        offsetY = directionY * pointerAmount * 2.2;
-      }
-
-      const color = spread.front > 0.08
-        ? mixColor(settings.palette.base, settings.palette.event, spread.front)
-        : mixColor(settings.palette.muted, settings.palette.highlight, displayValue);
-      context.globalAlpha = 0.2 + displayValue * 0.8;
-      context.fillStyle = color;
-      context.fillText(glyph, cellX + offsetX, cellY + offsetY);
     }
   }
 
+  context.fillStyle = coralLight;
+  context.fill(coralLightPath);
+  context.fillStyle = palette.coral;
+  context.fill(coralPath);
+  context.fillStyle = cyanLight;
+  context.fill(cyanPath);
+  context.fillStyle = cyanDeep;
+  context.fill(cyanDeepPath);
   context.restore();
 }
