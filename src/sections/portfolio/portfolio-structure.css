@@ -205,7 +205,9 @@
 }
 
 .portfolio-hero {
-  min-height: calc(72svh - 64px);
+  /* Fill the whole first screen at any viewport size: from under the fixed
+     nav down to the bottom edge of the CRT screen area. */
+  min-height: calc(100svh - 64px - var(--crt-bezel, 0px) * 2);
   display: grid;
   grid-template-rows: auto 1fr auto;
   padding-top: 2rem;
@@ -425,7 +427,6 @@
   width: 100%;
   max-width: none;
   overflow: clip;
-  background: var(--signal-void);
   color: var(--signal-white);
 }
 
@@ -1725,9 +1726,17 @@
   }
 
   .portfolio-game-section[data-runtime-signal='ready'] .portfolio-runtime-viewport {
+    /* Plain sticky: the box scrolls naturally with the column and parks only
+       when it reaches the threshold. `top` is set from JS as
+       screen-centre minus half the box height, so it parks centred at any
+       viewport size; the sticky container constraint hands it back to the
+       column bottom naturally on exit. */
     position: sticky;
-    top: 88px;
     display: block;
+  }
+
+  .portfolio-game-section[data-runtime-signal='ready'] .portfolio-runtime-viewport-box {
+    width: 100%;
     overflow: hidden;
     border: 1px solid var(--signal-line);
     background: var(--signal-surface);
@@ -1972,7 +1981,7 @@
   }
 
   .portfolio-hero {
-    min-height: auto;
+    min-height: calc(100svh - 58px - var(--crt-bezel, 0px));
   }
 
   .portfolio-hero-main h1 {
@@ -2305,7 +2314,7 @@
 }
 
 .portfolio-hero,
-.portfolio-section:not(.portfolio-game-section) {
+.portfolio-section {
   background: rgba(245, 247, 245, 0.74);
 }
 
@@ -2337,10 +2346,6 @@
 .portfolio-profile-list > div,
 .portfolio-profile-awards li {
   border-color: rgba(23, 33, 37, 0.2);
-}
-
-.portfolio-game-section {
-  background: rgba(238, 243, 242, 0.9);
 }
 
 .portfolio-game-section .portfolio-section-heading-copy h2,
@@ -2466,7 +2471,7 @@
   }
 
   .portfolio-hero,
-  .portfolio-section:not(.portfolio-game-section) {
+  .portfolio-section {
     background: rgba(245, 247, 245, 0.84);
     box-shadow: 0 0 0 100vmax rgba(245, 247, 245, 0.84);
   }
@@ -2510,24 +2515,6 @@
   .portfolio-primary-action,
   .portfolio-secondary-action {
     width: 100%;
-  }
-
-  .portfolio-hero-capabilities,
-  .portfolio-systems-capabilities {
-    grid-template-columns: 1fr;
-  }
-
-  .portfolio-hero-capabilities span,
-  .portfolio-systems-capabilities span,
-  .portfolio-hero-capabilities span:nth-child(2),
-  .portfolio-systems-capabilities span:nth-child(2) {
-    border-right: 0;
-    border-bottom: 1px solid rgba(138, 138, 133, 0.25);
-  }
-
-  .portfolio-hero-capabilities span:last-child,
-  .portfolio-systems-capabilities span:last-child {
-    border-bottom: 0;
   }
 
   .portfolio-section-heading-copy h2 {
@@ -2811,10 +2798,6 @@
 }
 
 @media (min-width: 1100px) {
-  .portfolio-hero {
-    min-height: clamp(600px, 68svh, 660px);
-  }
-
   .portfolio-hero-main {
     display: grid;
     grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
@@ -3532,16 +3515,10 @@
 }
 
 .portfolio-hero,
-.portfolio-section:not(.portfolio-game-section) {
+.portfolio-section {
   background: rgba(245, 247, 245, 0.74);
-  /* Full-bleed: paint the section background edge-to-edge like the game section. */
+  /* Full-bleed: paint the section background edge-to-edge, game section included. */
   box-shadow: 0 0 0 100vmax rgba(245, 247, 245, 0.74);
-  clip-path: inset(0 -100vmax);
-}
-
-.portfolio-game-section {
-  background: rgba(238, 243, 242, 0.9);
-  box-shadow: 0 0 0 100vmax rgba(238, 243, 242, 0.9);
   clip-path: inset(0 -100vmax);
 }
 
@@ -3598,7 +3575,7 @@
   }
 
   .portfolio-hero,
-  .portfolio-section:not(.portfolio-game-section) {
+  .portfolio-section {
     background: rgba(245, 247, 245, 0.84);
     box-shadow: 0 0 0 100vmax rgba(245, 247, 245, 0.84);
   }

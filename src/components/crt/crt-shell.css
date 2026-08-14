@@ -6,50 +6,60 @@
 :root {
   --crt-bezel: clamp(55px, 6.5vw, 95px);
   --crt-screen-radius: 10px;
+  /* Base plastic gradient direction. */
+  --crt-plastic-angle: 160deg;
+  /* Fold-shadow cutout: offsets / size adjustments relative to the screen
+     area (bezel inset) and its corner radius. Tunable for review. */
+  --crt-cut-dx: 0px;
+  --crt-cut-dy: 0px;
+  --crt-cut-dw: 0px;
+  --crt-cut-dh: 0px;
+  --crt-cut-radius: 10px;
   /* Shared matte plastic stack: bezel ring and corner caps paint from the
      same fixed-attached background so their tones always match. */
   --crt-plastic:
     linear-gradient(155deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 32%),
     linear-gradient(335deg, rgba(74, 68, 58, 0.2), rgba(74, 68, 58, 0) 42%),
-    linear-gradient(160deg, #e3ded3 0%, #d6d1c5 46%, #c4beb1 100%);
+    linear-gradient(var(--crt-plastic-angle), #e3ded3 0%, #d6d1c5 46%, #c4beb1 100%);
 
-  /* --- Tunable shading parameters (screen junction depth) --- */
-  --crt-shadow-top: 0.79;        /* thin pressed shadow along the screen top edge */
+  /* --- Tunable shading parameters (screen junction depth) ---
+     Values locked in with the on-page tuner on 2026-08-14. */
+  --crt-shadow-top: 0.71;        /* thin pressed shadow along the screen top edge */
   --crt-shadow-bottom: 0.535;    /* wider spread shadow along the bottom edge */
   --crt-shadow-left: 0.715;      /* concave darkening on the left edge */
   --crt-shadow-right: 0.695;     /* concave darkening on the right edge */
-  --crt-corner-dark-tl: 0.315;   /* radial darkening, top-left corner */
-  --crt-corner-dark-tr: 0.315;   /* radial darkening, top-right corner */
-  --crt-corner-dark-bl: 0.25;    /* radial darkening, bottom-left corner */
-  --crt-corner-dark-br: 0.25;    /* radial darkening, bottom-right corner */
+  --crt-corner-dark-tl: 0.2;     /* radial darkening, top-left corner */
+  --crt-corner-dark-tr: 0.195;   /* radial darkening, top-right corner */
+  --crt-corner-dark-bl: 0.17;    /* radial darkening, bottom-left corner */
+  --crt-corner-dark-br: 0.18;    /* radial darkening, bottom-right corner */
   /* Corner folds: per-corner dark/light ends, gradient direction, scale
      (multiple of bezel thickness) and transition pos/band. */
-  --crt-fold-tl-dark: 0.56;
-  --crt-fold-tl-light: 0.21;
+  --crt-fold-tl-dark: 0.76;
+  --crt-fold-tl-light: 0.275;
   --crt-fold-tl-angle: 225deg;
   --crt-fold-tl-scale: 15;
-  --crt-fold-tl-pos: 52;
-  --crt-fold-tl-band: 6;
-  --crt-fold-tr-dark: 0.48;
+  --crt-fold-tl-pos: 51;
+  --crt-fold-tl-band: 3;
+  --crt-fold-tr-dark: 0.7;
   --crt-fold-tr-light: 0.365;
   --crt-fold-tr-angle: 135deg;
   --crt-fold-tr-scale: 14;
-  --crt-fold-tr-pos: 52;
-  --crt-fold-tr-band: 6;
-  --crt-fold-bl-dark: 0.94;
-  --crt-fold-bl-light: 0.665;
+  --crt-fold-tr-pos: 51;
+  --crt-fold-tr-band: 3;
+  --crt-fold-bl-dark: 0.515;
+  --crt-fold-bl-light: 0.28;
   --crt-fold-bl-angle: 135deg;
-  --crt-fold-bl-scale: 11.7;
-  --crt-fold-bl-pos: 52;
-  --crt-fold-bl-band: 6;
-  --crt-fold-br-dark: 0.42;
-  --crt-fold-br-light: 0.475;
+  --crt-fold-bl-scale: 5.6;
+  --crt-fold-bl-pos: 51;
+  --crt-fold-bl-band: 4;
+  --crt-fold-br-dark: 0.525;
+  --crt-fold-br-light: 0.42;
   --crt-fold-br-angle: 225deg;
   --crt-fold-br-scale: 11.7;
   --crt-fold-br-pos: 50;
-  --crt-fold-br-band: 4;
-  --crt-reflection: 0.355;       /* glass reflection band strength */
-  --crt-reflection-soft: 0.045;  /* glass reflection secondary band */
+  --crt-fold-br-band: 2;
+  --crt-reflection: 0.05;        /* glass reflection band strength */
+  --crt-reflection-soft: 0.06;   /* glass reflection secondary band */
 }
 
 @media (max-width: 720px) {
@@ -141,15 +151,53 @@
    its dark end, light end and gradient angle; the radial mask fades the fold
    out from the outer corner so no element edge is ever visible. */
 /* The folds live only on the housing ring — the wrapper masks out the whole
-   screen area so no fold shading can spill onto the page content. */
+   screen area so no fold shading can spill onto the page content. The cutout
+   follows the screen's rounded corners: the base rectangle is subtracted
+   first, then each corner adds back the crescent between the square corner
+   and the arc (conic corner square minus its quarter disk), so no pale
+   triangle is left showing at the screen corners. Position, size and corner
+   radius of the cutout are tunable via --crt-cut-* for review. */
 .crt-shell-folds {
   position: absolute;
   inset: 0;
-  padding: var(--crt-bezel);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
+  --cut-x: calc(var(--crt-bezel) + var(--crt-cut-dx));
+  --cut-y: calc(var(--crt-bezel) + var(--crt-cut-dy));
+  --cut-w: calc(100% - var(--crt-bezel) * 2 + var(--crt-cut-dw));
+  --cut-h: calc(100% - var(--crt-bezel) * 2 + var(--crt-cut-dh));
+  --cut-r: var(--crt-cut-radius);
+  --cut-tl-cx: calc(var(--cut-x) + var(--cut-r));
+  --cut-tl-cy: calc(var(--cut-y) + var(--cut-r));
+  --cut-br-cx: calc(var(--cut-x) + var(--cut-w) - var(--cut-r));
+  --cut-br-cy: calc(var(--cut-y) + var(--cut-h) - var(--cut-r));
+  /* mask-composite builds bottom-up: each layer composites onto the result
+     of all layers beneath it, and `subtract` cuts the accumulated result
+     out of the layer. So the stack is, bottom-up: cut rect → full sheet
+     (subtract ⇒ ring) → corner square (add) → disk complement (intersect
+     ⇒ square minus quarter disk = crescent), repeated per corner. */
+  -webkit-mask:
+    radial-gradient(circle var(--cut-r) at var(--cut-br-cx) var(--cut-br-cy), transparent calc(var(--cut-r) - 0.5px), #000 calc(var(--cut-r) + 0.5px)),
+    conic-gradient(from 90deg at var(--cut-br-cx) var(--cut-br-cy), #fff 0deg 90deg, transparent 90deg 360deg),
+    radial-gradient(circle var(--cut-r) at var(--cut-tl-cx) var(--cut-br-cy), transparent calc(var(--cut-r) - 0.5px), #000 calc(var(--cut-r) + 0.5px)),
+    conic-gradient(from 180deg at var(--cut-tl-cx) var(--cut-br-cy), #fff 0deg 90deg, transparent 90deg 360deg),
+    radial-gradient(circle var(--cut-r) at var(--cut-br-cx) var(--cut-tl-cy), transparent calc(var(--cut-r) - 0.5px), #000 calc(var(--cut-r) + 0.5px)),
+    conic-gradient(from 0deg at var(--cut-br-cx) var(--cut-tl-cy), #fff 0deg 90deg, transparent 90deg 360deg),
+    radial-gradient(circle var(--cut-r) at var(--cut-tl-cx) var(--cut-tl-cy), transparent calc(var(--cut-r) - 0.5px), #000 calc(var(--cut-r) + 0.5px)),
+    conic-gradient(from 270deg at var(--cut-tl-cx) var(--cut-tl-cy), #fff 0deg 90deg, transparent 90deg 360deg),
+    linear-gradient(#fff 0 0),
+    linear-gradient(#fff 0 0) var(--cut-x) var(--cut-y) / var(--cut-w) var(--cut-h) no-repeat;
+  -webkit-mask-composite: source-in, source-over, source-in, source-over, source-in, source-over, source-in, source-over, source-out, source-over;
+  mask:
+    radial-gradient(circle var(--cut-r) at var(--cut-br-cx) var(--cut-br-cy), transparent calc(var(--cut-r) - 0.5px), #000 calc(var(--cut-r) + 0.5px)),
+    conic-gradient(from 90deg at var(--cut-br-cx) var(--cut-br-cy), #fff 0deg 90deg, transparent 90deg 360deg),
+    radial-gradient(circle var(--cut-r) at var(--cut-tl-cx) var(--cut-br-cy), transparent calc(var(--cut-r) - 0.5px), #000 calc(var(--cut-r) + 0.5px)),
+    conic-gradient(from 180deg at var(--cut-tl-cx) var(--cut-br-cy), #fff 0deg 90deg, transparent 90deg 360deg),
+    radial-gradient(circle var(--cut-r) at var(--cut-br-cx) var(--cut-tl-cy), transparent calc(var(--cut-r) - 0.5px), #000 calc(var(--cut-r) + 0.5px)),
+    conic-gradient(from 0deg at var(--cut-br-cx) var(--cut-tl-cy), #fff 0deg 90deg, transparent 90deg 360deg),
+    radial-gradient(circle var(--cut-r) at var(--cut-tl-cx) var(--cut-tl-cy), transparent calc(var(--cut-r) - 0.5px), #000 calc(var(--cut-r) + 0.5px)),
+    conic-gradient(from 270deg at var(--cut-tl-cx) var(--cut-tl-cy), #fff 0deg 90deg, transparent 90deg 360deg),
+    linear-gradient(#fff 0 0),
+    linear-gradient(#fff 0 0) var(--cut-x) var(--cut-y) / var(--cut-w) var(--cut-h) no-repeat;
+  mask-composite: intersect, add, intersect, add, intersect, add, intersect, add, subtract, add;
 }
 
 .crt-shell-fold {

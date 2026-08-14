@@ -2,8 +2,8 @@
 
 > 本文件保留分轮实施记录。当前唯一可执行的设计、动效与信息架构规范是 [`docs/portfolio-design-system.md`](docs/portfolio-design-system.md)；下方历史日志中的旧提案、旧阶段状态和旧文档路径仅用于追溯。
 >
-> 当前状态：ASCII + Dithering 正式背景、同源点击波、像素字体和 03 / 05 悬浮预览已接入开发支线并通过构建
-> 当前允许阶段：Round 10A（CRT 显示器外壳）为 `NEXT`；不进入旧 Round 9B–9E
+> 当前状态：Round 10A CRT 显示器外壳已验收（含 ScrollRail 顶部交互条）；Round 10B 开机序列已验收；开机"每会话一次"暂为测试模式（每次加载重播，Round 10 整体验收后决定是否恢复）；CRT 调参面板已随 10B 移除
+> 当前允许阶段：Round 10C（联合回归与规范更新）为 `NEXT`；不进入旧 Round 9B–9E
 > 当前分支：`codex/redesign/interactive-portfolio`
 
 ## 1. Codex 每轮工作协议
@@ -358,11 +358,11 @@ Round 10A — CRT 外壳：
 
 Round 10B — 开机序列 Overlay：
 
-- [ ] 状态机：黑屏 0.2s → 开机（中心亮点 → 水平亮线 → 纵向展开为白屏，约 500ms，仅 transform / opacity / clip-path）→ 打字机逐字打出 `ZHU YIJIA PORTFOLIO` 与 `UE / C++ GAME DEVELOPER`（块状光标全程闪烁）→ 打完后光标再闪 5 次 → 带 2–3 处水平位移故障的逆向收线 → 撤场进入主站。
-- [ ] Overlay 只覆盖屏幕区，不影响边框；打字与闪烁用 Fusion Pixel 像素字体。
-- [ ] sessionStorage 每会话一次；点击 / Esc / 任意键跳过；Reduced Motion 完全不出现。
-- [ ] 开机动画是纯仪式，不表达加载进度；不加音效。
-- [ ] 验收：完整播放、中途跳过、重复访问不播、Reduced Motion 直达主站、手机简化版、撤场后三套既有动效（背景呼吸与点击波 / 03/05 预览 / GAME WORK 560ms 交接）无残留影响。
+- [x] 状态机：黑屏 0.2s → 开机（中心亮点 → 水平亮线 → 纵向展开为白屏，约 500ms，仅 transform / opacity / clip-path）→ 打字机逐字打出 `ZHU YIJIA PORTFOLIO` 与 `UE / C++ GAME DEVELOPER`（块状光标全程闪烁）→ 打完后光标再闪 5 次 → 带 2–3 处水平位移故障的逆向收线 → 撤场进入主站。
+- [x] Overlay 只覆盖屏幕区，不影响边框；打字与闪烁用 Fusion Pixel 像素字体。
+- [ ] sessionStorage 每会话一次（暂为测试模式，每次加载重播，Round 10 整体验收后决定是否恢复）；点击 / Esc / 任意键跳过；Reduced Motion 完全不出现。
+- [x] 开机动画是纯仪式，不表达加载进度；不加音效。
+- [x] 验收：完整播放、中途跳过、重复访问不播、Reduced Motion 直达主站、手机简化版、撤场后三套既有动效（背景呼吸与点击波 / 03/05 预览 / GAME WORK 560ms 交接）无残留影响。
 
 Round 10C — 联合回归与规范更新：
 
@@ -809,3 +809,24 @@ Motion Study 06 验收：用户确认点击定位版本通过；Study 06 标记�
 修改：新增 `src/components/crt/` CRT 显示器外壳——哑光暖灰塑料边框（环形 mask 渐变 + 噪点）、四角塑料角件（`--crt-plastic` 共享材质 + fixed 附着）、逐角可调折角阴影（暗端/亮端/方向/范围/过渡位置/过渡宽度，裁切在外壳环形区）、玻璃层（四边独立压边阴影 + 四角径向暗部 + 常驻反光，鼠标 3px 微移，Reduced Motion 关闭）、右下角电源凹槽与 ZHUYIJIA 小字。导航、Dither Canvas、Portal 预览、Archive sticky 预览与页面起始空间全部收进屏幕区。层级：玻璃 → 塑料机身 → 角件 → 折角阴影 → 电源槽。阴影参数按用户调校固化（上缘 0.79 / 下缘 0.535 / 左 0.715 / 右 0.695 等 36 项）。临时调参卡已随本轮删除（`CrtTuner` 组件与样式、App 挂载均移除），36 项参数以 CSS 变量形式保留在 `crt-shell.css` 供后续微调。
 检查：生产构建、相关 ESLint、`git diff --check` 通过；本地截图工具多轮自检桌面 1440 / 1911、手机 390 与四角放大；排查并修复 canvas 替换元素不拉伸、mask XOR 奇偶泄漏等问题；10B 未开始。
 需要用户确认：外壳整体质感与当前固化参数（10A 仍待验收）；确认后进入 Round 10B 开机序列。
+
+2026-08-14 — Round 10A 验收修订与收尾 — DONE
+修订 1（参数固化）：按用户调校更新 36 项阴影默认参数（上缘 0.71、角部暗部 0.2 / 0.195 / 0.17 / 0.18、左下折角范围 5.6、反光 0.05 / 0.06 等），写入 `crt-shell.css` 的 `:root` 与调参面板 `DEFAULTS`。
+修订 2（切割圆角化）：折角阴影的内切割从直角 content-box 矩形改为带可调圆角的矩形；mask 按自底向上合成（切割矩形 → 全白 subtract → 角方块 conic add → 圆盘补集 radial intersect），修复了 composite 数量不足导致整层被减空、以及 `mask-position` 百分比对齐偏移两处问题；四角不再显露白色三角。
+修订 3（调参面板恢复）：从左下角恢复 `CrtTuner`，新增外框底色渐变方向（`--crt-plastic-angle`）与切割框参数（水平 / 垂直偏移、宽 / 高调整、圆角半径 `--crt-cut-*`）；悬停 / 聚焦参数行显示对应区域的红色虚线参考框（仅调试提示，不进入画面）；点击右侧数值可直接输入，Enter / 失焦提交并自动夹取范围。
+修订 4（顶部横向交互条）：移除视口原生纵向滚动条（仅根级，内部滚动容器保留），新增 `src/components/scroll-rail/ScrollRail.tsx`，固定在 CRT 屏幕最顶边、不新增独立栏目带；青色进度线与滑块反映阅读位置，01–08 章节刻度与导航当前状态同源同步（监听 `.portfolio-shell` 的 `data-active-section`），支持点击 / 拖拽跳转与键盘操作；Archive 复用为纯进度条。导航章节定义抽至 `src/sections/portfolio/navigation-sections.ts` 共用。
+检查：生产构建、相关 ESLint、`git diff --check` 通过；Edge 无头截图自检桌面 1440 首页 / Archive、四角放大与顶边交互条；拖拽与悬停提示由用户实机验收。
+确认：用户验收通过外壳质感、固化参数、圆角切割与顶部交互条；Round 10A 标记为 `DONE`，Round 10B（开机序列）标记为 `NEXT`，等待确认后开始。调参面板暂留，验收全部结束后随 10B 一并移除。
+
+2026-08-14 — Round 10B 开机序列 — DONE
+实现：新增 `src/components/crt/BootSequence.tsx` 与 `boot-sequence.css`。状态机：黑屏 0.2s → 开机 500ms（中心亮点 → 水平亮线 → 纵向展开为白屏，纯 transform / opacity）→ 打字机逐字打出 `ZHU YIJIA PORTFOLIO` 与 `UE / C++ GAME DEVELOPER`（块状光标 420ms 全程闪烁，行间留 4 tick 停顿）→ 打完光标再闪 5 次 → 文字 3 处水平位移故障并淡出 → 白屏提亮为纯白 → 连续收成发光水平亮线 → 缩成中心亮点熄灭（560ms，cubic-bezier(0.55,0.06,0.35,1)，无停顿）→ 撤场进主站。Overlay 只覆盖屏幕区（`inset: --crt-bezel` + 屏幕圆角），z-index 2900 位于页面内容之上、CRT 玻璃层（3000）之下，玻璃压暗与反光压在开机画面上。开机白屏内嵌第二个 Dither Canvas 实例（同一冻结参数）+ 与主站相同的 0.74 罩层，点阵强度与主站一致。
+交互：任意点击 / 按键跳过——打字与闪烁阶段跳过仍播放完整故障收线；黑屏 / 开机阶段直接进主站；收线期间忽略跳过。Reduced Motion 完全不出现；播放期间锁定页面滚动；手机简化版（打字 40ms、闪 3 次、无故障位移）。Archive 不播放。每会话一次暂为测试模式（每次加载重播），Round 10 整体验收后决定是否恢复 sessionStorage 门控（保留 key `zhuyijia-crt-booted` 注释）。
+修复：开机文字字体作用域（`--portfolio-pixel-font` 仅定义在 `.portfolio-shell` 内，开机层改用直接字体族声明）；第二行打字时第一行被顶起（第二行从始渲染隐藏光标占位行高）；息屏前"先关再开"闪烁（280ms 延迟期回退基础样式，fill 模式 forwards 改 both）；结尾黑屏硬切（收线时 Overlay 底色转透明，白色层收起时直接揭开同样白底点阵的主站，删除 120ms 黑屏停顿）。
+清理：CRT 调参面板（CrtTuner 组件、样式与 App 挂载）随本轮移除，36 项参数已固化在 `crt-shell.css`，可从 Git 历史恢复调参工具。
+检查：生产构建、相关 ESLint、`git diff --check` 通过；Edge 无头分阶段截图自检开机亮线、打字（像素字体 / 块状光标 / 双行不跳动）、收线后落点、390×844 手机简化版与 Archive 不播放；跳过路径与 Reduced Motion 由用户实机验收。
+确认：用户验收通过开机序列完整流程、收线节奏与跳过行为；Round 10B 标记为 `DONE`，Round 10C（联合回归与规范更新）标记为 `NEXT`，等待确认后开始。
+
+2026-08-14 — 主界面修订（10C 前）— DONE
+修改：① Hero 改为任意尺寸满首屏：桌面 `min-height: calc(100svh - 64px - 2×bezel)`、手机 `calc(100svh - 58px - bezel)`，删除 ≥1100px 断点的 68svh clamp 覆盖；顺手删除 ≤440px 把能力条压成单列的旧规则（恢复 2×2），390×844 实测 hero 高度 = 776px 正好一屏，首屏不再露出 02 区块。② 02 GAME WORK 区块删除专属背景层（两处 `rgba(238,243,242,0.9)` 背景 + 全宽阴影声明），与其他区块共用同一层 0.74 浅罩（手机 0.84），点阵透出强度全站统一。③ Runtime Signal Viewport 停留位置重构：回到原生 `position: sticky` 原理（同用户提出修改前），停留阈值由 JS 在几何变化时计算 `top = (视口高 + 64) / 2 − 半盒高`，使框体中心停在导航下方可视区中心；进入时框顶与右栏首卡片顶齐平、划到中心才停留、栏底框底与末卡片底齐平后自然被接走，全程滚动零 JS。坑：自定义属性 `--crt-bezel` 的 computed 值是未求值的 `clamp()` 字符串，不可 parseFloat，改为读取框架元素解析后的几何。
+检查：生产构建、相关 ESLint、`git diff --check` 通过；playwright-core 驱动 Edge 实测 1440×900 五档滚动位置的三态对齐数据（顶齐平 / 中心 482 停留 / 底齐平 652=652 / 同步退出）与 390×844、360×740 首屏高度；新增本地截图工具 `tmp/shots/`（playwright-core，已加入 .gitignore，不进版本库）。
+确认：用户验收通过三项修订。

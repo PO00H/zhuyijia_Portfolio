@@ -224,3 +224,13 @@
     text-wrap: balance;
   }
 }
+
+/* 视口原生纵向滚动条由顶部 ScrollRail 横向交互条替代（仅隐藏根滚动条，
+   页面内部滚动容器保留自身滚动条）。 */
+html {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}

@@ -1,6 +1,8 @@
 import { IframeLightbox } from './components/code/IframeLightbox';
 import { LightboxProvider } from './components/code/LightboxContext';
+import { BootSequence } from './components/crt/BootSequence';
 import { CrtShell } from './components/crt/CrtShell';
+import { ScrollRail } from './components/scroll-rail/ScrollRail';
 import { AssetLab } from './features/asset-lab/AssetLab';
 import { AsciiLab } from './features/ascii-lab/AsciiLab';
 import { PixelMaterialLab } from './features/pixel-material-lab/PixelMaterialLab';
@@ -32,6 +34,7 @@ function App() {
       <>
         <ArchivePage />
         <CrtShell />
+        <ScrollRail />
       </>
     );
   }
@@ -41,6 +44,8 @@ function App() {
       <IframeLightbox />
       <PortfolioHome />
       <CrtShell />
+      <ScrollRail />
+      <BootSequence />
     </LightboxProvider>
   );
 }
