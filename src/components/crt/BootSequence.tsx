@@ -10,9 +10,9 @@ import './boot-sequence.css';
  * sound. Any click / key skips; reduced motion never shows it; mobile plays
  * a shortened variant. The bezel frame is not covered.
  *
- * TEST MODE: replays on every load while Round 10 is under review. After
- * Round 10 acceptance, decide whether to restore the once-per-session gate
- * (sessionStorage key `zhuyijia-crt-booted`).
+ * Replays on every load — confirmed behavior after Round 10 review (the
+ * once-per-session sessionStorage gate `zhuyijia-crt-booted` was dropped
+ * by user decision, not just for testing).
  */
 
 const LINES = ['ZHU YIJIA PORTFOLIO', 'UE / C++ GAME DEVELOPER'];

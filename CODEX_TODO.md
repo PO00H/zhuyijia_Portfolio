@@ -2,8 +2,8 @@
 
 > 本文件保留分轮实施记录。当前唯一可执行的设计、动效与信息架构规范是 [`docs/portfolio-design-system.md`](docs/portfolio-design-system.md)；下方历史日志中的旧提案、旧阶段状态和旧文档路径仅用于追溯。
 >
-> 当前状态：Round 10A CRT 显示器外壳已验收（含 ScrollRail 顶部交互条）；Round 10B 开机序列已验收；开机"每会话一次"暂为测试模式（每次加载重播，Round 10 整体验收后决定是否恢复）；CRT 调参面板已随 10B 移除
-> 当前允许阶段：Round 10C（联合回归与规范更新）为 `NEXT`；不进入旧 Round 9B–9E
+> 当前状态：Round 10（CRT 显示器外壳 + 开机序列 + 联合回归）整体已验收；设计规范 v2 生效；开机序列每次加载重播
+> 当前允许阶段：无 `NEXT`，下一阶段由用户明确指定；不进入旧 Round 9B–9E
 > 当前分支：`codex/redesign/interactive-portfolio`
 
 ## 1. Codex 每轮工作协议
@@ -360,15 +360,15 @@ Round 10B — 开机序列 Overlay：
 
 - [x] 状态机：黑屏 0.2s → 开机（中心亮点 → 水平亮线 → 纵向展开为白屏，约 500ms，仅 transform / opacity / clip-path）→ 打字机逐字打出 `ZHU YIJIA PORTFOLIO` 与 `UE / C++ GAME DEVELOPER`（块状光标全程闪烁）→ 打完后光标再闪 5 次 → 带 2–3 处水平位移故障的逆向收线 → 撤场进入主站。
 - [x] Overlay 只覆盖屏幕区，不影响边框；打字与闪烁用 Fusion Pixel 像素字体。
-- [ ] sessionStorage 每会话一次（暂为测试模式，每次加载重播，Round 10 整体验收后决定是否恢复）；点击 / Esc / 任意键跳过；Reduced Motion 完全不出现。
+- [x] 点击 / Esc / 任意键跳过；Reduced Motion 完全不出现。播放频率：用户已决定每次加载重播，不启用 sessionStorage 每会话一次。
 - [x] 开机动画是纯仪式，不表达加载进度；不加音效。
 - [x] 验收：完整播放、中途跳过、重复访问不播、Reduced Motion 直达主站、手机简化版、撤场后三套既有动效（背景呼吸与点击波 / 03/05 预览 / GAME WORK 560ms 交接）无残留影响。
 
 Round 10C — 联合回归与规范更新：
 
-- [ ] 桌面、390px 手机、键盘、触屏、Reduced Motion 全回归；性能检查（外壳零常驻重绘）。
-- [ ] 更新 `docs/portfolio-design-system.md`：CRT 外壳与开机故事正式写入规范，并明确它在开机序列范围内取代"禁止黑底终端 / 故障效果"的旧条款（主站内容区仍执行浅色体系与既有禁令）。
-- [ ] 更新 README 与本文件执行日志。
+- [x] 桌面、390px 手机、键盘、触屏、Reduced Motion 全回归；性能检查（外壳零常驻重绘）。
+- [x] 更新 `docs/portfolio-design-system.md`：CRT 外壳与开机故事正式写入规范，并明确它在开机序列范围内取代"禁止黑底终端 / 故障效果"的旧条款（主站内容区仍执行浅色体系与既有禁令）。
+- [x] 更新 README 与本文件执行日志。
 
 Round 10 验收点：打开网站先看到一台"关机的显示器"，开机、打字、故障息屏后进入完整主站；边框在全站滚动中稳定不动；真实项目媒体保持原样；跳过与 Reduced Motion 路径可靠。
 
@@ -830,3 +830,15 @@ Motion Study 06 验收：用户确认点击定位版本通过；Study 06 标记�
 修改：① Hero 改为任意尺寸满首屏：桌面 `min-height: calc(100svh - 64px - 2×bezel)`、手机 `calc(100svh - 58px - bezel)`，删除 ≥1100px 断点的 68svh clamp 覆盖；顺手删除 ≤440px 把能力条压成单列的旧规则（恢复 2×2），390×844 实测 hero 高度 = 776px 正好一屏，首屏不再露出 02 区块。② 02 GAME WORK 区块删除专属背景层（两处 `rgba(238,243,242,0.9)` 背景 + 全宽阴影声明），与其他区块共用同一层 0.74 浅罩（手机 0.84），点阵透出强度全站统一。③ Runtime Signal Viewport 停留位置重构：回到原生 `position: sticky` 原理（同用户提出修改前），停留阈值由 JS 在几何变化时计算 `top = (视口高 + 64) / 2 − 半盒高`，使框体中心停在导航下方可视区中心；进入时框顶与右栏首卡片顶齐平、划到中心才停留、栏底框底与末卡片底齐平后自然被接走，全程滚动零 JS。坑：自定义属性 `--crt-bezel` 的 computed 值是未求值的 `clamp()` 字符串，不可 parseFloat，改为读取框架元素解析后的几何。
 检查：生产构建、相关 ESLint、`git diff --check` 通过；playwright-core 驱动 Edge 实测 1440×900 五档滚动位置的三态对齐数据（顶齐平 / 中心 482 停留 / 底齐平 652=652 / 同步退出）与 390×844、360×740 首屏高度；新增本地截图工具 `tmp/shots/`（playwright-core，已加入 .gitignore，不进版本库）。
 确认：用户验收通过三项修订。
+
+2026-08-14 — Round 10C 联合回归与规范更新 — DONE
+回归：playwright-core 驱动系统 Edge 完成八组检查——桌面 1440 顶部 / 中段 / 页尾、390×844 触屏顶部与页尾、Reduced Motion、Archive 桌面与手机。开机序列正常播放、Esc 跳过播收线后无残留（Dither Canvas 从 2 回到 1）、Reduced Motion 直达主站、Archive 不播开机；所有页面横向溢出为 0；导航、ScrollRail、CRT 外壳在各尺寸就位；手机菜单 7 入口正常开合。键盘回归：Tab 依次经过导航、02 / 03 / 05 词条、Archive 入口、Contact 四格与返回顶部，焦点描边可见；ScrollRail 可聚焦（`role="slider"`），End 键直达页尾（scrollY 6257 = maxScroll，aria-valuenow 100）。
+修复：favicon 404（`index.html` 加入内联 SVG 像素方块图标）；全局焦点描边从遗留酸性黄绿 `#D8FF32` 改为交互青 `#169eae`，选区颜色从红色改为 `#28b6c3`（`src/App.css`）。
+性能：CRT 外壳零常驻重绘（无动画循环，仅指针移动驱动的反光 transform 且 rAF 节流）；ScrollRail 仅滚动事件驱动；待机页面满帧率无长任务，唯一常驻绘制是已验收的 12 FPS Dither 背景。
+文档：`docs/portfolio-design-system.md` 升级为 v2——新增第 11 节 CRT 显示器外壳（层级、材质、圆角切割、36 项固化参数、零常驻重绘）与第 12 节开机序列（阶段、层级、跳过、降级、测试模式说明），第 3 节禁令加入开机序列例外条款，第 4 节冻结参数补充边框厚度与屏幕圆角，第 10 节写入 ScrollRail 替代原生滚动条；README 更新开机仪式描述。
+未提交 Git；等待用户验收 Round 10C 后将 Round 10 整体标记为 DONE，并决定开机序列是否恢复每会话一次。
+
+2026-08-15 — Round 10 整体验收 — DONE
+确认：用户验收 Round 10C 的联合回归、规范 v2 与 README 更新；Round 10（10A 外壳 / 10B 开机序列 / 10C 回归与规范）整体标记为 `DONE`。
+决定：开机序列保持每次加载重播，不恢复 sessionStorage 门控（规范 v2 与代码注释已同步）。
+状态：无 `NEXT`；下一阶段由用户明确指定。
