@@ -26,7 +26,10 @@
   --valiente-light: var(--portfolio-signal-surface-raised);
 
   min-height: 100vh;
-  padding-top: 64px;
+  padding-top: calc(64px + var(--crt-bezel, 0px));
+  padding-right: var(--crt-bezel, 0px);
+  padding-bottom: var(--crt-bezel, 0px);
+  padding-left: var(--crt-bezel, 0px);
   position: relative;
   isolation: isolate;
   background: rgba(243, 245, 243, 0.88);
@@ -78,9 +81,9 @@
 
 .portfolio-navigation {
   position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
+  top: var(--crt-bezel, 0px);
+  right: var(--crt-bezel, 0px);
+  left: var(--crt-bezel, 0px);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -198,7 +201,7 @@
 
 .portfolio-hero,
 .portfolio-section[id] {
-  scroll-margin-top: 80px;
+  scroll-margin-top: calc(80px + var(--crt-bezel, 0px));
 }
 
 .portfolio-hero {
@@ -971,7 +974,7 @@
   margin: 1.75rem 0 0;
   font-family: 'Inter', sans-serif;
   font-size: clamp(1.75rem, 3vw, 3.5rem);
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 0.98;
 }
@@ -1447,7 +1450,7 @@
   color: var(--valiente-red);
   font-family: 'Inter', sans-serif;
   font-size: clamp(3rem, 6vw, 6rem);
-  font-weight: 800;
+  font-weight: 400;
   letter-spacing: -0.07em;
   line-height: 0.8;
 }
@@ -3538,6 +3541,8 @@
 
 .portfolio-game-section {
   background: rgba(238, 243, 242, 0.9);
+  box-shadow: 0 0 0 100vmax rgba(238, 243, 242, 0.9);
+  clip-path: inset(0 -100vmax);
 }
 
 .portfolio-section:not(.portfolio-game-section) .portfolio-section-heading-copy h2,

@@ -90,9 +90,12 @@ export function InteractiveProjectIndex({
     const preview = previewRef.current;
     if (!preview) return;
 
-    const previewWidth = Math.min(400, window.innerWidth - 48);
+    // Keep the preview inside the CRT screen area, not just the viewport.
+    const bezel =
+      document.querySelector('.crt-shell-glass')?.getBoundingClientRect().left ?? 0;
+    const previewWidth = Math.min(400, window.innerWidth - bezel * 2 - 16);
     const previewHeight = 286;
-    const offset = 32;
+    const offset = 32 + bezel;
     const preferredX = x + offset;
     const nextX = Math.min(
       Math.max(offset, preferredX),

@@ -6,13 +6,19 @@
   --portfolio-signal-white: #172125;
   --portfolio-signal-muted: #69777a;
   --portfolio-signal-line: rgba(23, 33, 37, 0.18);
+  --portfolio-signal-line-strong: rgba(23, 33, 37, 0.3);
+  --portfolio-signal-cyan: #28b6c3;
+  --portfolio-signal-teal: #2d929b;
   --valiente-bg: var(--portfolio-signal-void);
   --valiente-red: var(--portfolio-signal-acid);
   --valiente-dark: var(--portfolio-signal-white);
   --valiente-gray: var(--portfolio-signal-muted);
 
   min-height: 100vh;
-  padding-top: 64px;
+  padding-top: calc(64px + var(--crt-bezel, 0px));
+  padding-right: var(--crt-bezel, 0px);
+  padding-bottom: var(--crt-bezel, 0px);
+  padding-left: var(--crt-bezel, 0px);
   position: relative;
   isolation: isolate;
   background: rgba(243, 245, 243, 0.88);
@@ -31,9 +37,9 @@
 
 .archive-navigation {
   position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
+  top: var(--crt-bezel, 0px);
+  right: var(--crt-bezel, 0px);
+  left: var(--crt-bezel, 0px);
   z-index: 100;
   display: flex;
   min-height: 64px;
@@ -127,7 +133,7 @@
 .archive-intro > p {
   max-width: 720px;
   margin: clamp(2.5rem, 5vw, 5rem) 0 0 auto;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--portfolio-pixel-font);
   font-size: clamp(0.75rem, 1vw, 0.95rem);
   font-weight: 300;
   line-height: 1.85;
@@ -136,8 +142,8 @@
 .archive-filters {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  border-top: 1px solid rgba(138, 138, 133, 0.45);
-  border-bottom: 1px solid rgba(138, 138, 133, 0.45);
+  border-top: 1px solid var(--portfolio-signal-line-strong);
+  border-bottom: 1px solid var(--portfolio-signal-line-strong);
 }
 
 .archive-filters button {
@@ -149,8 +155,8 @@
   gap: 1rem;
   padding: 0 1.25rem;
   border: 0;
-  border-right: 1px solid rgba(138, 138, 133, 0.35);
-  background: transparent;
+  border-right: 1px solid var(--portfolio-signal-line);
+  background: var(--portfolio-signal-surface);
   color: var(--valiente-gray);
   font-family: var(--portfolio-pixel-font);
   font-size: 12px;
@@ -161,18 +167,19 @@
   cursor: pointer;
 }
 
-.archive-filters button:first-child {
-  padding-left: 0;
-}
-
 .archive-filters button:last-child {
-  padding-right: 0;
   border-right: 0;
 }
 
 .archive-filters button:hover,
-.archive-filters button:focus-visible,
+.archive-filters button:focus-visible {
+  background: rgba(40, 182, 195, 0.08);
+  color: var(--valiente-red);
+}
+
 .archive-filters button.is-active {
+  background: rgba(40, 182, 195, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(22, 158, 174, 0.52);
   color: var(--valiente-red);
 }
 
@@ -197,7 +204,7 @@
 }
 
 .archive-list-labels {
-  padding: 0.65rem 0;
+  padding: 0.65rem 1rem;
   color: var(--valiente-gray);
   font-family: var(--portfolio-pixel-font);
   font-size: 12px;
@@ -214,15 +221,15 @@
 }
 
 .archive-list-rows {
-  border-top: 1px solid rgba(138, 138, 133, 0.4);
+  border-top: 1px solid var(--portfolio-signal-line-strong);
 }
 
 .archive-project-row {
   width: 100%;
   min-height: 74px;
-  padding: 0.75rem 0;
+  padding: 0.75rem 1rem;
   border: 0;
-  border-bottom: 1px solid rgba(138, 138, 133, 0.34);
+  border-bottom: 1px solid var(--portfolio-signal-line);
   background: transparent;
   color: var(--valiente-dark);
   text-align: left;
@@ -254,9 +261,9 @@
 
 .archive-project-name strong {
   min-width: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--portfolio-pixel-font);
   font-size: clamp(1rem, 1.35vw, 1.4rem);
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: -0.035em;
   line-height: 1.08;
   overflow-wrap: anywhere;
@@ -272,7 +279,7 @@
 .archive-project-row:focus-visible,
 .archive-project-row.is-selected {
   color: var(--valiente-red);
-  background: rgba(216, 255, 50, 0.065);
+  background: rgba(40, 182, 195, 0.08);
 }
 
 .archive-project-row:hover .archive-project-name small,
@@ -292,16 +299,21 @@
 
 .archive-desktop-preview {
   position: sticky;
-  top: 96px;
+  top: calc(96px + var(--crt-bezel, 0px));
   min-width: 0;
 }
 
+.archive-preview {
+  padding: 0 1.5rem 1.5rem;
+}
+
 .archive-preview-media {
-  width: 100%;
+  width: auto;
+  margin: 0 -1.5rem;
   overflow: hidden;
   aspect-ratio: 16 / 9;
   background: var(--valiente-dark);
-  border: 1px solid rgba(138, 138, 133, 0.45);
+  border: 1px solid var(--portfolio-signal-line-strong);
 }
 
 .archive-preview-media > video,
@@ -368,7 +380,7 @@
   max-width: 18ch;
   margin: 1.4rem 0 0;
   font-size: clamp(2rem, 4.3vw, 4.5rem);
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: -0.06em;
   line-height: 0.95;
   text-wrap: balance;
@@ -380,7 +392,7 @@
   max-width: 58ch;
   margin: 1.25rem 0 0;
   color: var(--valiente-gray);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--portfolio-pixel-font);
   font-size: 0.72rem;
   font-weight: 300;
   line-height: 1.75;
@@ -393,7 +405,7 @@
   gap: 1.5rem;
   margin-top: 1.75rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(138, 138, 133, 0.4);
+  border-top: 1px solid var(--portfolio-signal-line-strong);
 }
 
 .archive-preview-footer ul {
@@ -407,7 +419,7 @@
 
 .archive-preview-footer li {
   padding: 0.45rem 0.6rem;
-  border: 1px solid rgba(138, 138, 133, 0.35);
+  border: 1px solid var(--portfolio-signal-line);
   color: var(--valiente-gray);
   font-family: var(--portfolio-pixel-font);
   font-size: 12px;
@@ -423,9 +435,9 @@
   gap: 0.5rem;
   min-height: 40px;
   padding: 0.65rem 0.8rem;
-  border: 1px solid var(--valiente-red);
-  background: var(--valiente-red);
-  color: var(--portfolio-signal-void);
+  border: 1px solid var(--portfolio-signal-cyan);
+  background: var(--portfolio-signal-cyan);
+  color: #f5f7f5;
   font-family: var(--portfolio-pixel-font);
   font-size: 12px;
   letter-spacing: 0;
@@ -444,7 +456,7 @@
 
 .archive-footer {
   min-height: 88px;
-  border-top: 1px solid rgba(138, 138, 133, 0.4);
+  border-top: 1px solid var(--portfolio-signal-line-strong);
 }
 
 .archive-footer a {
@@ -525,7 +537,7 @@
   .archive-mobile-preview {
     display: block;
     padding: 1.25rem 0 2rem;
-    border-bottom: 1px solid rgba(138, 138, 133, 0.4);
+    border-bottom: 1px solid var(--portfolio-signal-line-strong);
   }
 
   .archive-project-row.is-selected {
@@ -576,14 +588,6 @@
     padding: 0 0.4rem;
   }
 
-  .archive-filters button:first-child {
-    padding-left: 0;
-  }
-
-  .archive-filters button:last-child {
-    padding-right: 0;
-  }
-
   .archive-list-labels,
   .archive-project-row {
     grid-template-columns: minmax(0, 1fr) 18px;
@@ -609,11 +613,7 @@
   }
 }
 
-/* Round 6C: Archive inherits the restrained Pixel Signal system. */
-.archive-shell {
-  background: rgba(9, 10, 9, 0.94);
-}
-
+/* Round 6C: Archive inherits the restrained signal system. */
 .archive-intro {
   position: relative;
 }
@@ -644,10 +644,6 @@
     opacity: 1;
     transform: scaleX(1);
   }
-}
-
-.archive-filters button.is-active {
-  background: rgba(216, 255, 50, 0.08);
 }
 
 .archive-preview {
@@ -699,6 +695,9 @@
 .archive-browser,
 .archive-footer {
   background: rgba(245, 247, 245, 0.74);
+  /* Full-bleed: paint the section background edge-to-edge like the home sections. */
+  box-shadow: 0 0 0 100vmax rgba(245, 247, 245, 0.74);
+  clip-path: inset(0 -100vmax);
 }
 
 .archive-project-row.is-selected,
@@ -707,10 +706,16 @@
 }
 
 .archive-preview,
-.archive-list,
+.archive-list {
+  background: rgba(245, 247, 245, 0.9);
+}
+
+/* The filter strip sits between sections, so it needs its own full-bleed base
+   at the same 0.74 wash as the surrounding sections. */
 .archive-filters {
-  background: rgba(245, 247, 245, 0.72);
-  backdrop-filter: blur(10px);
+  background: rgba(245, 247, 245, 0.74);
+  box-shadow: 0 0 0 100vmax rgba(245, 247, 245, 0.74);
+  clip-path: inset(0 -100vmax);
 }
 
 .archive-preview-media,

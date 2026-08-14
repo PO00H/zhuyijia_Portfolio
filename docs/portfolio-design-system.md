@@ -79,7 +79,9 @@
 
 正式首页、Archive、导航、按钮、说明文字和浮动预览统一使用 `Fusion Pixel 12` 简体中文像素字体。
 
-- 字体文件：`public/fonts/fusion-pixel/fusion-pixel-12px-proportional-zh_hans.otf.woff2`
+- 字体文件：`public/fonts/fusion-pixel/fusion-pixel-12px-proportional-zh_hans.otf.woff2`（约 648KB，全站唯一字体资源）。
+- `index.html` 对该字体使用 `preload`；不导入任何外部字体服务（Inter / JetBrains Mono 的 Google Fonts 导入已移除，仅保留回退声明）。
+- 像素字体只使用 400 常规字重；标题与 `strong` 一律不加粗，加粗会产生难看的合成锯齿。
 - 页面最终字体锁定必须覆盖遗留的 Inter、JetBrains Mono 和系统中文回退规则。
 - 真实项目图片、视频、截图、Sketchfab 和 `public/embed` 内独立作品保持自身字体。
 - 中文正文必须在桌面和手机检查换行、行高与可读性，不能只检查标题。

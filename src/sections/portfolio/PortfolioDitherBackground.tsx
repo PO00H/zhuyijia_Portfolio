@@ -70,9 +70,9 @@ export function PortfolioDitherBackground() {
 
     const resize = () => {
       // The coarse CSS-pixel grid is part of the approved dither material.
-      const pixelRatio = 1;
-      const width = Math.max(1, Math.round(window.innerWidth * pixelRatio));
-      const height = Math.max(1, Math.round(window.innerHeight * pixelRatio));
+      // Size follows the canvas box (inset by the CRT bezel), not the window.
+      const width = Math.max(1, Math.round(canvas.clientWidth));
+      const height = Math.max(1, Math.round(canvas.clientHeight));
 
       if (canvas.width !== width || canvas.height !== height) {
         canvas.width = width;
@@ -134,9 +134,12 @@ export function PortfolioDitherBackground() {
 
     const handlePointerDown = (event: PointerEvent) => {
       if (reducedMotion || event.button > 0) return;
+      // Map the click into the canvas box so the wave origin stays accurate
+      // now that the canvas is inset by the CRT bezel.
+      const rect = canvas.getBoundingClientRect();
       eventOrigin = {
-        x: Math.max(0, Math.min(1, event.clientX / Math.max(1, window.innerWidth))),
-        y: Math.max(0, Math.min(1, event.clientY / Math.max(1, window.innerHeight))),
+        x: Math.max(0, Math.min(1, (event.clientX - rect.left) / Math.max(1, rect.width))),
+        y: Math.max(0, Math.min(1, (event.clientY - rect.top) / Math.max(1, rect.height))),
       };
       eventStartedAt = performance.now();
       start();

@@ -1,0 +1,106 @@
+/* Temporary CRT tuner card — delete this file after the shading is approved. */
+.crt-tuner {
+  position: fixed;
+  bottom: calc(var(--crt-bezel, 0px) + 16px);
+  left: calc(var(--crt-bezel, 0px) + 16px);
+  z-index: 4000;
+  width: 240px;
+  padding: 12px 14px;
+  border: 1px solid rgba(23, 33, 37, 0.3);
+  border-radius: 6px;
+  background: rgba(245, 247, 245, 0.96);
+  box-shadow: 0 8px 24px rgba(23, 33, 37, 0.18);
+  color: #172125;
+  font-family: 'Fusion Pixel 12', monospace;
+  font-size: 11px;
+}
+
+.crt-tuner header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.crt-tuner header strong {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.crt-tuner button {
+  padding: 2px 8px;
+  border: 1px solid rgba(23, 33, 37, 0.35);
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.crt-tuner button:hover {
+  border-color: #169eae;
+  color: #169eae;
+}
+
+.crt-tuner-groups {
+  display: grid;
+  gap: 10px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.crt-tuner-groups section {
+  display: grid;
+  gap: 6px;
+}
+
+.crt-tuner-groups h2 {
+  margin: 0;
+  padding-top: 4px;
+  border-top: 1px solid rgba(23, 33, 37, 0.18);
+  color: #2d929b;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.crt-tuner-groups label {
+  display: grid;
+  gap: 2px;
+}
+
+.crt-tuner-groups label > span {
+  display: flex;
+  justify-content: space-between;
+}
+
+.crt-tuner-groups output {
+  color: #2d929b;
+}
+
+.crt-tuner-groups input[type='range'] {
+  width: 100%;
+  height: 14px;
+  accent-color: #169eae;
+}
+
+.crt-tuner-color {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+.crt-tuner-color input[type='color'] {
+  width: 48px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid rgba(23, 33, 37, 0.3);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.crt-tuner footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}

@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@100;200;300;400;500&display=swap');
-
 @font-face {
   font-family: 'Fusion Pixel 12';
   src: url('/fonts/fusion-pixel/fusion-pixel-12px-proportional-zh_hans.otf.woff2')
@@ -56,7 +54,7 @@
   }
   
   body {
-    background-color: #D1D1CB;
+    background-color: #f3f5f3;
     color: #1A1A1A;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-x: hidden;

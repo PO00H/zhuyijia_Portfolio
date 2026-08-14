@@ -1,6 +1,7 @@
 import { IframeLightbox } from './components/code/IframeLightbox';
 import { LightboxProvider } from './components/code/LightboxContext';
-import { DotGridBackground } from './components/ui/dot-grid-background';
+import { CrtShell } from './components/crt/CrtShell';
+import { CrtTuner } from './components/crt/CrtTuner';
 import { AssetLab } from './features/asset-lab/AssetLab';
 import { AsciiLab } from './features/ascii-lab/AsciiLab';
 import { PixelMaterialLab } from './features/pixel-material-lab/PixelMaterialLab';
@@ -29,24 +30,20 @@ function App() {
 
   if (isArchive) {
     return (
-      <div className="relative min-h-screen bg-[#090A09]">
-        <DotGridBackground containerClassName="bg-[#090A09]" />
-        <div className="relative z-10">
-          <ArchivePage />
-        </div>
-      </div>
+      <>
+        <ArchivePage />
+        <CrtShell />
+        <CrtTuner />
+      </>
     );
   }
 
   return (
     <LightboxProvider>
       <IframeLightbox />
-      <div className="relative min-h-screen bg-[#090A09]">
-        <DotGridBackground containerClassName="bg-[#090A09]" />
-        <div className="relative z-10">
-          <PortfolioHome />
-        </div>
-      </div>
+      <PortfolioHome />
+      <CrtShell />
+      <CrtTuner />
     </LightboxProvider>
   );
 }

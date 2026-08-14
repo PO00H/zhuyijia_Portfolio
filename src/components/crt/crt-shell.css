@@ -1,0 +1,317 @@
+/* CRT shell: 1980s–90s oscilloscope / lab monitor housing.
+   Front view, near-square corners, thick one-piece matte plastic body in
+   warm gray-beige. All layering is CSS; the only image is a tiny procedural
+   SVG noise tile (generated, not an asset). Reference: 参考/边框参考1.png
+   and the Severance Lumon terminal. */
+:root {
+  --crt-bezel: clamp(55px, 6.5vw, 95px);
+  --crt-screen-radius: 10px;
+  /* Shared matte plastic stack: bezel ring and corner caps paint from the
+     same fixed-attached background so their tones always match. */
+  --crt-plastic:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 32%),
+    linear-gradient(335deg, rgba(74, 68, 58, 0.2), rgba(74, 68, 58, 0) 42%),
+    linear-gradient(160deg, #e3ded3 0%, #d6d1c5 46%, #c4beb1 100%);
+
+  /* --- Tunable shading parameters (screen junction depth) --- */
+  --crt-shadow-top: 0.79;        /* thin pressed shadow along the screen top edge */
+  --crt-shadow-bottom: 0.535;    /* wider spread shadow along the bottom edge */
+  --crt-shadow-left: 0.715;      /* concave darkening on the left edge */
+  --crt-shadow-right: 0.695;     /* concave darkening on the right edge */
+  --crt-corner-dark-tl: 0.315;   /* radial darkening, top-left corner */
+  --crt-corner-dark-tr: 0.315;   /* radial darkening, top-right corner */
+  --crt-corner-dark-bl: 0.25;    /* radial darkening, bottom-left corner */
+  --crt-corner-dark-br: 0.25;    /* radial darkening, bottom-right corner */
+  /* Corner folds: per-corner dark/light ends, gradient direction, scale
+     (multiple of bezel thickness) and transition pos/band. */
+  --crt-fold-tl-dark: 0.56;
+  --crt-fold-tl-light: 0.21;
+  --crt-fold-tl-angle: 225deg;
+  --crt-fold-tl-scale: 15;
+  --crt-fold-tl-pos: 52;
+  --crt-fold-tl-band: 6;
+  --crt-fold-tr-dark: 0.48;
+  --crt-fold-tr-light: 0.365;
+  --crt-fold-tr-angle: 135deg;
+  --crt-fold-tr-scale: 14;
+  --crt-fold-tr-pos: 52;
+  --crt-fold-tr-band: 6;
+  --crt-fold-bl-dark: 0.94;
+  --crt-fold-bl-light: 0.665;
+  --crt-fold-bl-angle: 135deg;
+  --crt-fold-bl-scale: 11.7;
+  --crt-fold-bl-pos: 52;
+  --crt-fold-bl-band: 6;
+  --crt-fold-br-dark: 0.42;
+  --crt-fold-br-light: 0.475;
+  --crt-fold-br-angle: 225deg;
+  --crt-fold-br-scale: 11.7;
+  --crt-fold-br-pos: 50;
+  --crt-fold-br-band: 4;
+  --crt-reflection: 0.355;       /* glass reflection band strength */
+  --crt-reflection-soft: 0.045;  /* glass reflection secondary band */
+}
+
+@media (max-width: 720px) {
+  :root {
+    --crt-bezel: 10px;
+    --crt-screen-radius: 10px;
+  }
+}
+
+.crt-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  pointer-events: none;
+}
+
+/* Plastic body ring. Light falls from the upper left: top-left slightly
+   brighter, bottom-right slightly darker. Shadows are wide and faint. */
+.crt-shell-bezel {
+  position: absolute;
+  inset: 0;
+  padding: var(--crt-bezel);
+  border-radius: 0;
+  background: var(--crt-plastic);
+  background-attachment: fixed;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* Fine dust / matte plastic grain on the housing. Kept very quiet. */
+.crt-shell-bezel::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  content: '';
+  opacity: 0.05;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* Corner caps: the housing continues into the four inner corners with the
+   same 10px arc as the screen, so no background can leak through the
+   crescent between the square bezel edge and the rounded screen corner.
+   They paint from the same fixed-attached plastic stack as the bezel, so
+   their tone is pixel-identical to the surrounding housing. */
+.crt-shell-corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: var(--crt-plastic);
+  background-attachment: fixed;
+}
+
+.crt-corner-tl {
+  top: calc(var(--crt-bezel) - 1px);
+  left: calc(var(--crt-bezel) - 1px);
+  -webkit-mask: radial-gradient(circle 10px at 11px 11px, transparent 9.5px, #000 10.5px);
+  mask: radial-gradient(circle 10px at 11px 11px, transparent 9.5px, #000 10.5px);
+}
+
+.crt-corner-tr {
+  top: calc(var(--crt-bezel) - 1px);
+  right: calc(var(--crt-bezel) - 1px);
+  -webkit-mask: radial-gradient(circle 10px at 7px 11px, transparent 9.5px, #000 10.5px);
+  mask: radial-gradient(circle 10px at 7px 11px, transparent 9.5px, #000 10.5px);
+}
+
+.crt-corner-bl {
+  bottom: calc(var(--crt-bezel) - 1px);
+  left: calc(var(--crt-bezel) - 1px);
+  -webkit-mask: radial-gradient(circle 10px at 11px 7px, transparent 9.5px, #000 10.5px);
+  mask: radial-gradient(circle 10px at 11px 7px, transparent 9.5px, #000 10.5px);
+}
+
+.crt-corner-br {
+  right: calc(var(--crt-bezel) - 1px);
+  bottom: calc(var(--crt-bezel) - 1px);
+  -webkit-mask: radial-gradient(circle 10px at 7px 7px, transparent 9.5px, #000 10.5px);
+  mask: radial-gradient(circle 10px at 7px 7px, transparent 9.5px, #000 10.5px);
+}
+
+/* Corner folds: a wide, soft diagonal shading transition across each housing
+   corner (like the mitered frame in 参考/边框参考1.png). Every corner owns
+   its dark end, light end and gradient angle; the radial mask fades the fold
+   out from the outer corner so no element edge is ever visible. */
+/* The folds live only on the housing ring — the wrapper masks out the whole
+   screen area so no fold shading can spill onto the page content. */
+.crt-shell-folds {
+  position: absolute;
+  inset: 0;
+  padding: var(--crt-bezel);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+.crt-shell-fold {
+  position: absolute;
+  width: calc(var(--crt-bezel) * var(--crt-fold-scale));
+  height: calc(var(--crt-bezel) * var(--crt-fold-scale));
+  -webkit-mask: radial-gradient(
+    circle calc(var(--crt-bezel) * var(--crt-fold-scale)) at var(--crt-fold-origin, 0 0),
+    #000 30%,
+    transparent 92%
+  );
+  mask: radial-gradient(
+    circle calc(var(--crt-bezel) * var(--crt-fold-scale)) at var(--crt-fold-origin, 0 0),
+    #000 30%,
+    transparent 92%
+  );
+}
+
+.crt-fold-tl {
+  top: 0;
+  left: 0;
+  --crt-fold-origin: 0 0;
+  --crt-fold-scale: var(--crt-fold-tl-scale);
+  background: linear-gradient(
+    var(--crt-fold-tl-angle),
+    rgba(56, 51, 44, var(--crt-fold-tl-dark)) 0%,
+    rgba(56, 51, 44, calc(var(--crt-fold-tl-dark) * 0.46)) calc((var(--crt-fold-tl-pos) - var(--crt-fold-tl-band) / 2) * 1%),
+    rgba(255, 255, 255, 0.02) calc(var(--crt-fold-tl-pos) * 1%),
+    rgba(255, 255, 255, calc(var(--crt-fold-tl-light) * 0.73)) calc((var(--crt-fold-tl-pos) + var(--crt-fold-tl-band) / 2) * 1%),
+    rgba(255, 255, 255, var(--crt-fold-tl-light)) 100%
+  );
+}
+
+.crt-fold-tr {
+  top: 0;
+  right: 0;
+  --crt-fold-origin: 100% 0;
+  --crt-fold-scale: var(--crt-fold-tr-scale);
+  background: linear-gradient(
+    var(--crt-fold-tr-angle),
+    rgba(56, 51, 44, var(--crt-fold-tr-dark)) 0%,
+    rgba(56, 51, 44, calc(var(--crt-fold-tr-dark) * 0.46)) calc((var(--crt-fold-tr-pos) - var(--crt-fold-tr-band) / 2) * 1%),
+    rgba(255, 255, 255, 0.02) calc(var(--crt-fold-tr-pos) * 1%),
+    rgba(255, 255, 255, calc(var(--crt-fold-tr-light) * 0.73)) calc((var(--crt-fold-tr-pos) + var(--crt-fold-tr-band) / 2) * 1%),
+    rgba(255, 255, 255, var(--crt-fold-tr-light)) 100%
+  );
+}
+
+.crt-fold-bl {
+  bottom: 0;
+  left: 0;
+  --crt-fold-origin: 0 100%;
+  --crt-fold-scale: var(--crt-fold-bl-scale);
+  background: linear-gradient(
+    var(--crt-fold-bl-angle),
+    rgba(56, 51, 44, var(--crt-fold-bl-dark)) 0%,
+    rgba(56, 51, 44, calc(var(--crt-fold-bl-dark) * 0.46)) calc((var(--crt-fold-bl-pos) - var(--crt-fold-bl-band) / 2) * 1%),
+    rgba(255, 255, 255, 0.02) calc(var(--crt-fold-bl-pos) * 1%),
+    rgba(255, 255, 255, calc(var(--crt-fold-bl-light) * 0.73)) calc((var(--crt-fold-bl-pos) + var(--crt-fold-bl-band) / 2) * 1%),
+    rgba(255, 255, 255, var(--crt-fold-bl-light)) 100%
+  );
+}
+
+.crt-fold-br {
+  right: 0;
+  bottom: 0;
+  --crt-fold-origin: 100% 100%;
+  --crt-fold-scale: var(--crt-fold-br-scale);
+  background: linear-gradient(
+    var(--crt-fold-br-angle),
+    rgba(56, 51, 44, var(--crt-fold-br-dark)) 0%,
+    rgba(56, 51, 44, calc(var(--crt-fold-br-dark) * 0.46)) calc((var(--crt-fold-br-pos) - var(--crt-fold-br-band) / 2) * 1%),
+    rgba(255, 255, 255, 0.02) calc(var(--crt-fold-br-pos) * 1%),
+    rgba(255, 255, 255, calc(var(--crt-fold-br-light) * 0.73)) calc((var(--crt-fold-br-pos) + var(--crt-fold-br-band) / 2) * 1%),
+    rgba(255, 255, 255, var(--crt-fold-br-light)) 100%
+  );
+}
+
+/* Screen junction depth: thin pressed shadow along the top edge, soft
+   concave darkening left and right, a slightly wider spread at the bottom,
+   corners a touch darker. Soft and aged, never card-crisp. */
+.crt-shell-glass {
+  position: absolute;
+  inset: var(--crt-bezel);
+  border-radius: var(--crt-screen-radius);
+  background:
+    radial-gradient(170px 120px at 0 0, rgba(48, 45, 40, var(--crt-corner-dark-tl)), transparent 74%),
+    radial-gradient(170px 120px at 100% 0, rgba(48, 45, 40, var(--crt-corner-dark-tr)), transparent 74%),
+    radial-gradient(190px 130px at 0 100%, rgba(48, 45, 40, var(--crt-corner-dark-bl)), transparent 74%),
+    radial-gradient(190px 130px at 100% 100%, rgba(48, 45, 40, var(--crt-corner-dark-br)), transparent 74%);
+  box-shadow:
+    inset 0 2px 4px rgba(43, 40, 36, var(--crt-shadow-top)),
+    inset 0 -16px 30px -10px rgba(43, 40, 36, var(--crt-shadow-bottom)),
+    inset 20px 0 36px -20px rgba(43, 40, 36, var(--crt-shadow-left)),
+    inset -20px 0 36px -20px rgba(43, 40, 36, var(--crt-shadow-right));
+}
+
+/* Outermost glass reflection: a broad curved sheen that follows the top of
+   the glass plus one faint diagonal band. Strictly inside the screen area;
+   drifts a few pixels with the pointer. */
+.crt-shell-glass::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      130% 55% at 50% -12%,
+      rgba(255, 255, 255, var(--crt-reflection)) 0%,
+      rgba(255, 255, 255, calc(var(--crt-reflection) * 0.35)) 38%,
+      transparent 62%
+    ),
+    linear-gradient(
+      115deg,
+      transparent 52%,
+      rgba(255, 255, 255, var(--crt-reflection-soft)) 64%,
+      transparent 78%
+    );
+  content: '';
+  transform: translate(var(--crt-reflect-x, 0px), var(--crt-reflect-y, 0px));
+  transition: transform 550ms ease-out;
+}
+
+/* Bottom-right power recess: shallow horizontal groove, no light. */
+.crt-shell-power {
+  position: absolute;
+  right: calc(var(--crt-bezel) + 64px);
+  bottom: calc(var(--crt-bezel) / 2 - 5px);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.crt-shell-power::before {
+  width: 44px;
+  height: 9px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(43, 40, 36, 0.2), rgba(255, 255, 255, 0.12));
+  box-shadow:
+    inset 0 1px 2px rgba(43, 40, 36, 0.35),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.22),
+    0 1px 0 rgba(255, 255, 255, 0.14);
+  content: '';
+}
+
+.crt-shell-power::after {
+  color: rgba(23, 33, 37, 0.42);
+  content: 'ZHUYIJIA';
+  font-family: 'Fusion Pixel 12', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+@media (max-width: 720px) {
+  .crt-shell-power {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-shell-glass::after {
+    transform: none;
+    transition: none;
+  }
+}
