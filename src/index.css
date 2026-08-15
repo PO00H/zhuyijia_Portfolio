@@ -35,12 +35,14 @@
     --ring: 14 100% 50%;
     --radius: 0.25rem;
     
-    /* Custom Colors */
-    --valiente-bg: #D1D1CB;
-    --valiente-red: #FF3D00;
-    --valiente-dark: #1A1A1A;
-    --valiente-gray: #8A8A85;
-    --valiente-light: #E8E8E5;
+    /* Custom Colors — legacy valiente names kept as aliases of the site
+       palette so portal-mounted elements (floating preview, lightbox)
+       outside .portfolio-shell still follow the live theme. */
+    --valiente-bg: var(--site-bg, #0b0d0c);
+    --valiente-red: var(--site-active, #f4f7f2);
+    --valiente-dark: var(--site-ink, #e9ece7);
+    --valiente-gray: var(--site-muted, #8a938c);
+    --valiente-light: var(--site-veil-color, #0e100f);
   }
 }
 

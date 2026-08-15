@@ -1,0 +1,258 @@
+/* Retro program windows inside the CRT screen (Win 3.1/95 chrome adapted to
+   the site palette). Stacking context: above page content, below the CRT
+   glass (3000) so reflections and edge shading still play over the windows. */
+.retro-wm {
+  position: fixed;
+  inset: var(--crt-bezel, 0px);
+  z-index: 2500;
+  border-radius: var(--crt-screen-radius, 0px);
+  overflow: hidden;
+  font-family: 'Fusion Pixel 12', monospace;
+}
+
+.retro-wm-backdrop {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: rgb(from var(--site-bg, #0b0d0c) r g b / 0.45);
+  cursor: default;
+}
+
+.retro-window-slot {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.retro-window-offset {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.retro-window {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  width: min(1400px, 90%);
+  height: min(880px, 85%);
+  border: 2px solid var(--site-veil-color, #0e100f);
+  border-radius: 0;
+  background: var(--site-veil-color, #0e100f);
+  box-shadow:
+    inset 1px 1px 0 color-mix(in srgb, var(--site-veil-color, #0e100f), #ffffff 32%),
+    inset -1px -1px 0 color-mix(in srgb, var(--site-veil-color, #0e100f), #000000 55%),
+    8px 8px 0 rgb(from var(--site-deep, #67716a) r g b / 0.28);
+  animation: retro-window-open 160ms steps(3, end) both;
+}
+
+@keyframes retro-window-open {
+  from {
+    transform: scale(0.96);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Title bar: dark bar; focused window gets the active color, unfocused
+   stays muted. */
+.retro-window-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 4px 0 10px;
+  flex: 0 0 auto;
+  border-bottom: 2px solid var(--site-veil-color, #0e100f);
+  background: var(--site-bg, #0b0d0c);
+  color: var(--site-muted, #8a938c);
+}
+
+.retro-window[data-focused] .retro-window-titlebar {
+  color: var(--site-active, #f4f7f2);
+}
+
+.retro-window-title {
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Pixel icons drawn in CSS so close / maximize / restore share one look. */
+.retro-window-max,
+.retro-window-close {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  flex: 0 0 auto;
+  background: var(--site-veil-color, #0e100f);
+  box-shadow:
+    inset 1px 1px 0 color-mix(in srgb, var(--site-veil-color, #0e100f), #ffffff 32%),
+    inset -1px -1px 0 color-mix(in srgb, var(--site-veil-color, #0e100f), #000000 55%);
+  color: var(--site-ink, #e9ece7);
+  cursor: pointer;
+}
+
+.retro-window-max:active,
+.retro-window-close:active {
+  box-shadow:
+    inset 1px 1px 0 color-mix(in srgb, var(--site-veil-color, #0e100f), #000000 55%),
+    inset -1px -1px 0 color-mix(in srgb, var(--site-veil-color, #0e100f), #ffffff 32%);
+}
+
+.retro-icon {
+  position: relative;
+  display: block;
+  width: 12px;
+  height: 12px;
+}
+
+/* maximize: hollow square */
+.retro-icon-max {
+  border: 2px solid currentcolor;
+  border-top-width: 3px;
+}
+
+/* restore: two overlapping squares */
+.retro-icon-restore::before,
+.retro-icon-restore::after {
+  position: absolute;
+  content: '';
+  border: 2px solid currentcolor;
+}
+
+.retro-icon-restore::before {
+  top: 0;
+  right: 0;
+  width: 7px;
+  height: 7px;
+  border-top-width: 3px;
+}
+
+.retro-icon-restore::after {
+  bottom: 0;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  background: var(--site-veil-color, #0e100f);
+  border-top-width: 3px;
+}
+
+/* close: pixel cross */
+.retro-icon-close::before,
+.retro-icon-close::after {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: 12px;
+  height: 2px;
+  content: '';
+  background: currentcolor;
+}
+
+.retro-icon-close::before {
+  transform: rotate(45deg);
+}
+
+.retro-icon-close::after {
+  transform: rotate(-45deg);
+}
+
+/* Maximized: fill the whole screen area; cancel the cascade offset. */
+.retro-window.is-maximized {
+  width: 100%;
+  height: 100%;
+}
+
+.retro-window-slot:has(.retro-window.is-maximized) .retro-window-offset {
+  transform: none !important;
+}
+
+.retro-window-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin: 2px;
+  background: var(--site-bg, #0b0d0c);
+}
+
+.retro-window-body iframe,
+.retro-window-body video {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  object-fit: contain;
+  background: var(--site-bg, #0b0d0c);
+}
+
+.retro-window-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--site-bg, #0b0d0c);
+  color: var(--site-muted, #8a938c);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+}
+
+.retro-window-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background: currentcolor;
+  animation: retro-window-blink 420ms steps(1, end) infinite;
+}
+
+@keyframes retro-window-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Mobile: full-screen sheet inside the screen area, no cascade offset. */
+@media (max-width: 720px) {
+  .retro-window {
+    width: calc(100% - 16px);
+    height: calc(100% - 16px);
+  }
+
+  .retro-window-offset {
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .retro-window {
+    animation: none;
+  }
+
+  .retro-window-cursor {
+    animation: none;
+  }
+}

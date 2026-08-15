@@ -1,5 +1,6 @@
 import { Fragment, useMemo, useState } from 'react';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { useLightbox } from '@/components/code/LightboxContext';
 import {
   projectEntries,
   type PortfolioProject,
@@ -98,6 +99,7 @@ function ArchiveMedia({ project }: { project: PortfolioProject }) {
 }
 
 function ProjectPreview({ project, mobile = false }: { project: PortfolioProject; mobile?: boolean }) {
+  const { open } = useLightbox();
   const projectUrl = getProjectUrl(project);
 
   return (
@@ -122,10 +124,13 @@ function ProjectPreview({ project, mobile = false }: { project: PortfolioProject
         </ul>
 
         {projectUrl && (
-          <a href={projectUrl} target="_blank" rel="noreferrer">
+          <button
+            type="button"
+            onClick={() => open({ id: project.id, title: project.title, url: projectUrl })}
+          >
             查看项目
             <ArrowUpRight aria-hidden="true" />
-          </a>
+          </button>
         )}
       </div>
     </article>

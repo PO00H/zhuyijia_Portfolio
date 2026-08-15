@@ -1,8 +1,8 @@
-import { IframeLightbox } from './components/code/IframeLightbox';
 import { LightboxProvider } from './components/code/LightboxContext';
 import { BootSequence } from './components/crt/BootSequence';
 import { ColorTuner } from './components/crt/ColorTuner';
 import { CrtShell } from './components/crt/CrtShell';
+import { RetroWindowLayer } from './components/crt/RetroWindowLayer';
 import { ScrollRail } from './components/scroll-rail/ScrollRail';
 import { AssetLab } from './features/asset-lab/AssetLab';
 import { AsciiLab } from './features/ascii-lab/AsciiLab';
@@ -32,23 +32,24 @@ function App() {
 
   if (isArchive) {
     return (
-      <>
+      <LightboxProvider>
         <ArchivePage />
         <CrtShell />
         <ScrollRail />
         <ColorTuner />
-      </>
+        <RetroWindowLayer />
+      </LightboxProvider>
     );
   }
 
   return (
     <LightboxProvider>
-      <IframeLightbox />
       <PortfolioHome />
       <CrtShell />
       <ScrollRail />
       <BootSequence />
       <ColorTuner />
+      <RetroWindowLayer />
     </LightboxProvider>
   );
 }

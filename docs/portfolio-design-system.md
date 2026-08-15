@@ -159,13 +159,26 @@ GAME WORK 保留已经验收的共享媒体窗口和 560ms Dither 交接。它�
 首页首次访问播放一次 CRT 开机仪式（`src/components/crt/BootSequence.tsx`），Archive 不播放。它是纯仪式，不表达加载进度，不加音效。
 
 - 只覆盖屏幕区（`inset: --crt-bezel` + 屏幕圆角），z-index 2900：高于页面内容，低于玻璃层，玻璃压暗与反光压在开机画面上。
-- 阶段：黑屏 0.2s → 开机 500ms（中心亮点 → 水平亮线 → 纵向展开为白屏，仅 transform / opacity）→ 打字机逐字打出 `ZHU YIJIA PORTFOLIO` 与 `UE / C++ GAME DEVELOPER`（块状光标全程闪烁）→ 光标再闪 5 次 → 文字 3 处水平位移故障并淡出 → 白屏提亮为纯白 → 连续收成发光亮线 → 缩成亮点熄灭。
+- 阶段：无黑屏停顿 → 开机 500ms（中心亮点 → 水平亮线 → 纵向展开，仅 transform / opacity）→ 打字机逐字打出 `ZHU YIJIA PORTFOLIO` 与 `UE / C++ GAME DEVELOPER`（块状光标全程闪烁）→ 光标再闪 5 次 → 文字 3 处水平位移故障并淡出 → 屏幕保持遮罩色挤压、荧光汇聚成亮线 → 缩成亮点熄灭（亮色随主题，深底不再有白屏硬闪）。
 - 开机白屏内嵌与主站同参数的 Dither Canvas 实例与相同的 0.74 罩层；撤场时 Overlay 底色转透明，收线直接揭开主站，无黑屏硬切。
 - 任意点击 / 按键跳过；打字与闪烁阶段跳过仍播放完整故障收线。Reduced Motion 完全不出现。手机简化版（更快打字、闪 3 次、无故障位移）。
 - 播放期间锁定页面滚动；结束后组件卸载，双 Canvas 无残留。
 - 播放频率：每次加载重播（用户在 Round 10 整体验收后确认的最终行为；不启用 sessionStorage 门控）。
 
-## 13. 开发实验页
+## 13. 全站配色系统与调参面板
+
+全站颜色由 `:root` 的 `--site-*` 变量驱动（bg / ink / primary / deep / active / title / muted / dotPaper / frame / veilColor + veil 透明度），CSS 内不允许新增硬编码色——墨色、纸白、三类青色的 rgba 变体一律用 `rgb(from var(...) r g b / α)` 或 `color-mix` 派生。左下角「配色调参」面板（`src/components/crt/ColorTuner.tsx`）为**永久面板**：10 个合并颜色参数 + 遮罩透明度 + CRT 外壳 52 项参数（切割框 / 四边压暗 / 角部暗部 / 折角 / 反光 / 椭圆反光 / 文字泛光），6 套预设可绑定 veil 与外壳参数（`preset.shell`）。当前默认主题为「黑底终端」；文字泛光为三层 `text-shadow`（跟随 `currentColor`，可用 `bloomColor` 覆盖）；旧 valiente 变量是 `--site-*` 的别名，portal 挂载元素同样跟随主题。
+
+## 14. 复古程序窗口
+
+项目详情以 CRT 屏幕内的复古程序窗口打开（`src/components/crt/RetroWindowLayer.tsx` + `retro-window.css`），替代已删除的 iOS 风格 lightbox。
+
+- 管理器：`src/components/code/LightboxContext.tsx`。多窗口共存；`open()` 同 key 置前不重复开；点击窗口任意处置前（z 计数器）；ESC / 背景点击关最上层；右上角像素 × 关指定窗口。**不做拖动**（用户明确决定）。
+- 样式：直角 2px 凸起双边框、深色像素标题栏（聚焦=交互色字 / 失焦=muted）、CSS 绘制像素图标（最大化空心方块 / 还原双叠方块 / 关闭斜杆叉）、无圆角无模糊；全部颜色走 `--site-*` 变量。
+- 布局：层级在页面内容之上、玻璃层之下（z 2500），窗口不超出屏幕区；尺寸 `min(1400px, 90%)` × `min(880px, 85%)`；多开按 28/22px 级联错开；最大化铺满屏幕区；手机（≤720px）退化为全屏 sheet。
+- 内容：本地 embed 页走 iframe，视频文件走 `<video>`；加载态为黑底像素 LOADING + 闪烁方块光标。首页 02 与 Archive 的「查看项目」统一开窗。
+
+## 15. 开发实验页
 
 - `/ascii-lab`：当前 Dither 参数与点击事件研究页；只在开发环境开放。
 - `/asset-lab`：真实素材裁切与派生映射工具；只在开发环境开放。
@@ -173,7 +186,7 @@ GAME WORK 保留已经验收的共享媒体窗口和 560ms Dither 交接。它�
 
 实验页用于验证单变量，不代表要复制一套新网站。正式参数以本文件和 `PortfolioDitherBackground.tsx` 为准。
 
-## 14. 维护与验收
+## 16. 维护与验收
 
 改动设计前先检查本文件，改动项目内容时再读取 [`adding-real-ue-project.md`](adding-real-ue-project.md)。历史提交与 `CODEX_TODO.md` 中的旧方向只用于追溯，不得覆盖本规范。
 
