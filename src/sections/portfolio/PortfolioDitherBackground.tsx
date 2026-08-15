@@ -4,6 +4,7 @@ import {
   renderVerticalBreathingFrame,
   type MotionStudySettings,
 } from '@/features/ascii-lab/asciiEngine';
+import { liveDitherPalette } from '@/lib/live-theme';
 import './portfolio-dither-background.css';
 
 const DESKTOP_FPS = 12;
@@ -18,11 +19,8 @@ const PORTFOLIO_DITHER_SETTINGS: MotionStudySettings = {
   direction: 'top-right-to-bottom-left',
   density: 1.05,
   fisheye: 0.08,
-  palette: {
-    paper: '#e0e0e0',
-    coral: '#28b6c3',
-    cyan: '#2d929b',
-  },
+  /* Shared by reference with the color tuner: mutations apply next frame. */
+  palette: liveDitherPalette,
 };
 
 export function PortfolioDitherBackground() {

@@ -14,7 +14,7 @@
 }
 
 .scroll-rail:focus-visible {
-  outline: 2px solid #169eae;
+  outline: 2px solid var(--site-active, #169eae);
   outline-offset: -2px;
 }
 
@@ -24,7 +24,7 @@
   right: 0;
   left: 0;
   height: 2px;
-  background: rgba(23, 33, 37, 0.16);
+  background: rgb(from var(--site-ink) r g b / 0.16);
 }
 
 .scroll-rail-progress {
@@ -32,7 +32,7 @@
   top: 0;
   left: 0;
   height: 2px;
-  background: #169eae;
+  background: var(--site-active, #169eae);
 }
 
 .scroll-rail-thumb {
@@ -40,8 +40,8 @@
   top: 0;
   height: 8px;
   min-width: 14px;
-  border: 1px solid rgba(23, 33, 37, 0.55);
-  background: #169eae;
+  border: 1px solid rgb(from var(--site-ink) r g b / 0.55);
+  background: var(--site-active, #169eae);
 }
 
 /* Extra padding enlarges the mark's hover area; only the content box shows. */
@@ -51,14 +51,14 @@
   width: 2px;
   height: 5px;
   padding: 5px 4px;
-  background: rgba(23, 33, 37, 0.35);
+  background: rgb(from var(--site-ink) r g b / 0.35);
   background-clip: content-box;
   transform: translateX(-50%);
 }
 
 .scroll-rail-mark.is-active {
   height: 10px;
-  background: #169eae;
+  background: var(--site-active, #169eae);
   background-clip: content-box;
 }
 
@@ -66,9 +66,9 @@
   position: absolute;
   top: calc(100% + 4px);
   padding: 3px 8px;
-  border: 1px solid rgba(22, 158, 174, 0.52);
-  background: rgba(245, 247, 245, 0.96);
-  color: #172125;
+  border: 1px solid rgb(from var(--site-active) r g b / 0.52);
+  background: rgb(from var(--site-veil-color) r g b / 0.96);
+  color: var(--site-ink, #172125);
   font-size: 10px;
   white-space: nowrap;
   transform: translateX(-50%);

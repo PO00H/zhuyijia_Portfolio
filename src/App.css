@@ -127,13 +127,13 @@ html {
 /* Focus styles for accessibility */
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid #169eae;
+  outline: 2px solid var(--site-active, #169eae);
   outline-offset: 2px;
 }
 
 /* Selection color */
 ::selection {
-  background: #28b6c3;
+  background: var(--site-primary, #28b6c3);
   color: white;
 }
 

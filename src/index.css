@@ -54,8 +54,8 @@
   }
   
   body {
-    background-color: #f3f5f3;
-    color: #1A1A1A;
+    background-color: var(--site-bg, #0b0d0c);
+    color: var(--site-ink, #e9ece7);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-x: hidden;
   }
@@ -233,4 +233,39 @@ html {
 
 html::-webkit-scrollbar {
   display: none;
+}
+
+/* 全站配色变量：配色调参面板（ColorTuner）实时写入这些值。
+   使用同一颜色的系统在参数中合并为一个变量，不新增重复参数。
+   默认主题为「黑底终端」（2026-08-15 暂定）。 */
+:root {
+  --site-bg: #0b0d0c;
+  --site-ink: #e9ece7;
+  --site-primary: #b7c2ba;
+  --site-deep: #67716a;
+  --site-active: #f4f7f2;
+  --crt-plastic-base: #1e221f;
+  /* Hero 大标题色（独立于点阵深色）。 */
+  --site-title: #f4f7f2;
+  /* 辅助 / 次要文字色。 */
+  --site-muted: #8a938c;
+  /* 点阵上方遮罩（ veil ）的透明度，配色调参面板可实时调节。 */
+  --site-veil: 0.6;
+  /* 遮罩 / 面板底色（各 section 面纱、卡片、导航底色的取色来源）。 */
+  --site-veil-color: #0e100f;
+}
+
+/* 显像管文字泛光：像素文字带三层 currentColor 柔光（跟随文字色，
+   反色按钮同样安全）——贴字高亮核心 + 中晕 + 淡远晕，
+   半径与强度由配色调参面板实时调节。 */
+.portfolio-shell,
+.archive-shell,
+.crt-boot {
+  text-shadow:
+    0 0 calc(var(--crt-text-bloom-radius, 5) * 0.25px)
+    rgb(from var(--crt-text-bloom-color, currentColor) r g b / min(1, var(--crt-text-bloom-alpha, 0.32) * 2.2)),
+    0 0 calc(var(--crt-text-bloom-radius, 5) * 1px)
+    rgb(from var(--crt-text-bloom-color, currentColor) r g b / var(--crt-text-bloom-alpha, 0.32)),
+    0 0 calc(var(--crt-text-bloom-radius, 5) * 3px)
+    rgb(from var(--crt-text-bloom-color, currentColor) r g b / calc(var(--crt-text-bloom-alpha, 0.32) * 0.45));
 }

@@ -20,7 +20,7 @@
   inset: 0;
   display: grid;
   place-items: center;
-  background: #f3f5f3;
+  background: var(--site-bg, #f3f5f3);
   opacity: 0;
   transform: scale(0.001, 0.001);
   transform-origin: 50% 50%;
@@ -41,7 +41,7 @@
 .crt-boot-screen::after {
   position: absolute;
   inset: 0;
-  background: rgba(245, 247, 245, 0.74);
+  background: rgb(from var(--site-veil-color) r g b / var(--site-veil, 0.74));
   content: '';
   transition: opacity 140ms linear;
 }
@@ -63,12 +63,12 @@
   transform: none;
 }
 
-/* Shutdown: the text glitches then fades; the screen lifts to pure white so
-   the collapse stays visible against the identical-looking live site, then
-   it squeezes into a glowing horizontal line, holds a beat, shrinks to a
-   dot and dies — classic CRT power-off, revealing the site continuously. */
+/* Shutdown: the text glitches then fades; the screen lifts to the live
+   veil color so the collapse stays continuous with the site underneath,
+   then it squeezes into a glowing horizontal line, holds a beat, shrinks to
+   a dot and dies — classic CRT power-off, revealing the site continuously. */
 .crt-boot[data-phase='shutdown'] .crt-boot-screen {
-  background: #ffffff;
+  background: var(--site-veil-color, #f5f7f5);
   box-shadow: 0 0 28px rgba(255, 255, 255, 0.85);
   animation: crt-power-off 560ms cubic-bezier(0.55, 0.06, 0.35, 1) 280ms both;
 }
@@ -81,11 +81,10 @@
   opacity: 0;
 }
 
-/* At shutdown the black base turns transparent: the collapsing white layer
-   then reveals the live site (same white + dot field) underneath, so the
-   exit is a continuous dissolve instead of a black-to-white hard cut. The
-   white layer still covers the whole screen during the glitch, so the base
-   flip itself is never visible. */
+/* At shutdown the base turns transparent: the collapsing layer then reveals
+   the live site (same veil color + dot field) underneath, so the exit is a
+   continuous dissolve instead of a hard cut. The layer still covers the
+   whole screen during the glitch, so the base flip itself is never visible. */
 .crt-boot[data-phase='shutdown'] {
   background: transparent;
 }
@@ -103,7 +102,7 @@
 }
 
 .crt-boot-title {
-  color: #172125;
+  color: var(--site-ink, #172125);
   font-size: clamp(20px, 3.2vw, 34px);
   line-height: 1.4;
   letter-spacing: 0.04em;
@@ -111,7 +110,7 @@
 
 .crt-boot-subtitle {
   margin-top: 14px;
-  color: #2d929b;
+  color: var(--site-deep, #2d929b);
   font-size: clamp(12px, 1.6vw, 16px);
   line-height: 1.5;
   letter-spacing: 0.08em;
@@ -133,7 +132,7 @@
   right: 18px;
   bottom: 12px;
   margin: 0;
-  color: rgba(23, 33, 37, 0.38);
+  color: rgb(from var(--site-ink) r g b / 0.38);
   font-size: 10px;
   letter-spacing: 0.1em;
   opacity: 0;
@@ -170,24 +169,28 @@
   0% {
     opacity: 1;
     transform: scale(1, 1);
+    background-color: var(--site-veil-color, #f5f7f5);
   }
 
-  /* Squeeze to a bright horizontal line… */
+  /* Squeeze to a horizontal line while the phosphor concentrates into it… */
   45% {
     opacity: 1;
     transform: scale(1, 0.008);
+    background-color: #ffffff;
   }
 
   /* …keep shrinking straight into a glowing dot… */
   78% {
     opacity: 1;
     transform: scale(0.035, 0.018);
+    background-color: #ffffff;
   }
 
   /* …and die out. */
   100% {
     opacity: 0;
     transform: scale(0.001, 0.001);
+    background-color: #ffffff;
   }
 }
 

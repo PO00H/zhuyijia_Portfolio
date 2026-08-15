@@ -842,3 +842,15 @@ Motion Study 06 验收：用户确认点击定位版本通过；Study 06 标记�
 确认：用户验收 Round 10C 的联合回归、规范 v2 与 README 更新；Round 10（10A 外壳 / 10B 开机序列 / 10C 回归与规范）整体标记为 `DONE`。
 决定：开机序列保持每次加载重播，不恢复 sessionStorage 门控（规范 v2 与代码注释已同步）。
 状态：无 `NEXT`；下一阶段由用户明确指定。
+
+2026-08-15 — 内容内突实验 — REJECTED / REVERTED
+试验：用 SVG feDisplacementMap + 程序生成径向位移图把页面内容做成与点阵背景同向的内突隆起（屏幕中心锚定、四边钉住、强度 / 曲线指数调参面板）。
+否决：用户实测后判定得不偿失——文字在边距处剪切撕裂、滚动每帧重栅格化有性能代价、命中区与画面有位移偏差；点阵上的 8% 内突放到文字内容上不成立。
+回退：删除 `ContentWarp.tsx` / `content-warp.css` 与 App / PortfolioHome 接入，工作区回到 `00e5035` 状态；实验代码可从本条目前的工作区历史或会话记录追溯，未提交。
+
+2026-08-15 — 全站配色参数系统与黑底终端默认主题 — DONE
+配色系统：新增 `src/lib/live-theme.ts` + `src/components/crt/ColorTuner.tsx`（永久保留的调参面板）。10 个合并颜色参数（页面背景 / 主要文字 / 主色 / 深色 / 交互色 / 大标题色 / 辅助文字色 / 点阵底色 / CRT 外框 / 遮罩面板色）+ 遮罩透明度滑杆 + 6 套预设；点阵引擎经 `liveDitherPalette` 引用共享实时换色。底层把全站 118+ 处硬编码色改为变量派生（`rgb(from var(...) r g b / α)` / `color-mix`）：墨色 rgba 跟随 ink、纸白 rgba 跟随 veilColor、三类青色跟随 primary/deep/active，surface/muted/shell 底色分别跟随 veilColor/site-bg。CRT 外壳 40 项阴影参数（外框渐变方向 / 切割框 / 四边压暗 / 角部暗部 / 四角折角×6 / 玻璃反光）全部暴露并可按预设绑定（preset.shell 覆盖），浅色预设封存 08-14 锁定值（LIGHT_FRAME_SHELL），深色外框预设共用 DARK_FRAME_SHELL。
+单色可用性修复：黑底下交互色≈正文色导致 hover 无反馈——行 / 条目 / 按钮 hover 增加交互色 12% 背景提亮；滚动进入区块的标题变色恢复为跟随交互色 + 标题栏 10% 交互色洗刷（替换旧 transparent 锁定）；游戏区 `--signal-void` 从旧硬编码近白改为 `var(--site-bg)`，修复查看项目按钮 hover、视窗标签条、切换条激活段、RESERVED 徽章的白底白字。
+默认主题切换：黑底终端设为全站默认（`:root` 变量、`DEFAULT_PALETTE`、`liveDitherPalette` 初值、`crt-shell.css` 折角 / 反光默认值、ColorTuner 初始态全部同步），开机界面与 Archive 页随变量体系一并切换，无 FOUC。开机收线阶段的纯白提亮保留——黑屏上收白线是经典 CRT 息屏观感。
+检查：生产构建、相关 ESLint、`tsc --noEmit` 通过；playwright 实测全新加载即为终端主题（body #0b0d0c / h1 #f4f7f2 / veil 0.6 / 折角反光新默认值 / 点阵 #0f1211 底）、Archive 同步、五类元素 hover 与滚动变色在两套主题下均有可见反馈。
+确认：用户决定调参面板永久保留，暂定黑底终端为默认风格，下一阶段进入细节打磨。

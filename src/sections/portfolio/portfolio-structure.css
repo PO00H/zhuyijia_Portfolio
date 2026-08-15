@@ -9,16 +9,16 @@
 
 .portfolio-shell {
   --portfolio-pixel-font: 'Fusion Pixel 12', 'JetBrains Mono', monospace;
-  --portfolio-signal-acid: #169eae;
-  --portfolio-signal-void: #f3f5f3;
-  --portfolio-signal-surface: rgba(248, 249, 248, 0.9);
-  --portfolio-signal-surface-raised: rgba(255, 255, 255, 0.96);
-  --portfolio-signal-white: #172125;
-  --portfolio-signal-muted: #69777a;
-  --portfolio-signal-line: rgba(23, 33, 37, 0.18);
-  --portfolio-signal-line-strong: rgba(23, 33, 37, 0.3);
-  --portfolio-signal-cyan: #28b6c3;
-  --portfolio-signal-teal: #2d929b;
+  --portfolio-signal-acid: var(--site-active, #169eae);
+  --portfolio-signal-void: var(--site-bg, #f3f5f3);
+  --portfolio-signal-surface: rgb(from var(--site-veil-color, #f5f7f5) r g b / 0.9);
+  --portfolio-signal-surface-raised: rgb(from var(--site-veil-color, #f5f7f5) r g b / 0.96);
+  --portfolio-signal-white: var(--site-ink, #172125);
+  --portfolio-signal-muted: var(--site-muted, #69777a);
+  --portfolio-signal-line: rgb(from var(--site-ink) r g b / 0.18);
+  --portfolio-signal-line-strong: rgb(from var(--site-ink) r g b / 0.3);
+  --portfolio-signal-cyan: var(--site-primary, #28b6c3);
+  --portfolio-signal-teal: var(--site-deep, #2d929b);
   --valiente-bg: var(--portfolio-signal-void);
   --valiente-red: var(--portfolio-signal-acid);
   --valiente-dark: var(--portfolio-signal-white);
@@ -32,7 +32,7 @@
   padding-left: var(--crt-bezel, 0px);
   position: relative;
   isolation: isolate;
-  background: rgba(243, 245, 243, 0.88);
+  background: rgb(from var(--site-bg, #f3f5f3) r g b / 0.88);
   color: var(--valiente-dark);
 }
 
@@ -57,6 +57,7 @@
 .portfolio-archive-entry:hover,
 .portfolio-archive-entry:focus-visible {
   color: var(--valiente-red);
+  background-color: rgb(from var(--site-active) r g b / 0.1);
 }
 
 .portfolio-archive-open {
@@ -90,7 +91,7 @@
   justify-content: space-between;
   min-height: 64px;
   padding: 0 3rem;
-  background: rgba(245, 247, 245, 0.94);
+  background: rgb(from var(--site-veil-color) r g b / 0.94);
   border-bottom: 1px solid var(--portfolio-signal-line);
   backdrop-filter: blur(12px);
 }
@@ -209,7 +210,7 @@
      nav down to the bottom edge of the CRT screen area. */
   min-height: calc(100svh - 64px - var(--crt-bezel, 0px) * 2);
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: 1fr auto;
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
@@ -238,6 +239,23 @@
 
 .portfolio-project-meta {
   width: 100%;
+}
+
+/* The identity block groups meta + name + title into one unit; on desktop
+   the statement column bottom-aligns with it, sharing one horizontal line. */
+.portfolio-hero-identity {
+  display: grid;
+  justify-items: start;
+}
+
+.portfolio-hero-identity .portfolio-hero-meta {
+  display: block;
+  margin: 0 0 clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.portfolio-hero-identity .section-label {
+  margin: 0;
+  color: var(--valiente-dark);
 }
 
 .portfolio-hero-main {
@@ -414,13 +432,13 @@
 }
 
 .portfolio-game-section {
-  --signal-void: rgba(238, 243, 242, 0.92);
-  --signal-surface: rgba(250, 251, 250, 0.94);
-  --signal-white: #172125;
-  --signal-acid: #169eae;
-  --signal-moss: #2d929b;
-  --signal-gray: #69777a;
-  --signal-line: rgba(23, 33, 37, 0.22);
+  --signal-void: var(--site-bg, #f3f5f3);
+  --signal-surface: rgb(from var(--site-veil-color, #f5f7f5) r g b / 0.94);
+  --signal-white: var(--site-ink, #172125);
+  --signal-acid: var(--site-active, #169eae);
+  --signal-moss: var(--site-deep, #2d929b);
+  --signal-gray: var(--site-muted, #69777a);
+  --signal-line: rgb(from var(--site-ink) r g b / 0.22);
   --signal-pixel-font: 'Fusion Pixel 12', 'JetBrains Mono', monospace;
   --signal-pixel-unit: 12px;
 
@@ -2149,7 +2167,7 @@
 
 /* Palette integration 01: airy retro-future pixel system. */
 .portfolio-shell {
-  background: rgba(243, 245, 243, 0.86);
+  background: rgb(from var(--site-bg, #f3f5f3) r g b / 0.86);
 }
 
 /* Preview study: one-second cursor charge and pixel-field reveal. */
@@ -2169,7 +2187,7 @@
   margin-left: -16px;
   display: none;
   pointer-events: none;
-  color: #169eae;
+  color: var(--site-active, #169eae);
 }
 
 .portfolio-preview-cursor.is-visible {
@@ -2185,12 +2203,12 @@
 }
 
 .portfolio-preview-cursor circle {
-  fill: rgba(243, 245, 243, 0.82);
+  fill: rgb(from var(--site-bg, #f3f5f3) r g b / 0.82);
   stroke-width: 2;
 }
 
 .portfolio-preview-cursor-track {
-  stroke: rgba(23, 33, 37, 0.22);
+  stroke: rgb(from var(--site-ink) r g b / 0.22);
 }
 
 .portfolio-preview-cursor-progress {
@@ -2207,9 +2225,9 @@
 
 .portfolio-floating-preview {
   z-index: 2147483000;
-  border-color: rgba(23, 33, 37, 0.72);
-  background: rgba(245, 247, 245, 0.98);
-  box-shadow: 10px 10px 0 rgba(45, 146, 155, 0.16);
+  border-color: rgb(from var(--site-ink) r g b / 0.72);
+  background: rgb(from var(--site-veil-color) r g b / 0.98);
+  box-shadow: 10px 10px 0 rgb(from var(--site-deep) r g b / 0.16);
   contain: paint;
   will-change: transform, opacity, clip-path;
 }
@@ -2220,8 +2238,8 @@
   content: '';
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(40, 182, 195, 0.28) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(40, 182, 195, 0.28) 1px, transparent 1px);
+    linear-gradient(rgb(from var(--site-primary) r g b / 0.28) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(from var(--site-primary) r g b / 0.28) 1px, transparent 1px);
   background-size: 8px 8px;
   mix-blend-mode: multiply;
   opacity: 0;
@@ -2303,36 +2321,43 @@
 }
 
 .portfolio-navigation {
-  background: rgba(245, 247, 245, 0.94);
-  border-bottom-color: rgba(45, 146, 155, 0.42);
-  box-shadow: 0 1px 0 rgba(245, 247, 245, 0.72);
+  background: rgb(from var(--site-veil-color) r g b / 0.94);
+  border-bottom-color: rgb(from var(--site-deep) r g b / 0.42);
+  box-shadow: 0 1px 0 rgb(from var(--site-veil-color) r g b / 0.72);
 }
 
 .portfolio-navigation-links a.is-current {
-  border-color: rgba(22, 158, 174, 0.52);
-  background: rgba(40, 182, 195, 0.1);
+  border-color: rgb(from var(--site-active) r g b / 0.52);
+  background: rgb(from var(--site-primary) r g b / 0.1);
 }
 
 .portfolio-hero,
 .portfolio-section {
-  background: rgba(245, 247, 245, 0.74);
+  background: rgb(from var(--site-veil-color) r g b / var(--site-veil, 0.74));
 }
 
 .portfolio-hero-main h1 {
-  color: var(--portfolio-signal-teal);
-  text-shadow: 1px 0 0 rgba(245, 247, 245, 0.78);
+  color: var(--site-title, #f4f7f2);
+  text-shadow:
+    1px 0 0 rgb(from var(--site-veil-color) r g b / 0.78),
+    0 0 calc(var(--crt-text-bloom-radius, 5) * 0.25px)
+    rgb(from var(--crt-text-bloom-color, currentColor) r g b / min(1, var(--crt-text-bloom-alpha, 0.32) * 2.2)),
+    0 0 calc(var(--crt-text-bloom-radius, 5) * 1px)
+    rgb(from var(--crt-text-bloom-color, currentColor) r g b / var(--crt-text-bloom-alpha, 0.32)),
+    0 0 calc(var(--crt-text-bloom-radius, 5) * 3px)
+    rgb(from var(--crt-text-bloom-color, currentColor) r g b / calc(var(--crt-text-bloom-alpha, 0.32) * 0.45));
 }
 
 .portfolio-primary-action {
   border-color: var(--portfolio-signal-cyan);
   background: var(--portfolio-signal-cyan);
-  color: #f5f7f5;
+  color: var(--site-veil-color, #f5f7f5);
 }
 
 .portfolio-secondary-action {
-  border-color: rgba(23, 33, 37, 0.36);
+  border-color: rgb(from var(--site-ink) r g b / 0.36);
   color: var(--portfolio-signal-white);
-  background: rgba(245, 247, 245, 0.44);
+  background: rgb(from var(--site-veil-color) r g b / 0.44);
 }
 
 .portfolio-hero-statement,
@@ -2345,7 +2370,7 @@
 .portfolio-evidence-grid > div,
 .portfolio-profile-list > div,
 .portfolio-profile-awards li {
-  border-color: rgba(23, 33, 37, 0.2);
+  border-color: rgb(from var(--site-ink) r g b / 0.2);
 }
 
 .portfolio-game-section .portfolio-section-heading-copy h2,
@@ -2356,46 +2381,46 @@
 
 .portfolio-featured-card {
   clip-path: none;
-  box-shadow: 8px 8px 0 rgba(45, 146, 155, 0.08);
+  box-shadow: 8px 8px 0 rgb(from var(--site-deep) r g b / 0.08);
 }
 
 .portfolio-reserved-field,
 .portfolio-runtime-reserved {
   background-image:
-    linear-gradient(rgba(40, 182, 195, 0.14) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(40, 182, 195, 0.14) 1px, transparent 1px);
+    linear-gradient(rgb(from var(--site-primary) r g b / 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(from var(--site-primary) r g b / 0.14) 1px, transparent 1px);
 }
 
 .portfolio-card-pixel-layer span,
 .portfolio-runtime-pixels span {
-  box-shadow: 6px 6px 0 rgba(45, 146, 155, 0.42);
+  box-shadow: 6px 6px 0 rgb(from var(--site-deep) r g b / 0.42);
 }
 
 .portfolio-game-section .portfolio-project-meta span:last-child,
 .portfolio-game-section .portfolio-project-status,
 .portfolio-index-row:hover,
 .portfolio-index-row.is-active {
-  background: rgba(40, 182, 195, 0.1);
+  background: rgb(from var(--site-primary) r g b / 0.1);
 }
 
 .portfolio-runtime-chrome {
   background: var(--portfolio-signal-teal);
-  color: #f5f7f5;
+  color: var(--site-veil-color, #f5f7f5);
 }
 
 .portfolio-runtime-chrome span:first-child {
   background: var(--portfolio-signal-cyan);
-  color: #f5f7f5;
+  color: var(--site-veil-color, #f5f7f5);
 }
 
 .portfolio-runtime-chrome span:last-child {
-  color: rgba(245, 247, 245, 0.72);
+  color: rgb(from var(--site-veil-color) r g b / 0.72);
 }
 
 .portfolio-runtime-reserved-mark {
   background:
     linear-gradient(90deg, transparent 25%, var(--signal-acid) 25% 50%, transparent 50% 75%, var(--signal-moss) 75%),
-    linear-gradient(transparent 25%, rgba(40, 182, 195, 0.46) 25% 50%, transparent 50% 75%, rgba(45, 146, 155, 0.72) 75%);
+    linear-gradient(transparent 25%, rgb(from var(--site-primary) r g b / 0.46) 25% 50%, transparent 50% 75%, rgb(from var(--site-deep) r g b / 0.72) 75%);
   background-blend-mode: multiply;
   background-size: 24px 24px;
 }
@@ -2406,7 +2431,7 @@
 
 .portfolio-runtime-diagnostic-label {
   background:
-    linear-gradient(90deg, transparent 0 calc(100% - 12px), rgba(40, 182, 195, 0.1) calc(100% - 12px)),
+    linear-gradient(90deg, transparent 0 calc(100% - 12px), rgb(from var(--site-primary) r g b / 0.1) calc(100% - 12px)),
     var(--signal-surface);
 }
 
@@ -2416,8 +2441,8 @@
 .portfolio-shell[data-active-section='archive'] #archive .portfolio-section-heading,
 .portfolio-shell[data-active-section='profile'] #profile .portfolio-section-heading,
 .portfolio-shell[data-active-section='contact'] #contact .portfolio-section-heading {
-  border-color: rgba(22, 158, 174, 0.48);
-  background: rgba(40, 182, 195, 0.07);
+  border-color: rgb(from var(--site-active) r g b / 0.48);
+  background: rgb(from var(--site-primary) r g b / 0.07);
 }
 
 .portfolio-section:not(.portfolio-game-section) .portfolio-section-heading-copy h2,
@@ -2436,12 +2461,12 @@
 }
 
 .portfolio-game-section[data-runtime-signal='ready'] .portfolio-featured-card[aria-current='true'] {
-  border-bottom-color: rgba(22, 158, 174, 0.72);
-  background: rgba(40, 182, 195, 0.08);
+  border-bottom-color: rgb(from var(--site-active) r g b / 0.72);
+  background: rgb(from var(--site-primary) r g b / 0.08);
 }
 
 .portfolio-floating-preview {
-  background: rgba(245, 247, 245, 0.94);
+  background: rgb(from var(--site-veil-color) r g b / 0.94);
 }
 
 .portfolio-system-card,
@@ -2461,19 +2486,19 @@
   .portfolio-primary-action:focus-visible {
     border-color: var(--portfolio-signal-teal);
     background: var(--portfolio-signal-teal);
-    color: #f5f7f5;
+    color: var(--site-veil-color, #f5f7f5);
   }
 }
 
 @media (max-width: 720px) {
   .portfolio-navigation-mobile-menu {
-    background: rgba(245, 247, 245, 0.98);
+    background: rgb(from var(--site-veil-color) r g b / 0.98);
   }
 
   .portfolio-hero,
   .portfolio-section {
-    background: rgba(245, 247, 245, 0.84);
-    box-shadow: 0 0 0 100vmax rgba(245, 247, 245, 0.84);
+    background: rgb(from var(--site-veil-color) r g b / 0.84);
+    box-shadow: 0 0 0 100vmax rgb(from var(--site-veil-color) r g b / 0.84);
   }
 }
 
@@ -2506,10 +2531,6 @@
   .portfolio-navigation-mobile-menu {
     padding-right: 1rem;
     padding-left: 1rem;
-  }
-
-  .portfolio-hero-meta span:last-child {
-    display: none;
   }
 
   .portfolio-primary-action,
@@ -2685,7 +2706,7 @@
 
   .portfolio-shell[data-active-section='systems'] #systems .portfolio-section-heading,
   .portfolio-shell[data-active-section='relevant-work'] #relevant-work .portfolio-section-heading {
-    background: transparent;
+    background: rgb(from var(--site-active) r g b / 0.1);
   }
 }
 
@@ -2873,6 +2894,7 @@
   .portfolio-contact-link:focus-visible,
   .portfolio-archive-entry:hover {
     color: var(--portfolio-signal-acid);
+    background-color: rgb(from var(--site-active) r g b / 0.12);
   }
 }
 
@@ -2916,7 +2938,7 @@
   .portfolio-shell[data-active-section='experience']
     #experience
     .portfolio-section-heading.is-record {
-    background: transparent;
+    background: rgb(from var(--site-active) r g b / 0.1);
   }
 }
 
@@ -3039,7 +3061,7 @@
   .portfolio-shell[data-active-section='archive']
     #archive
     .portfolio-section-heading.is-catalog {
-    background: transparent;
+    background: rgb(from var(--site-active) r g b / 0.1);
   }
 }
 
@@ -3159,7 +3181,7 @@
   .portfolio-shell[data-active-section='profile']
     #profile
     .portfolio-section-heading.is-resume {
-    background: transparent;
+    background: rgb(from var(--site-active) r g b / 0.1);
   }
 
   .portfolio-shell[data-active-section='profile']
@@ -3254,7 +3276,7 @@
   .portfolio-shell[data-active-section='contact']
     #contact
     .portfolio-section-heading.is-closing {
-    background: transparent;
+    background: rgb(from var(--site-active) r g b / 0.1);
   }
 
   .portfolio-contact-section .portfolio-contact-card {
@@ -3501,35 +3523,39 @@
 
 /* Final cascade lock for the approved light palette. */
 .portfolio-shell {
-  background: rgba(243, 245, 243, 0.86);
+  background: rgb(from var(--site-bg, #f3f5f3) r g b / 0.86);
 }
 
 .portfolio-navigation {
-  background: rgba(245, 247, 245, 0.94);
-  border-bottom-color: rgba(45, 146, 155, 0.42);
+  background: rgb(from var(--site-veil-color) r g b / 0.94);
+  border-bottom-color: rgb(from var(--site-deep) r g b / 0.42);
 }
 
 .portfolio-navigation-links a.is-current {
-  border-color: rgba(22, 158, 174, 0.52);
-  background: rgba(40, 182, 195, 0.1);
+  border-color: rgb(from var(--site-active) r g b / 0.52);
+  background: rgb(from var(--site-primary) r g b / 0.1);
 }
 
 .portfolio-hero,
 .portfolio-section {
-  background: rgba(245, 247, 245, 0.74);
+  background: rgb(from var(--site-veil-color) r g b / var(--site-veil, 0.74));
   /* Full-bleed: paint the section background edge-to-edge, game section included. */
-  box-shadow: 0 0 0 100vmax rgba(245, 247, 245, 0.74);
+  box-shadow: 0 0 0 100vmax rgb(from var(--site-veil-color) r g b / var(--site-veil, 0.74));
   clip-path: inset(0 -100vmax);
 }
 
-.portfolio-section:not(.portfolio-game-section) .portfolio-section-heading-copy h2,
+.portfolio-section:not(.portfolio-game-section) .portfolio-section-heading-copy h2 {
+  color: var(--portfolio-signal-white);
+}
+
+/* 滚动进入的区块标题变色：跟随交互色，单色配色下也有变化。 */
 .portfolio-shell[data-active-section='systems'] #systems .portfolio-section-heading-copy h2,
 .portfolio-shell[data-active-section='experience'] #experience .portfolio-section-heading-copy h2,
 .portfolio-shell[data-active-section='relevant-work'] #relevant-work .portfolio-section-heading-copy h2,
 .portfolio-shell[data-active-section='archive'] #archive .portfolio-section-heading-copy h2,
 .portfolio-shell[data-active-section='profile'] #profile .portfolio-section-heading-copy h2,
 .portfolio-shell[data-active-section='contact'] #contact .portfolio-section-heading-copy h2 {
-  color: var(--portfolio-signal-white);
+  color: var(--site-active, #169eae);
 }
 
 .portfolio-shell[data-active-section='systems'] #systems .portfolio-section-heading,
@@ -3538,12 +3564,12 @@
 .portfolio-shell[data-active-section='archive'] #archive .portfolio-section-heading,
 .portfolio-shell[data-active-section='profile'] #profile .portfolio-section-heading,
 .portfolio-shell[data-active-section='contact'] #contact .portfolio-section-heading {
-  border-color: rgba(22, 158, 174, 0.48);
-  background: rgba(40, 182, 195, 0.07);
+  border-color: rgb(from var(--site-active) r g b / 0.48);
+  background: rgb(from var(--site-primary) r g b / 0.07);
 }
 
 .portfolio-game-section[data-runtime-signal='ready'] .portfolio-featured-copy h3 {
-  color: rgba(23, 33, 37, 0.58);
+  color: rgb(from var(--site-ink) r g b / 0.58);
 }
 
 .portfolio-game-section[data-runtime-signal='ready']
@@ -3561,8 +3587,8 @@
 }
 
 .portfolio-game-section[data-runtime-signal='ready'] .portfolio-featured-card[aria-current='true'] {
-  border-bottom-color: rgba(22, 158, 174, 0.72);
-  background: rgba(40, 182, 195, 0.08);
+  border-bottom-color: rgb(from var(--site-active) r g b / 0.72);
+  background: rgb(from var(--site-primary) r g b / 0.08);
 }
 
 .portfolio-section:not(.portfolio-game-section) .portfolio-marker-line {
@@ -3571,13 +3597,13 @@
 
 @media (max-width: 720px) {
   .portfolio-navigation-mobile-menu {
-    background: rgba(245, 247, 245, 0.98);
+    background: rgb(from var(--site-veil-color) r g b / 0.98);
   }
 
   .portfolio-hero,
   .portfolio-section {
-    background: rgba(245, 247, 245, 0.84);
-    box-shadow: 0 0 0 100vmax rgba(245, 247, 245, 0.84);
+    background: rgb(from var(--site-veil-color) r g b / 0.84);
+    box-shadow: 0 0 0 100vmax rgb(from var(--site-veil-color) r g b / 0.84);
   }
 }
 
@@ -3596,9 +3622,9 @@
 
 .portfolio-floating-preview {
   z-index: 2147483000;
-  border-color: rgba(23, 33, 37, 0.72);
-  background: rgba(245, 247, 245, 0.98);
-  box-shadow: 10px 10px 0 rgba(45, 146, 155, 0.16);
+  border-color: rgb(from var(--site-ink) r g b / 0.72);
+  background: rgb(from var(--site-veil-color) r g b / 0.98);
+  box-shadow: 10px 10px 0 rgb(from var(--site-deep) r g b / 0.16);
 }
 
 @media (max-width: 720px) {

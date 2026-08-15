@@ -20,10 +20,15 @@
   --crt-plastic:
     linear-gradient(155deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 32%),
     linear-gradient(335deg, rgba(74, 68, 58, 0.2), rgba(74, 68, 58, 0) 42%),
-    linear-gradient(var(--crt-plastic-angle), #e3ded3 0%, #d6d1c5 46%, #c4beb1 100%);
+    linear-gradient(
+      var(--crt-plastic-angle),
+      color-mix(in srgb, var(--crt-plastic-base, #d6d1c5), #ffffff 13%) 0%,
+      var(--crt-plastic-base, #d6d1c5) 46%,
+      color-mix(in srgb, var(--crt-plastic-base, #d6d1c5), #000000 9%) 100%
+    );
 
   /* --- Tunable shading parameters (screen junction depth) ---
-     Values locked in with the on-page tuner on 2026-08-14. */
+     Locked per theme; current values are the dark "terminal" frame tuning (2026-08-15). */
   --crt-shadow-top: 0.71;        /* thin pressed shadow along the screen top edge */
   --crt-shadow-bottom: 0.535;    /* wider spread shadow along the bottom edge */
   --crt-shadow-left: 0.715;      /* concave darkening on the left edge */
@@ -34,32 +39,44 @@
   --crt-corner-dark-br: 0.18;    /* radial darkening, bottom-right corner */
   /* Corner folds: per-corner dark/light ends, gradient direction, scale
      (multiple of bezel thickness) and transition pos/band. */
-  --crt-fold-tl-dark: 0.76;
-  --crt-fold-tl-light: 0.275;
+  --crt-fold-tl-dark: 1;
+  --crt-fold-tl-light: 0.4;
   --crt-fold-tl-angle: 225deg;
   --crt-fold-tl-scale: 15;
   --crt-fold-tl-pos: 51;
-  --crt-fold-tl-band: 3;
-  --crt-fold-tr-dark: 0.7;
-  --crt-fold-tr-light: 0.365;
+  --crt-fold-tl-band: 2;
+  --crt-fold-tr-dark: 1;
+  --crt-fold-tr-light: 0.4;
   --crt-fold-tr-angle: 135deg;
   --crt-fold-tr-scale: 14;
-  --crt-fold-tr-pos: 51;
-  --crt-fold-tr-band: 3;
-  --crt-fold-bl-dark: 0.515;
-  --crt-fold-bl-light: 0.28;
+  --crt-fold-tr-pos: 49;
+  --crt-fold-tr-band: 4;
+  --crt-fold-bl-dark: 0.115;
+  --crt-fold-bl-light: 0.245;
   --crt-fold-bl-angle: 135deg;
-  --crt-fold-bl-scale: 5.6;
-  --crt-fold-bl-pos: 51;
-  --crt-fold-bl-band: 4;
-  --crt-fold-br-dark: 0.525;
+  --crt-fold-bl-scale: 18.4;
+  --crt-fold-bl-pos: 50;
+  --crt-fold-bl-band: 2.5;
+  --crt-fold-br-dark: 0.685;
   --crt-fold-br-light: 0.42;
   --crt-fold-br-angle: 225deg;
-  --crt-fold-br-scale: 11.7;
+  --crt-fold-br-scale: 19.1;
   --crt-fold-br-pos: 50;
-  --crt-fold-br-band: 2;
-  --crt-reflection: 0.05;        /* glass reflection band strength */
-  --crt-reflection-soft: 0.06;   /* glass reflection secondary band */
+  --crt-fold-br-band: 2.5;
+  --crt-reflection: 0.1;        /* glass reflection band strength */
+  --crt-reflection-soft: 0.005;   /* glass reflection secondary band */
+  /* Elliptical glass glare: position / radii / rotation / falloff / strength. */
+  --crt-glare-x: 83;
+  --crt-glare-y: 22;
+  --crt-glare-rx: 57;
+  --crt-glare-ry: 66;
+  --crt-glare-angle: 1deg;
+  --crt-glare-pos: 22;
+  --crt-glare-band: 15;
+  --crt-glare-strength: 0.1;
+  /* Phosphor text bloom (显像管泛光): blur radius + alpha of currentColor glow. */
+  --crt-text-bloom-radius: 20;
+  --crt-text-bloom-alpha: 0.15;
 }
 
 @media (max-width: 720px) {
@@ -320,6 +337,33 @@
   transition: transform 550ms ease-out;
 }
 
+/* Elliptical glass glare: a soft rotatable hotspot above the existing
+   reflection bands. Outer layer clips to the rounded screen; the inner
+   gradient rotates around the glare position. */
+.crt-shell-glare {
+  position: absolute;
+  inset: var(--crt-bezel);
+  border-radius: var(--crt-screen-radius);
+  overflow: hidden;
+}
+
+.crt-shell-glare::before {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse calc(var(--crt-glare-rx) * 1%) calc(var(--crt-glare-ry) * 1%)
+      at calc(var(--crt-glare-x) * 1%) calc(var(--crt-glare-y) * 1%),
+    rgba(255, 255, 255, var(--crt-glare-strength)) 0%,
+    rgba(255, 255, 255, calc(var(--crt-glare-strength) * 0.5))
+      calc((var(--crt-glare-pos) - var(--crt-glare-band) / 2) * 1%),
+    rgba(255, 255, 255, 0)
+      calc((var(--crt-glare-pos) + var(--crt-glare-band) / 2) * 1%)
+  );
+  content: '';
+  transform: rotate(var(--crt-glare-angle));
+  transform-origin: calc(var(--crt-glare-x) * 1%) calc(var(--crt-glare-y) * 1%);
+}
+
 /* Bottom-right power recess: shallow horizontal groove, no light. */
 .crt-shell-power {
   position: absolute;
@@ -343,7 +387,7 @@
 }
 
 .crt-shell-power::after {
-  color: rgba(23, 33, 37, 0.42);
+  color: rgb(from var(--site-ink) r g b / 0.42);
   content: 'ZHUYIJIA';
   font-family: 'Fusion Pixel 12', monospace;
   font-size: 9px;

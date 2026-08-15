@@ -1,12 +1,9 @@
 export function PortfolioHero() {
   return (
     <section id="top" className="portfolio-hero" aria-labelledby="hero-title">
-      <div className="portfolio-hero-meta">
-        <span>PORTFOLIO / 2026</span>
-      </div>
-
       <div className="portfolio-hero-main">
         <div className="portfolio-hero-identity">
+          <p className="portfolio-hero-meta">PORTFOLIO / 2026</p>
           <p className="section-label">ZHU YIJIA · 朱翊嘉</p>
           <h1 id="hero-title">
             <span>UE / C++</span>

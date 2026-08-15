@@ -15,6 +15,14 @@
       type="font/woff2"
       crossorigin
     />
+    <!-- 首屏即深色（CRT 关机态），避免 JS/CSS 加载前的白闪。 -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #0b0d0c;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

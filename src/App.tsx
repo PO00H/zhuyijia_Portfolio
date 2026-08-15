@@ -1,6 +1,7 @@
 import { IframeLightbox } from './components/code/IframeLightbox';
 import { LightboxProvider } from './components/code/LightboxContext';
 import { BootSequence } from './components/crt/BootSequence';
+import { ColorTuner } from './components/crt/ColorTuner';
 import { CrtShell } from './components/crt/CrtShell';
 import { ScrollRail } from './components/scroll-rail/ScrollRail';
 import { AssetLab } from './features/asset-lab/AssetLab';
@@ -35,6 +36,7 @@ function App() {
         <ArchivePage />
         <CrtShell />
         <ScrollRail />
+        <ColorTuner />
       </>
     );
   }
@@ -46,6 +48,7 @@ function App() {
       <CrtShell />
       <ScrollRail />
       <BootSequence />
+      <ColorTuner />
     </LightboxProvider>
   );
 }

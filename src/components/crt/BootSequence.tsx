@@ -23,7 +23,7 @@ const TYPE_TICK_MS = 55;
 const POWER_ON_MS = 500;
 const POWER_OFF_MS = 560;
 const GLITCH_MS = 280;
-const OFF_BEAT_MS = 200;
+const OFF_BEAT_MS = 0;
 
 type Phase = 'off' | 'power' | 'typing' | 'blink' | 'shutdown' | 'done';
 

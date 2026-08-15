@@ -65,6 +65,7 @@ export function CrtShell() {
         <div className="crt-shell-fold crt-fold-br" />
       </div>
       <div ref={glassRef} className="crt-shell-glass" />
+      <div className="crt-shell-glare" />
       <div className="crt-shell-power" />
     </div>
   );
