@@ -866,3 +866,8 @@ Motion Study 06 验收：用户确认点击定位版本通过；Study 06 标记�
 文档：`docs/portfolio-design-system.md` 新增第 13 节（配色系统与调参面板）与第 14 节（复古程序窗口），开机序列节同步无黑屏停顿与深色收线，旧 13/14 顺延为 15/16。
 检查：生产构建、`tsc --noEmit` 通过；playwright 实测双窗 z 序与置前、ESC / × 关闭、Archive 开窗、390px 全屏 sheet、1600 / 2560 窗口尺寸、最大化切换数值。
 确认：用户验收窗口风格与尺寸比例，标题栏点阵纹理经试装后去除。
+
+2026-08-17 — 02 预留位接入《显影 / DEVELOP》+ ECHOFLASH 封面替换 — DONE
+显影接入：交付包 `develop-web-package-20260816.zip` 的 `01-site` 全量复制到 `public/embed/develop/`（34MB，全相对路径零改动）；封面 `public/projects/develop/cover.webp`（包内 S1）、预览 `preview.mp4`（23MB hero 太重，用 725KB 的 V01 片段）。`ue-project-upcoming` 条目按 `docs/adding-real-ue-project.md` 规范更新：标题 DEVELOP — 《显影》、published、2026、七个真实系统标签（Scene Capture / Render Target / Procedural Mesh / Line Trace / Undo / Restore 等）、中文摘要、detailUrl 指向 embed。实测 01 卡真实封面进共享视窗、复古窗口打开 WebGL 取景器正常。
+ECHOFLASH 封面：用户提供的 16:9 新图（1920×1080）置于 `public/covers/echoflash-16x9.png`，`portfolioDerivedAssets.json` 的 `game-001` 封面派生映射指向新图（ratio 16:9）；`covers/echoflash.png` 原图与详情页均不动。期间发现用户侧曾把 4:3 crop webp 误覆盖到 `covers/echoflash.png`（webp 内容 png 后缀），已从 git 恢复原文件。
+检查：生产构建、`tsc --noEmit` 通过；playwright 实测 01 卡内容、embed 窗口加载、02 卡新封面在共享视窗正常显示。

@@ -1,0 +1,122 @@
+﻿{
+    "generatedAt":  "2026-08-06T15:46:13",
+    "totalBytes":  34026774,
+    "files":  [
+                  {
+                      "path":  "media\\manifest.json",
+                      "bytes":  4270
+                  },
+                  {
+                      "path":  "media\\blueprints\\capture-photo-rt.webp",
+                      "bytes":  139874
+                  },
+                  {
+                      "path":  "media\\blueprints\\cut-items-a.webp",
+                      "bytes":  348636
+                  },
+                  {
+                      "path":  "media\\blueprints\\cut-items-b.webp",
+                      "bytes":  350354
+                  },
+                  {
+                      "path":  "media\\blueprints\\cut-trace-both.webp",
+                      "bytes":  177716
+                  },
+                  {
+                      "path":  "media\\blueprints\\cut-working-copy.webp",
+                      "bytes":  268718
+                  },
+                  {
+                      "path":  "media\\blueprints\\execute-undo.webp",
+                      "bytes":  198452
+                  },
+                  {
+                      "path":  "media\\blueprints\\place-photo-rotation.webp",
+                      "bytes":  144546
+                  },
+                  {
+                      "path":  "media\\blueprints\\place-photo-spawn.webp",
+                      "bytes":  217640
+                  },
+                  {
+                      "path":  "media\\blueprints\\preset-beginplay.webp",
+                      "bytes":  234056
+                  },
+                  {
+                      "path":  "media\\blueprints\\restore-actor.webp",
+                      "bytes":  261046
+                  },
+                  {
+                      "path":  "media\\blueprints\\rollback-pending.webp",
+                      "bytes":  220270
+                  },
+                  {
+                      "path":  "media\\blueprints\\validate-undo.webp",
+                      "bytes":  125242
+                  },
+                  {
+                      "path":  "media\\images\\S1.webp",
+                      "bytes":  189104
+                  },
+                  {
+                      "path":  "media\\posters\\V01.webp",
+                      "bytes":  19192
+                  },
+                  {
+                      "path":  "media\\posters\\V02.webp",
+                      "bytes":  12500
+                  },
+                  {
+                      "path":  "media\\posters\\V03.webp",
+                      "bytes":  10148
+                  },
+                  {
+                      "path":  "media\\posters\\V04.webp",
+                      "bytes":  2750
+                  },
+                  {
+                      "path":  "media\\posters\\V06.webp",
+                      "bytes":  14744
+                  },
+                  {
+                      "path":  "media\\posters\\V08.webp",
+                      "bytes":  9190
+                  },
+                  {
+                      "path":  "media\\posters\\V10.webp",
+                      "bytes":  14206
+                  },
+                  {
+                      "path":  "media\\video\\hero.mp4",
+                      "bytes":  24109077
+                  },
+                  {
+                      "path":  "media\\video\\V01.mp4",
+                      "bytes":  725593
+                  },
+                  {
+                      "path":  "media\\video\\V02.mp4",
+                      "bytes":  1011891
+                  },
+                  {
+                      "path":  "media\\video\\V03.mp4",
+                      "bytes":  1090760
+                  },
+                  {
+                      "path":  "media\\video\\V04.mp4",
+                      "bytes":  1147290
+                  },
+                  {
+                      "path":  "media\\video\\V06.mp4",
+                      "bytes":  1388028
+                  },
+                  {
+                      "path":  "media\\video\\V08.mp4",
+                      "bytes":  1004963
+                  },
+                  {
+                      "path":  "media\\video\\V10.mp4",
+                      "bytes":  586518
+                  }
+              ]
+}

@@ -8,10 +8,10 @@
       "projectId": "game-001",
       "source": "/covers/echoflash.png",
       "kind": "image",
-      "ratio": "4:3",
-      "width": 1440,
+      "ratio": "16:9",
+      "width": 1920,
       "height": 1080,
-      "derived": "/derived/asset-lab-v1/game-001/echoflash-crop.webp",
+      "derived": "/covers/echoflash-16x9.png",
       "poster": null
     },
     {
