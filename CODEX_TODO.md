@@ -895,3 +895,7 @@ CSS 清理（每个选择器均先 grep 核实 0 使用）：`src/index.css` 删
 2026-08-17 — 简历下载切换器 — DONE
 修改：新增 `src/data/resume.ts` 简历配置文件与 `src/components/resume/ResumeDownload.tsx` 组件。`ResumeDownload` 根据 `available: true` 的条目数量自动降级：只有一份简历时显示单一下载按钮（保持现有 Hero「下载个人简历」与 Contact「简历 / RESUME · 中文」卡片）；多份简历时显示语言切换按钮组 + 下载链接。Hero 与 Contact 的硬编码简历链接均替换为组件。预留了英文简历注释模板：放入 `public/documents/ZhuYijia_Resume.pdf` 并将该条目 `available` 改为 `true` 即可自动出现切换 UI。
 检查：`npm run build`、`git diff --check` 通过；桌面首页与 Contact 区截图显示单一下载按钮正常。未提交 git。
+
+2026-08-17 — ColorTuner 参数持久化 — DONE
+修改：`src/components/crt/ColorTuner.tsx` 新增 localStorage 持久化。配色、遮罩透明度、CRT 外壳 52 项参数、文字泛光色和当前预设 ID 在每次改动后自动写入 `localStorage['zhuyijia-color-tuner-state']`；组件挂载时读取并恢复到 `:root` 变量与 dither 调色板，刷新页面后调整不会丢失。面板底部新增「导出 JSON」「导入 JSON」按钮：导出可下载带时间戳的主题 JSON 备份，导入可从 JSON 文件还原全部参数并继续编辑；保留「重置」恢复默认黑底终端和「复制参数」到剪贴板。
+检查：`npm run build`、`git diff --check` 通过；桌面截图确认底部新增导出/导入/重置/复制四个按钮；未提交 git。
