@@ -887,3 +887,7 @@ CSS 清理（每个选择器均先 grep 核实 0 使用）：`src/index.css` 删
 2026-08-17 — O5 Canvas 底层微优化 — DONE
 修改：`src/features/ascii-lab/asciiEngine.ts` 新增调色板混色缓存（`getMixedPalette`），按 `${paper}:${coral}:${cyan}` 键值缓存 `coralLight` / `cyanLight` / `cyanDeep`，主题未变时不再每帧解析并混色 3 个 hex；`src/sections/portfolio/PortfolioDitherBackground.tsx` 给 `resize` 加 120ms 节流，避免拖动窗口时每帧重绘全幅 Canvas，并在 effect cleanup 中清除待执行的 timeout。
 检查：`npm run build`、`git diff --check` 通过；JS bundle 增加 0.32 kB（可忽略）；桌面/Archive/390 手机截图无视觉回归。未提交 git。
+
+2026-08-17 — O7-1 黑底终端主题转正 — DONE
+修改：删除 `src/index.css` 中 `:root` 默认主题注释里的“（2026-08-15 暂定）”字样；`docs/portfolio-design-system.md` 第 13 节将“当前默认主题为「黑底终端」”改为“默认主题为正式确定的「黑底终端」”，确认 ColorTuner 永久保留、6 套预设继续可用。
+检查：`npm run build`、`git diff --check` 通过；未提交 git。

@@ -167,7 +167,7 @@ GAME WORK 保留已经验收的共享媒体窗口和 560ms Dither 交接。它�
 
 ## 13. 全站配色系统与调参面板
 
-全站颜色由 `:root` 的 `--site-*` 变量驱动（bg / ink / primary / deep / active / title / muted / dotPaper / frame / veilColor + veil 透明度），CSS 内不允许新增硬编码色——墨色、纸白、三类青色的 rgba 变体一律用 `rgb(from var(...) r g b / α)` 或 `color-mix` 派生。左下角「配色调参」面板（`src/components/crt/ColorTuner.tsx`）为**永久面板**：10 个合并颜色参数 + 遮罩透明度 + CRT 外壳 52 项参数（切割框 / 四边压暗 / 角部暗部 / 折角 / 反光 / 椭圆反光 / 文字泛光），6 套预设可绑定 veil 与外壳参数（`preset.shell`）。当前默认主题为「黑底终端」；文字泛光为三层 `text-shadow`（跟随 `currentColor`，可用 `bloomColor` 覆盖）；旧 valiente 变量是 `--site-*` 的别名，portal 挂载元素同样跟随主题。
+全站颜色由 `:root` 的 `--site-*` 变量驱动（bg / ink / primary / deep / active / title / muted / dotPaper / frame / veilColor + veil 透明度），CSS 内不允许新增硬编码色——墨色、纸白、三类青色的 rgba 变体一律用 `rgb(from var(...) r g b / α)` 或 `color-mix` 派生。左下角「配色调参」面板（`src/components/crt/ColorTuner.tsx`）为**永久面板**：10 个合并颜色参数 + 遮罩透明度 + CRT 外壳 52 项参数（切割框 / 四边压暗 / 角部暗部 / 折角 / 反光 / 椭圆反光 / 文字泛光），6 套预设可绑定 veil 与外壳参数（`preset.shell`）。默认主题为正式确定的「黑底终端」；文字泛光为三层 `text-shadow`（跟随 `currentColor`，可用 `bloomColor` 覆盖）；旧 valiente 变量是 `--site-*` 的别名，portal 挂载元素同样跟随主题。
 
 ## 14. 复古程序窗口
 
