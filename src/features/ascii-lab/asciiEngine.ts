@@ -88,6 +88,29 @@ const mixHex = (from: string, to: string, amount: number) => {
   return `#${mixed.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
 };
 
+interface CachedMixedPalette {
+  key: string;
+  coralLight: string;
+  cyanLight: string;
+  cyanDeep: string;
+}
+
+let mixedPaletteCache: CachedMixedPalette | null = null;
+
+const getMixedPalette = (palette: MotionStudyPalette) => {
+  const key = `${palette.paper}:${palette.coral}:${palette.cyan}`;
+  if (mixedPaletteCache && mixedPaletteCache.key === key) {
+    return mixedPaletteCache;
+  }
+  mixedPaletteCache = {
+    key,
+    coralLight: mixHex(palette.coral, palette.paper, 0.38),
+    cyanLight: mixHex(palette.cyan, palette.paper, 0.34),
+    cyanDeep: mixHex(palette.cyan, '#000000', 0.12),
+  };
+  return mixedPaletteCache;
+};
+
 const getDirectionCoordinate = (
   direction: MotionDirection,
   horizontal: number,
@@ -159,9 +182,7 @@ export function renderVerticalBreathingFrame(
     dotEventMode = 'cell',
   } = frame;
   const palette = settings.palette;
-  const coralLight = mixHex(palette.coral, palette.paper, 0.38);
-  const cyanLight = mixHex(palette.cyan, palette.paper, 0.34);
-  const cyanDeep = mixHex(palette.cyan, '#000000', 0.12);
+  const { coralLight, cyanLight, cyanDeep } = getMixedPalette(palette);
   const geometry = GEOMETRY[settings.geometry];
   const shorterSide = Math.min(width, height);
   const density = Math.max(0.65, Math.min(1.5, settings.density));

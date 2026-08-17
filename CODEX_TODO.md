@@ -883,3 +883,7 @@ CSS 清理（每个选择器均先 grep 核实 0 使用）：`src/index.css` 删
 2026-08-17 — O2 图片懒加载与 WebP 压缩 — DONE
 修改：为四个关键 `<img>` 节点添加 `loading="lazy"`：`RuntimeSignalViewport` 共享视窗封面、`InteractiveProjectIndex` 悬浮/展开预览封面、`FeaturedGamesSection` 精选项目封面、`RelevantWorkSection` TAJIMA 贴图。使用临时安装的 `sharp` 转换封面为 WebP：`echoflash-16x9.png` 1.5 MB → 133 KB（8.9%）、`echoflash.png` 1.2 MB → 99 KB（8.5%）、`eraser-odyssey.png` 496 KB → 221 KB（44.7%）；随即卸载 `sharp`，不在项目中保留依赖。同步更新 `portfolioProjects.ts`、`portfolioDerivedAssets.json`、`portfolioAssetCrops.json` 中对应的 source/derived 路径，以及 `public/embed/echoflash-detail/index.html` 的 video poster；删除原 PNG 文件。
 检查：`npm run build` 与 `git diff --check` 通过；curl 验证 4 个 WebP 资源均返回 200 image/webp；playwright 桌面/Archive/390 手机截图无样式缺失；原 PNG 引用全库清零。未提交 git。
+
+2026-08-17 — O5 Canvas 底层微优化 — DONE
+修改：`src/features/ascii-lab/asciiEngine.ts` 新增调色板混色缓存（`getMixedPalette`），按 `${paper}:${coral}:${cyan}` 键值缓存 `coralLight` / `cyanLight` / `cyanDeep`，主题未变时不再每帧解析并混色 3 个 hex；`src/sections/portfolio/PortfolioDitherBackground.tsx` 给 `resize` 加 120ms 节流，避免拖动窗口时每帧重绘全幅 Canvas，并在 effect cleanup 中清除待执行的 timeout。
+检查：`npm run build`、`git diff --check` 通过；JS bundle 增加 0.32 kB（可忽略）；桌面/Archive/390 手机截图无视觉回归。未提交 git。

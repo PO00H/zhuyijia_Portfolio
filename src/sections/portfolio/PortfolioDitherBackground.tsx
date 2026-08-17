@@ -43,6 +43,7 @@ export function PortfolioDitherBackground() {
     let startTime = performance.now();
     let eventStartedAt: number | null = null;
     let eventOrigin = { x: 0.5, y: 0.5 };
+    let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
 
     const paint = (elapsedSeconds: number, now = performance.now()) => {
       const eventProgress = eventStartedAt === null
@@ -67,17 +68,21 @@ export function PortfolioDitherBackground() {
     };
 
     const resize = () => {
-      // The coarse CSS-pixel grid is part of the approved dither material.
-      // Size follows the canvas box (inset by the CRT bezel), not the window.
-      const width = Math.max(1, Math.round(canvas.clientWidth));
-      const height = Math.max(1, Math.round(canvas.clientHeight));
+      if (resizeTimeout) clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        resizeTimeout = null;
+        // The coarse CSS-pixel grid is part of the approved dither material.
+        // Size follows the canvas box (inset by the CRT bezel), not the window.
+        const width = Math.max(1, Math.round(canvas.clientWidth));
+        const height = Math.max(1, Math.round(canvas.clientHeight));
 
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
-      }
+        if (canvas.width !== width || canvas.height !== height) {
+          canvas.width = width;
+          canvas.height = height;
+        }
 
-      paint(reducedMotion ? 0.7 : (performance.now() - startTime) / 1000);
+        paint(reducedMotion ? 0.7 : (performance.now() - startTime) / 1000);
+      }, 120);
     };
 
     const stop = () => {
@@ -156,6 +161,7 @@ export function PortfolioDitherBackground() {
     return () => {
       disposed = true;
       stop();
+      if (resizeTimeout) clearTimeout(resizeTimeout);
       window.removeEventListener('resize', resize);
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('blur', handleBlur);
