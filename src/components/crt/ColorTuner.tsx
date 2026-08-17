@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   applyCrtShell,
   applySitePalette,
@@ -17,41 +17,7 @@ import './color-tuner.css';
  * share one parameter), plus presets. Applies :root variables live and mutates
  * the shared dither palette. The CRT shell/shadow section writes the --crt-*
  * variables directly; presets may carry per-preset shell overrides.
- *
- * User adjustments are persisted to localStorage and can be exported/imported
- * as JSON for backup or transfer between devices.
  */
-
-const STORAGE_KEY = 'zhuyijia-color-tuner-state';
-const STATE_VERSION = 1;
-
-interface SavedTunerState {
-  version: number;
-  presetId: string;
-  values: SitePalette;
-  veil: number;
-  shell: Record<string, number>;
-  bloomColor: string;
-}
-
-const saveTunerState = (state: SavedTunerState) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch {
-    // Ignore private-mode / quota errors.
-  }
-};
-
-const loadTunerState = (): SavedTunerState | null => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as SavedTunerState;
-    return parsed.version === STATE_VERSION ? parsed : null;
-  } catch {
-    return null;
-  }
-};
 
 const PARAMS: { key: keyof SitePalette; label: string }[] = [
   { key: 'bg', label: '页面背景' },
@@ -83,58 +49,38 @@ const formatShellValue = (param: ShellParam, value: number) =>
   `${value}${param.unit ?? ''}`;
 
 export function ColorTuner() {
-  const saved = loadTunerState();
-  const initialPreset = saved?.presetId ?? 'terminal';
-  const initialValues = saved?.values ?? { ...DEFAULT_PALETTE };
-  const initialVeil = saved?.veil ?? 0.6;
-  const initialShell = saved?.shell ?? { ...CRT_SHELL_DEFAULTS };
-  const initialBloom = saved?.bloomColor ?? '';
-
-  const [values, setValues] = useState<SitePalette>(initialValues);
-  const [veil, setVeil] = useState(initialVeil);
-  const [shell, setShell] = useState<Record<string, number>>(initialShell);
-  const [bloomColor, setBloomColor] = useState(initialBloom);
-  const [presetId, setPresetId] = useState(initialPreset);
+  const [values, setValues] = useState<SitePalette>({ ...DEFAULT_PALETTE });
+  const [veil, setVeil] = useState(0.6);
+  const [shell, setShell] = useState<Record<string, number>>({ ...CRT_SHELL_DEFAULTS });
+  const [bloomColor, setBloomColor] = useState('');
+  const [presetId, setPresetId] = useState('terminal');
   const [collapsed, setCollapsed] = useState(false);
   const [shellOpen, setShellOpen] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
 
-  const persist = (
-    next: Partial<SavedTunerState> & { values: SitePalette; veil: number; shell: Record<string, number>; bloomColor: string; presetId: string },
-  ) => {
-    saveTunerState({
-      version: STATE_VERSION,
-      presetId: next.presetId,
-      values: next.values,
-      veil: next.veil,
-      shell: next.shell,
-      bloomColor: next.bloomColor,
-    });
+  const apply = (palette: SitePalette) => {
+    setValues(palette);
+    applySitePalette(palette);
   };
 
   const applyVeil = (value: number) => {
     setVeil(value);
     document.documentElement.style.setProperty('--site-veil', String(value));
-    persist({ presetId, values, veil: value, shell, bloomColor });
+  };
+
+  const applyShell = (values: Record<string, number>) => {
+    setShell(values);
+    applyCrtShell(values);
   };
 
   const setColor = (key: keyof SitePalette, value: string) => {
-    const nextPresetId = 'custom';
-    setPresetId(nextPresetId);
-    const nextValues = { ...values, [key]: value };
-    setValues(nextValues);
-    applySitePalette(nextValues);
-    persist({ presetId: nextPresetId, values: nextValues, veil, shell, bloomColor });
+    setPresetId('custom');
+    apply({ ...values, [key]: value });
   };
 
   const setShellValue = (varName: string, value: number) => {
     if (Number.isNaN(value)) return;
-    const nextPresetId = 'custom';
-    setPresetId(nextPresetId);
-    const nextShell = { ...shell, [varName]: value };
-    setShell(nextShell);
-    applyCrtShell(nextShell);
-    persist({ presetId: nextPresetId, values, veil, shell: nextShell, bloomColor });
+    setPresetId('custom');
+    applyShell({ ...shell, [varName]: value });
   };
 
   const applyBloomColor = (value: string) => {
@@ -144,30 +90,15 @@ export function ColorTuner() {
     } else {
       document.documentElement.style.removeProperty('--crt-text-bloom-color');
     }
-    persist({ presetId, values, veil, shell, bloomColor: value });
   };
 
   const applyPreset = (presetId_: string) => {
     const preset = PALETTE_PRESETS.find((entry) => entry.id === presetId_);
     if (!preset) return;
-    const nextValues = { ...preset.palette };
-    const nextVeil = preset.veil ?? 0.6;
-    const nextShell = { ...CRT_SHELL_DEFAULTS, ...preset.shell };
     setPresetId(preset.id);
-    setValues(nextValues);
-    setVeil(nextVeil);
-    setShell(nextShell);
-    setBloomColor('');
-    applySitePalette(nextValues);
-    document.documentElement.style.setProperty('--site-veil', String(nextVeil));
-    applyCrtShell(nextShell);
-    document.documentElement.style.removeProperty('--crt-text-bloom-color');
-    persist({ presetId: preset.id, values: nextValues, veil: nextVeil, shell: nextShell, bloomColor: '' });
-  };
-
-  const resetToDefault = () => {
-    applyPreset('terminal');
-    applyBloomColor('');
+    apply({ ...preset.palette });
+    applyVeil(preset.veil ?? 0.6);
+    applyShell({ ...CRT_SHELL_DEFAULTS, ...preset.shell });
   };
 
   const copyValues = () => {
@@ -180,74 +111,6 @@ export function ColorTuner() {
       + (bloomColor ? `\nbloomColor: '${bloomColor}'` : '');
     void navigator.clipboard?.writeText(text);
   };
-
-  const exportJson = () => {
-    const state: SavedTunerState = {
-      version: STATE_VERSION,
-      presetId,
-      values,
-      veil,
-      shell,
-      bloomColor,
-    };
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `zhuyijia-theme-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  const importJson = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const parsed = JSON.parse(String(reader.result)) as SavedTunerState;
-        if (parsed.version !== STATE_VERSION || !parsed.values || typeof parsed.veil !== 'number') {
-          // eslint-disable-next-line no-alert
-          window.alert('文件格式不正确或版本不匹配。');
-          return;
-        }
-        setPresetId(parsed.presetId);
-        setValues(parsed.values);
-        setVeil(parsed.veil);
-        setShell(parsed.shell);
-        setBloomColor(parsed.bloomColor ?? '');
-        applySitePalette(parsed.values);
-        document.documentElement.style.setProperty('--site-veil', String(parsed.veil));
-        applyCrtShell(parsed.shell);
-        if (parsed.bloomColor) {
-          document.documentElement.style.setProperty('--crt-text-bloom-color', parsed.bloomColor);
-        } else {
-          document.documentElement.style.removeProperty('--crt-text-bloom-color');
-        }
-        persist(parsed);
-      } catch {
-        // eslint-disable-next-line no-alert
-        window.alert('无法解析该 JSON 文件。');
-      }
-    };
-    reader.readAsText(file);
-    event.target.value = '';
-  };
-
-  // Apply persisted state to the DOM on first mount (the CSS may have loaded
-  // with defaults before React hydrates).
-  useEffect(() => {
-    applySitePalette(values);
-    document.documentElement.style.setProperty('--site-veil', String(veil));
-    applyCrtShell(shell);
-    if (bloomColor) {
-      document.documentElement.style.setProperty('--crt-text-bloom-color', bloomColor);
-    } else {
-      document.documentElement.style.removeProperty('--crt-text-bloom-color');
-    }
-  }, []);
 
   return (
     <aside className="color-tuner" aria-label="全站配色调试">
@@ -363,22 +226,15 @@ export function ColorTuner() {
           </div>
 
           <footer>
-            <button type="button" onClick={resetToDefault}>
+            <button
+              type="button"
+              onClick={() => {
+                applyPreset('terminal');
+                applyBloomColor('');
+              }}
+            >
               重置
             </button>
-            <button type="button" onClick={exportJson}>
-              导出 JSON
-            </button>
-            <button type="button" onClick={() => fileRef.current?.click()}>
-              导入 JSON
-            </button>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="application/json,.json"
-              onChange={importJson}
-              style={{ display: 'none' }}
-            />
             <button type="button" onClick={copyValues}>
               复制参数
             </button>
