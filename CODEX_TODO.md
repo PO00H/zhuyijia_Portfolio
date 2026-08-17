@@ -903,3 +903,8 @@ CSS 清理（每个选择器均先 grep 核实 0 使用）：`src/index.css` 删
 2026-08-17 — ColorTuner 默认隐藏与打开方式 — DONE
 修改：`src/components/crt/ColorTuner.tsx` 默认不渲染（`visible` 初始 false）；新增两种打开方式：URL 参数 `?tuner=1`、键盘快捷键 `Ctrl+\``（Backquote，数字 1 左侧的物理键）。面板 header 新增「×」关闭按钮，点击隐藏并记录到 `localStorage['zhuyijia-color-tuner-visible']`；关闭后刷新页面仍保持隐藏。普通访客不再看到左下角调参面板，所有者仍可用快捷键或 URL 参数调出。
 检查：`npm run build`、`git diff --check` 通过；桌面截图验证默认 URL 下左下角无面板、`?tuner=1` 下正常显示；未提交 git。
+
+2026-08-17 — 修复开机画面卡顿 — DONE
+问题：开机序列 `BootSequence.tsx` 内嵌了第二个 `PortfolioDitherBackground`，它以桌面 12 FPS / 手机 10 FPS 的呼吸循环运行，导致覆盖在全屏上的开机动画背景看起来明显掉帧、卡顿。
+修复：给 `PortfolioDitherBackground` 新增 `frozen` 属性；`frozen=true` 时只绘制一帧静态点阵并立即退出，不启动 `requestAnimationFrame` 循环、不监听 pointer/resize/focus/visibility 事件。`BootSequence` 的背景改用 `<PortfolioDitherBackground frozen />`，主站背景仍为动态循环。保留开机画面的点阵质感，但消除低帧率循环带来的卡顿感。
+检查：`npm run build`、`git diff --check` 通过；桌面首屏截图确认背景正常；未提交 git。

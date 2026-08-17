@@ -125,7 +125,7 @@ export function BootSequence() {
       <div className="crt-boot-screen">
         {/* Same breathing dot field as the live site, painted behind the
             typewriter text so the boot screen matches the main background. */}
-        <PortfolioDitherBackground />
+        <PortfolioDitherBackground frozen />
         {(phase === 'typing' || phase === 'blink' || phase === 'shutdown') && (
           <div className="crt-boot-text">
             <p className="crt-boot-title">

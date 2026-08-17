@@ -23,7 +23,14 @@ const PORTFOLIO_DITHER_SETTINGS: MotionStudySettings = {
   palette: liveDitherPalette,
 };
 
-export function PortfolioDitherBackground() {
+interface PortfolioDitherBackgroundProps {
+  /** Render a single static frame instead of the live breathing loop.
+   *  Useful for the boot overlay, where the low-FPS loop would make the
+   *  whole sequence feel choppy. */
+  frozen?: boolean;
+}
+
+export function PortfolioDitherBackground({ frozen = false }: PortfolioDitherBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -149,6 +156,12 @@ export function PortfolioDitherBackground() {
     };
 
     resize();
+    if (frozen) {
+      // Frozen mode: paint once and leave the canvas static. No animation
+      // loop, event listeners or resize handling — the boot overlay is short.
+      return;
+    }
+
     window.addEventListener('resize', resize);
     window.addEventListener('focus', handleFocus);
     window.addEventListener('blur', handleBlur);
