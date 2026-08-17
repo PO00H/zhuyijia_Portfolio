@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   applyCrtShell,
   applySitePalette,
@@ -12,11 +12,15 @@ import {
 import './color-tuner.css';
 
 /**
- * Site color tuner (kept permanently): exposes every adjustable color of the
+ * Site color tuner (hidden by default): exposes every adjustable color of the
  * current palette as a single consolidated parameter (systems sharing a color
  * share one parameter), plus presets. Applies :root variables live and mutates
  * the shared dither palette. The CRT shell/shadow section writes the --crt-*
  * variables directly; presets may carry per-preset shell overrides.
+ *
+ * The panel is not rendered by default. Open it via the URL hash `#tuner`
+ * or the keyboard shortcut Ctrl+Shift+T; close it with the same shortcut or
+ * the header close button. Refreshing the page restores the default theme.
  */
 
 const PARAMS: { key: keyof SitePalette; label: string }[] = [
@@ -49,6 +53,9 @@ const formatShellValue = (param: ShellParam, value: number) =>
   `${value}${param.unit ?? ''}`;
 
 export function ColorTuner() {
+  const [visible, setVisible] = useState(
+    () => typeof window !== 'undefined' && window.location.hash === '#tuner',
+  );
   const [values, setValues] = useState<SitePalette>({ ...DEFAULT_PALETTE });
   const [veil, setVeil] = useState(0.6);
   const [shell, setShell] = useState<Record<string, number>>({ ...CRT_SHELL_DEFAULTS });
@@ -101,6 +108,22 @@ export function ColorTuner() {
     applyShell({ ...CRT_SHELL_DEFAULTS, ...preset.shell });
   };
 
+  useEffect(() => {
+    const onHashChange = () => setVisible(window.location.hash === '#tuner');
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 't') {
+        event.preventDefault();
+        setVisible((open) => !open);
+      }
+    };
+    window.addEventListener('hashchange', onHashChange);
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, []);
+
   const copyValues = () => {
     const shellLines = CRT_SHELL_PARAMS
       .filter((param) => shell[param.varName] !== param.defaultValue)
@@ -112,12 +135,17 @@ export function ColorTuner() {
     void navigator.clipboard?.writeText(text);
   };
 
+  if (!visible) return null;
+
   return (
     <aside className="color-tuner" aria-label="全站配色调试">
       <header>
         <strong>配色调参</strong>
         <button type="button" onClick={() => setCollapsed((open) => !open)}>
           {collapsed ? '展开' : '收起'}
+        </button>
+        <button type="button" onClick={() => setVisible(false)} title="关闭（Ctrl+Shift+T 重新打开）">
+          关闭
         </button>
       </header>
 

@@ -899,4 +899,16 @@ CSS 清理（每个选择器均先 grep 核实 0 使用）：`src/index.css` 删
 2026-08-17 — 修复开机画面卡顿 — DONE
 问题：开机序列 `BootSequence.tsx` 内嵌了第二个 `PortfolioDitherBackground`，它以桌面 12 FPS / 手机 10 FPS 的呼吸循环运行，导致覆盖在全屏上的开机动画背景看起来明显掉帧、卡顿。
 修复：给 `PortfolioDitherBackground` 新增 `frozen` 属性；`frozen=true` 时只绘制一帧静态点阵并立即退出，不启动 `requestAnimationFrame` 循环、不监听 pointer/resize/focus/visibility 事件。`BootSequence` 的背景改用 `<PortfolioDitherBackground frozen />`，主站背景仍为动态循环。保留开机画面的点阵质感，但消除低帧率循环带来的卡顿感。
-检查：`npm run build`、`git diff --check` 通过；桌面首屏截图确认背景正常；未提交 git。
+检查：`npm run build`、`git diff --check` 通过；桌面首屏截图确认背景正常；已随 `bd9c5c5` 推送。
+
+2026-08-17 — 配色调参面板默认隐藏 — DONE
+修改：`src/components/crt/ColorTuner.tsx` 默认不渲染（`visible` 初始读取 `location.hash === '#tuner'`）；通过 URL hash `#tuner` 或快捷键 Ctrl+Shift+T 唤出，面板头部新增「关闭」按钮（或再按快捷键）关闭。不写 localStorage，刷新页面恢复默认主题；调参功能与全部参数完整保留。`docs/portfolio-design-system.md` 第 13 节「永久面板」描述同步更新为「默认隐藏、功能永久保留」。
+检查：`npm run build`、`git diff --check` 通过；未提交 git。
+
+2026-08-17 — 修复 O2 懒加载封面全隐形回归 — DONE
+问题：02 GAME WORK 共享视窗封面纯黑、只在滚动切换瞬间出现画面（实为 dither 交接 canvas 的帧）。根因不是当日改动——`src/App.css` 遗留模板规则 `img[loading] { opacity: 0 }`（配套淡入 JS 从未存在），O2（12e3082）给共享视窗 / 03·05 预览 / 精选卡片 / TAJIMA 贴图的 img 加上 `loading="lazy"` 后全部命中该规则永久隐形，透出 stage 的 #050605 黑底。
+实证：puppeteer-core + 系统 Edge headless 量得激活层 img complete=true、naturalWidth=1920、elementFromPoint 为 IMG 自身，但 computed opacity=0；全库 grep 确认无任何 JS 移除 loading 属性或做淡入。
+修复：删除 `src/App.css` 的「Loading state for images」整块（`img { opacity: 1; transition }` 与 `img[loading] { opacity: 0 }`）。
+附带发现：`72f321d` 简历切换器提交漏了 `src/data/resume.ts`（`ResumeDownload.tsx` 第 3 行 import 它），文件仅存在于工作区，远程 build 必挂——需随本次一并补提交。
+回归：headless 实测 02 区 DEVELOP / ECHOFLASH 封面正常渲染；03 区键盘聚焦词条三个预览封面 opacity 全部恢复 1；390×844 手机端 02 卡片封面正常；Archive 页正常。临时依赖 puppeteer-core 与诊断脚本已清理（tmp/ 本就在 .gitignore）。
+检查：`npm run build`、`git diff --check` 通过；未提交 git。
