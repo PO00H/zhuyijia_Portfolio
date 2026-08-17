@@ -1,3 +1,5 @@
+import { ResumeDownload } from '@/components/resume/ResumeDownload';
+
 export function PortfolioHero() {
   return (
     <section id="top" className="portfolio-hero" aria-labelledby="hero-title">
@@ -19,13 +21,7 @@ export function PortfolioHero() {
             <a className="portfolio-primary-action" href="#game-work">
               查看核心项目
             </a>
-            <a
-              className="portfolio-secondary-action"
-              href="/documents/朱翊嘉个人简历.pdf"
-              download="朱翊嘉个人简历.pdf"
-            >
-              下载个人简历
-            </a>
+            <ResumeDownload variant="hero" />
           </div>
         </div>
       </div>

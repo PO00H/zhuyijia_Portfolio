@@ -891,3 +891,7 @@ CSS 清理（每个选择器均先 grep 核实 0 使用）：`src/index.css` 删
 2026-08-17 — O7-1 黑底终端主题转正 — DONE
 修改：删除 `src/index.css` 中 `:root` 默认主题注释里的“（2026-08-15 暂定）”字样；`docs/portfolio-design-system.md` 第 13 节将“当前默认主题为「黑底终端」”改为“默认主题为正式确定的「黑底终端」”，确认 ColorTuner 永久保留、6 套预设继续可用。
 检查：`npm run build`、`git diff --check` 通过；未提交 git。
+
+2026-08-17 — 简历下载切换器 — DONE
+修改：新增 `src/data/resume.ts` 简历配置文件与 `src/components/resume/ResumeDownload.tsx` 组件。`ResumeDownload` 根据 `available: true` 的条目数量自动降级：只有一份简历时显示单一下载按钮（保持现有 Hero「下载个人简历」与 Contact「简历 / RESUME · 中文」卡片）；多份简历时显示语言切换按钮组 + 下载链接。Hero 与 Contact 的硬编码简历链接均替换为组件。预留了英文简历注释模板：放入 `public/documents/ZhuYijia_Resume.pdf` 并将该条目 `available` 改为 `true` 即可自动出现切换 UI。
+检查：`npm run build`、`git diff --check` 通过；桌面首页与 Contact 区截图显示单一下载按钮正常。未提交 git。

@@ -1,4 +1,5 @@
-import { ArrowUpRight, FileText, Github, Mail, Phone } from 'lucide-react';
+import { ArrowUpRight, Github, Mail, Phone } from 'lucide-react';
+import { ResumeDownload } from '@/components/resume/ResumeDownload';
 import { SectionHeading } from './SectionHeading';
 
 export function ContactSection() {
@@ -34,18 +35,7 @@ export function ContactSection() {
             <strong>13757722815</strong>
           </div>
 
-          <a
-            href="/documents/朱翊嘉个人简历.pdf"
-            download="朱翊嘉个人简历.pdf"
-            className="portfolio-contact-card portfolio-contact-link"
-          >
-            <span className="portfolio-contact-label">
-              <FileText aria-hidden="true" />
-              简历 / RESUME
-            </span>
-            <strong>朱翊嘉个人简历</strong>
-            <ArrowUpRight className="portfolio-contact-arrow" aria-hidden="true" />
-          </a>
+          <ResumeDownload variant="contact" />
 
           <a
             href="https://github.com/PO00H"
