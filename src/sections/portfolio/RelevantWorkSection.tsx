@@ -32,7 +32,7 @@ export function RelevantWorkSection() {
               <div className="portfolio-tajima-textures" aria-label="Tajima Cutter PBR 贴图">
                 {project.assetPaths.map((path, index) => (
                   <figure key={path}>
-                    <img src={path} alt={`Tajima Cutter ${textureLabels[index]} texture`} />
+                    <img src={path} alt={`Tajima Cutter ${textureLabels[index]} texture`} loading="lazy" />
                     <figcaption>{textureLabels[index]}</figcaption>
                   </figure>
                 ))}

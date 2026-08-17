@@ -8,9 +8,9 @@
   },
   "assets": [
     {
-      "id": "game-001:/covers/echoflash.png",
+      "id": "game-001:/covers/echoflash.webp",
       "projectId": "game-001",
-      "source": "/covers/echoflash.png",
+      "source": "/covers/echoflash.webp",
       "kind": "image",
       "output": {
         "width": 1440,
@@ -48,9 +48,9 @@
       }
     },
     {
-      "id": "game-002:/covers/eraser-odyssey.png",
+      "id": "game-002:/covers/eraser-odyssey.webp",
       "projectId": "game-002",
-      "source": "/covers/eraser-odyssey.png",
+      "source": "/covers/eraser-odyssey.webp",
       "kind": "image",
       "output": {
         "width": 1440,

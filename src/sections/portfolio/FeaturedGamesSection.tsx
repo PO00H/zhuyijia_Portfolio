@@ -52,7 +52,7 @@ function FeaturedProject({ project, index }: { project: PortfolioProject; index:
     >
       <div className="portfolio-featured-media">
         {project.cover ? (
-          <img src={project.cover} alt="" />
+          <img src={project.cover} alt="" loading="lazy" />
         ) : (
           <div className="portfolio-reserved-field" aria-label="真实 UE 项目素材预留区域">
             <span>UE / C++</span>

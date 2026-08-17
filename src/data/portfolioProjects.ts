@@ -120,7 +120,7 @@ export const sourcePortfolioProjects: PortfolioProject[] = [
     tier: 'flagship',
     status: 'published',
     featuredOrder: 2,
-    cover: '/covers/echoflash.png',
+    cover: '/covers/echoflash.webp',
     preview: '/previews/echoflash.mp4',
     detailUrl: '/embed/echoflash-detail/index.html',
     existingContentPath: '/embed/echoflash-detail/index.html',
@@ -130,7 +130,7 @@ export const sourcePortfolioProjects: PortfolioProject[] = [
     summary:
       '被夺去双眼的剑客，以声波辨位、蓄力一闪，在黑暗中完成必杀。未使用游戏引擎，物理、渲染、AI 与状态调度均为自研。',
     assetPaths: [
-      '/covers/echoflash.png',
+      '/covers/echoflash.webp',
       '/previews/echoflash.mp4',
       '/embed/echoflash-detail/index.html',
     ],
@@ -143,7 +143,7 @@ export const sourcePortfolioProjects: PortfolioProject[] = [
     tier: 'flagship',
     status: 'published',
     featuredOrder: 3,
-    cover: '/covers/eraser-odyssey.png',
+    cover: '/covers/eraser-odyssey.webp',
     preview: null,
     detailUrl: '/embed/eraser-odyssey/index.html',
     existingContentPath: '/embed/eraser-odyssey/index.html',
@@ -153,7 +153,7 @@ export const sourcePortfolioProjects: PortfolioProject[] = [
     summary:
       '文具生态的轻度策略 Roguelike，以三分钟“收集、合成、战斗”循环组织玩法、像素美术管线与 Godot 原型。',
     assetPaths: [
-      '/covers/eraser-odyssey.png',
+      '/covers/eraser-odyssey.webp',
       '/embed/eraser-odyssey/index.html',
     ],
   },

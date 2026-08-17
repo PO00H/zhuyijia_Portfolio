@@ -122,7 +122,7 @@ export function RuntimeSignalViewport({
               key={project.id}
             >
               {project.cover ? (
-                <img src={project.cover} alt="" />
+                <img src={project.cover} alt="" loading="lazy" />
               ) : (
                 <ReservedSignal project={project} />
               )}

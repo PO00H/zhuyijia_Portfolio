@@ -48,7 +48,7 @@ function ProjectPreviewMedia({
   }
 
   if (project.cover) {
-    return <img src={project.cover} alt="" />;
+    return <img src={project.cover} alt="" loading="lazy" />;
   }
 
   return <div className="portfolio-floating-empty">NO PREVIEW</div>;
