@@ -899,3 +899,7 @@ CSS 清理（每个选择器均先 grep 核实 0 使用）：`src/index.css` 删
 2026-08-17 — ColorTuner 参数持久化 — DONE
 修改：`src/components/crt/ColorTuner.tsx` 新增 localStorage 持久化。配色、遮罩透明度、CRT 外壳 52 项参数、文字泛光色和当前预设 ID 在每次改动后自动写入 `localStorage['zhuyijia-color-tuner-state']`；组件挂载时读取并恢复到 `:root` 变量与 dither 调色板，刷新页面后调整不会丢失。面板底部新增「导出 JSON」「导入 JSON」按钮：导出可下载带时间戳的主题 JSON 备份，导入可从 JSON 文件还原全部参数并继续编辑；保留「重置」恢复默认黑底终端和「复制参数」到剪贴板。
 检查：`npm run build`、`git diff --check` 通过；桌面截图确认底部新增导出/导入/重置/复制四个按钮；未提交 git。
+
+2026-08-17 — ColorTuner 默认隐藏与打开方式 — DONE
+修改：`src/components/crt/ColorTuner.tsx` 默认不渲染（`visible` 初始 false）；新增两种打开方式：URL 参数 `?tuner=1`、键盘快捷键 `Ctrl+\``（Backquote，数字 1 左侧的物理键）。面板 header 新增「×」关闭按钮，点击隐藏并记录到 `localStorage['zhuyijia-color-tuner-visible']`；关闭后刷新页面仍保持隐藏。普通访客不再看到左下角调参面板，所有者仍可用快捷键或 URL 参数调出。
+检查：`npm run build`、`git diff --check` 通过；桌面截图验证默认 URL 下左下角无面板、`?tuner=1` 下正常显示；未提交 git。

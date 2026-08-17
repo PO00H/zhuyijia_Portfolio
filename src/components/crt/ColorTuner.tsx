@@ -97,7 +97,26 @@ export function ColorTuner() {
   const [presetId, setPresetId] = useState(initialPreset);
   const [collapsed, setCollapsed] = useState(false);
   const [shellOpen, setShellOpen] = useState(false);
+  const [visible, setVisible] = useState(() => {
+    if (new URLSearchParams(window.location.search).get('tuner') === '1') {
+      return true;
+    }
+    try {
+      return localStorage.getItem('zhuyijia-color-tuner-visible') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const hideTuner = () => {
+    setVisible(false);
+    try {
+      localStorage.setItem('zhuyijia-color-tuner-visible', 'false');
+    } catch {
+      // ignore
+    }
+  };
 
   const persist = (
     next: Partial<SavedTunerState> & { values: SitePalette; veil: number; shell: Record<string, number>; bloomColor: string; presetId: string },
@@ -249,13 +268,42 @@ export function ColorTuner() {
     }
   }, []);
 
+  // Toggle visibility with Ctrl+` (Backquote) and persist the choice.
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.code === 'Backquote') {
+        event.preventDefault();
+        setVisible((current) => {
+          const next = !current;
+          try {
+            localStorage.setItem('zhuyijia-color-tuner-visible', String(next));
+          } catch {
+            // ignore
+          }
+          return next;
+        });
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  if (!visible) {
+    return null;
+  }
+
   return (
     <aside className="color-tuner" aria-label="全站配色调试">
       <header>
         <strong>配色调参</strong>
-        <button type="button" onClick={() => setCollapsed((open) => !open)}>
-          {collapsed ? '展开' : '收起'}
-        </button>
+        <div className="color-tuner-header-actions">
+          <button type="button" onClick={() => setCollapsed((open) => !open)}>
+            {collapsed ? '展开' : '收起'}
+          </button>
+          <button type="button" onClick={hideTuner} title="隐藏面板 (Ctrl+`)">
+            ×
+          </button>
+        </div>
       </header>
 
       {!collapsed && (
