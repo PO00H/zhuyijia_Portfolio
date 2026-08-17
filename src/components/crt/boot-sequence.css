@@ -1,0 +1,253 @@
+/* CRT boot sequence overlay: covers only the screen area (the bezel frame
+   stays visible around it). It stacks above the page content but BELOW the
+   CRT glass layer (the shell sits at z-index 3000), so the glass edge
+   shadows and reflection play over the boot screen like real content.
+   Skippable, never shown under reduced motion. White screen with dark pixel
+   text, matching the live site. All motion is transform / opacity only. */
+.crt-boot {
+  position: fixed;
+  inset: var(--crt-bezel, 0px);
+  z-index: 2900;
+  overflow: hidden;
+  border-radius: var(--crt-screen-radius, 0px);
+  background: #101211;
+  cursor: pointer;
+  font-family: 'Fusion Pixel 12', monospace;
+}
+
+.crt-boot-screen {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--site-bg, #f3f5f3);
+  opacity: 0;
+  transform: scale(0.001, 0.001);
+  transform-origin: 50% 50%;
+  transition: background-color 160ms linear;
+}
+
+/* The boot screen hosts its own dither canvas instance, pinned to the
+   screen box instead of the viewport. */
+.crt-boot-screen .portfolio-dither-background {
+  position: absolute;
+  inset: 0;
+  transition: opacity 140ms linear;
+}
+
+/* Same veil the main sections use over the shared canvas, so the dot field
+   reads at the same strength as the live site. ::after paints above the
+   canvas child; the text wrapper stays on top via its own z-index. */
+.crt-boot-screen::after {
+  position: absolute;
+  inset: 0;
+  background: rgb(from var(--site-veil-color) r g b / var(--site-veil, 0.74));
+  content: '';
+  transition: opacity 140ms linear;
+}
+
+.crt-boot-text {
+  position: relative;
+  z-index: 1;
+  padding: 0 24px;
+  text-align: left;
+}
+
+.crt-boot[data-phase='power'] .crt-boot-screen {
+  animation: crt-power-on 500ms ease-in-out forwards;
+}
+
+.crt-boot[data-phase='typing'] .crt-boot-screen,
+.crt-boot[data-phase='blink'] .crt-boot-screen {
+  opacity: 1;
+  transform: none;
+}
+
+/* Shutdown: the text glitches then fades; the screen lifts to the live
+   veil color so the collapse stays continuous with the site underneath,
+   then it squeezes into a glowing horizontal line, holds a beat, shrinks to
+   a dot and dies — classic CRT power-off, revealing the site continuously. */
+.crt-boot[data-phase='shutdown'] .crt-boot-screen {
+  background: var(--site-veil-color, #f5f7f5);
+  box-shadow: 0 0 28px rgba(255, 255, 255, 0.85);
+  animation: crt-power-off 560ms cubic-bezier(0.55, 0.06, 0.35, 1) 280ms both;
+}
+
+.crt-boot[data-phase='shutdown'] .crt-boot-screen .portfolio-dither-background {
+  opacity: 0;
+}
+
+.crt-boot[data-phase='shutdown'] .crt-boot-screen::after {
+  opacity: 0;
+}
+
+/* At shutdown the base turns transparent: the collapsing layer then reveals
+   the live site (same veil color + dot field) underneath, so the exit is a
+   continuous dissolve instead of a hard cut. The layer still covers the
+   whole screen during the glitch, so the base flip itself is never visible. */
+.crt-boot[data-phase='shutdown'] {
+  background: transparent;
+}
+
+.crt-boot[data-phase='shutdown'] .crt-boot-text {
+  animation:
+    crt-glitch 280ms steps(1, end) both,
+    crt-text-fade 160ms ease-out 260ms forwards;
+}
+
+.crt-boot-title,
+.crt-boot-subtitle {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.crt-boot-title {
+  color: var(--site-ink, #172125);
+  font-size: clamp(20px, 3.2vw, 34px);
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+}
+
+.crt-boot-subtitle {
+  margin-top: 14px;
+  color: var(--site-deep, #2d929b);
+  font-size: clamp(12px, 1.6vw, 16px);
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+}
+
+/* Block cursor: blinks through the whole ritual. */
+.crt-boot-cursor {
+  display: inline-block;
+  width: 0.58em;
+  height: 0.96em;
+  margin-left: 0.12em;
+  background: currentcolor;
+  vertical-align: -0.1em;
+  animation: crt-cursor-blink 420ms steps(1, end) infinite;
+}
+
+.crt-boot-skip {
+  position: absolute;
+  right: 18px;
+  bottom: 12px;
+  margin: 0;
+  color: rgb(from var(--site-ink) r g b / 0.38);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.crt-boot[data-phase='typing'] .crt-boot-skip,
+.crt-boot[data-phase='blink'] .crt-boot-skip {
+  opacity: 1;
+}
+
+@keyframes crt-power-on {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.001, 0.001);
+  }
+
+  18% {
+    opacity: 1;
+    transform: scale(0.04, 0.02);
+  }
+
+  55% {
+    transform: scale(1, 0.006);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1, 1);
+  }
+}
+
+@keyframes crt-power-off {
+  0% {
+    opacity: 1;
+    transform: scale(1, 1);
+    background-color: var(--site-veil-color, #f5f7f5);
+  }
+
+  /* Squeeze to a horizontal line while the phosphor concentrates into it… */
+  45% {
+    opacity: 1;
+    transform: scale(1, 0.008);
+    background-color: #ffffff;
+  }
+
+  /* …keep shrinking straight into a glowing dot… */
+  78% {
+    opacity: 1;
+    transform: scale(0.035, 0.018);
+    background-color: #ffffff;
+  }
+
+  /* …and die out. */
+  100% {
+    opacity: 0;
+    transform: scale(0.001, 0.001);
+    background-color: #ffffff;
+  }
+}
+
+@keyframes crt-text-fade {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes crt-glitch {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  18% {
+    transform: translateX(-9px);
+  }
+
+  36% {
+    transform: translateX(0);
+  }
+
+  58% {
+    transform: translateX(7px);
+  }
+
+  76% {
+    transform: translateX(-3px);
+  }
+
+  88% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes crt-cursor-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Placeholder that reserves the second line's height before it starts
+   typing, so the first line never shifts up. */
+.crt-boot-cursor--idle {
+  visibility: hidden;
+  animation: none;
+}
+
+@media (max-width: 720px) {
+  .crt-boot-skip {
+    display: none;
+  }
+}

@@ -1,0 +1,190 @@
+.motion-study-01 {
+  --study-paper: #fafbf8;
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--study-paper);
+}
+
+.motion-study-01 canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .motion-study-01 canvas {
+    cursor: crosshair;
+  }
+}
+
+.motion-study-controls {
+  position: fixed;
+  inset: 14px auto auto 14px;
+  z-index: 2;
+  width: min(286px, calc(100vw - 28px));
+  color: #151515;
+  font-family: Inter, "Microsoft YaHei", sans-serif;
+}
+
+.motion-study-controls details {
+  border: 1px solid rgba(15, 15, 15, 0.28);
+  background: color-mix(in srgb, var(--study-paper) 90%, transparent);
+  box-shadow: 0 10px 36px rgba(20, 20, 20, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.motion-study-controls summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 9px 12px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.motion-study-controls summary::-webkit-details-marker {
+  display: none;
+}
+
+.motion-study-controls summary span {
+  font-size: 11px;
+  font-weight: 760;
+  letter-spacing: -0.015em;
+}
+
+.motion-study-controls summary small {
+  color: rgba(15, 15, 15, 0.55);
+  font-size: 10px;
+}
+
+.motion-study-controls details[open] summary {
+  border-bottom: 1px solid rgba(15, 15, 15, 0.16);
+}
+
+.motion-study-controls-body {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+}
+
+.motion-study-controls-body > label {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.motion-study-controls select,
+.motion-study-controls input[type="range"],
+.motion-study-event-trigger {
+  width: 100%;
+}
+
+.motion-study-event-trigger {
+  min-height: 42px;
+  padding: 9px 12px;
+  color: var(--study-paper);
+  border: 1px solid #151515;
+  border-radius: 0;
+  background: #151515;
+  font: 700 11px Inter, "Microsoft YaHei", sans-serif;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.motion-study-event-trigger:hover {
+  color: #151515;
+  background: var(--study-paper);
+}
+
+.motion-study-event-trigger:active {
+  transform: scale(0.985);
+}
+
+.motion-study-controls select {
+  min-height: 34px;
+  padding: 5px 8px;
+  color: #151515;
+  border: 1px solid rgba(15, 15, 15, 0.22);
+  border-radius: 0;
+  background: color-mix(in srgb, var(--study-paper) 94%, white);
+  font: 11px inherit;
+}
+
+.motion-study-density {
+  grid-template-columns: 1fr !important;
+  gap: 7px !important;
+}
+
+.motion-study-density > span {
+  display: flex;
+  justify-content: space-between;
+}
+
+.motion-study-density output {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.motion-study-controls input[type="range"] {
+  accent-color: #151515;
+}
+
+.motion-study-colors {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.motion-study-colors label {
+  min-height: 34px;
+  display: grid;
+  grid-template-columns: 1fr 28px;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 5px 4px 8px;
+  border: 1px solid rgba(15, 15, 15, 0.18);
+  font-size: 10px;
+}
+
+.motion-study-colors input[type="color"] {
+  width: 28px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.motion-study-controls :is(summary, select, input):focus-visible {
+  outline: 2px solid #151515;
+  outline-offset: 2px;
+}
+
+@media (max-width: 720px) {
+  .motion-study-controls {
+    inset: 8px auto auto 8px;
+    width: min(270px, calc(100vw - 16px));
+  }
+
+  .motion-study-controls select,
+  .motion-study-colors label,
+  .motion-study-event-trigger {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-study-01 canvas {
+    animation: none;
+  }
+}

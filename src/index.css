@@ -1,4 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@100;200;300;400;500&display=swap');
+@font-face {
+  font-family: 'Fusion Pixel 12';
+  src: url('/fonts/fusion-pixel/fusion-pixel-12px-proportional-zh_hans.otf.woff2')
+    format('woff2');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
 
 @tailwind base;
 @tailwind components;
@@ -28,12 +35,14 @@
     --ring: 14 100% 50%;
     --radius: 0.25rem;
     
-    /* Custom Colors */
-    --valiente-bg: #D1D1CB;
-    --valiente-red: #FF3D00;
-    --valiente-dark: #1A1A1A;
-    --valiente-gray: #8A8A85;
-    --valiente-light: #E8E8E5;
+    /* Custom Colors — legacy valiente names kept as aliases of the site
+       palette so portal-mounted elements (floating preview, lightbox)
+       outside .portfolio-shell still follow the live theme. */
+    --valiente-bg: var(--site-bg, #0b0d0c);
+    --valiente-red: var(--site-active, #f4f7f2);
+    --valiente-dark: var(--site-ink, #e9ece7);
+    --valiente-gray: var(--site-muted, #8a938c);
+    --valiente-light: var(--site-veil-color, #0e100f);
   }
 }
 
@@ -47,8 +56,8 @@
   }
   
   body {
-    background-color: #D1D1CB;
-    color: #1A1A1A;
+    background-color: var(--site-bg, #0b0d0c);
+    color: var(--site-ink, #e9ece7);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-x: hidden;
   }
@@ -60,25 +69,6 @@
 }
 
 @layer components {
-  /* Giant Display Text */
-  .display-giant {
-    font-family: 'Inter', sans-serif;
-    font-size: clamp(3rem, 10vw, 12rem);
-    font-weight: 800;
-    line-height: 0.9;
-    letter-spacing: -0.04em;
-    color: var(--valiente-red);
-  }
-  
-  /* Monospace Body Text */
-  .body-mono {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 300;
-    font-size: 0.75rem;
-    line-height: 1.6;
-    letter-spacing: 0.02em;
-  }
-  
   /* Section Label */
   .section-label {
     font-family: 'JetBrains Mono', monospace;
@@ -97,97 +87,15 @@
     letter-spacing: 0.05em;
     color: var(--valiente-gray);
   }
-  
-  /* Work Title */
-  .work-title {
-    font-family: 'Inter', sans-serif;
-    font-size: clamp(2rem, 6vw, 5rem);
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    color: var(--valiente-dark);
-    transition: color 0.3s ease;
-  }
-  
-  .work-title:hover {
-    color: var(--valiente-red);
-  }
-  
-  /* Navigation Link */
-  .nav-link {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 400;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--valiente-gray);
-    transition: color 0.3s ease;
-  }
-  
-  .nav-link:hover,
-  .nav-link.active {
-    color: var(--valiente-red);
-  }
-  
-  /* Sticky Navigation Container (legacy class - 备用) */
-  .sticky-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    background: rgba(209, 209, 203, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(138, 138, 133, 0.2);
-  }
 
-  /* Sticky Navigation Bar - 桌面带 backdrop blur */
-  .sticky-nav-bar {
-    background: rgba(209, 209, 203, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(138, 138, 133, 0.2);
-  }
-  /* 移动端 / 触屏：去掉 backdrop-filter，避免滚动时每帧高斯模糊重栅格化卡顿 */
-  @media (pointer: coarse), (max-width: 768px) {
-    .sticky-nav,
-    .sticky-nav-bar {
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
-      background: rgba(209, 209, 203, 0.97);
-    }
-  }
-
-  /* 触屏设备：所有 work-item / 按钮 / 链接去掉 300ms click 延迟，根治鬼点击 */
+  /* 触屏设备：按钮 / 链接去掉 300ms click 延迟，根治鬼点击 */
   @media (pointer: coarse) {
-    .work-item,
-    .work-item *,
     button,
     a {
       touch-action: manipulation;
     }
   }
-  
-  /* Section Base */
-  .section-full {
-    min-height: 100vh;
-    width: 100%;
-    position: relative;
-  }
-  
-  /* Text Reveal Animation */
-  .char-reveal {
-    display: inline-block;
-    overflow: hidden;
-  }
-  
-  .char-reveal .char {
-    display: inline-block;
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  
+
   /* 原生 scrollbar 样式 */
   ::-webkit-scrollbar {
     width: 6px;
@@ -204,16 +112,47 @@
   }
 }
 
-@layer utilities {
-  .text-valiente-red {
-    color: var(--valiente-red);
-  }
-  
-  .bg-valiente {
-    background-color: var(--valiente-bg);
-  }
-  
-  .text-balance {
-    text-wrap: balance;
-  }
+/* 视口原生纵向滚动条由顶部 ScrollRail 横向交互条替代（仅隐藏根滚动条，
+   页面内部滚动容器保留自身滚动条）。 */
+html {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+/* 全站配色变量：配色调参面板（ColorTuner）实时写入这些值。
+   使用同一颜色的系统在参数中合并为一个变量，不新增重复参数。
+   默认主题为「黑底终端」。 */
+:root {
+  --site-bg: #0b0d0c;
+  --site-ink: #e9ece7;
+  --site-primary: #b7c2ba;
+  --site-deep: #67716a;
+  --site-active: #f4f7f2;
+  --crt-plastic-base: #1e221f;
+  /* Hero 大标题色（独立于点阵深色）。 */
+  --site-title: #f4f7f2;
+  /* 辅助 / 次要文字色。 */
+  --site-muted: #8a938c;
+  /* 点阵上方遮罩（ veil ）的透明度，配色调参面板可实时调节。 */
+  --site-veil: 0.6;
+  /* 遮罩 / 面板底色（各 section 面纱、卡片、导航底色的取色来源）。 */
+  --site-veil-color: #0e100f;
+}
+
+/* 显像管文字泛光：像素文字带三层 currentColor 柔光（跟随文字色，
+   反色按钮同样安全）——贴字高亮核心 + 中晕 + 淡远晕，
+   半径与强度由配色调参面板实时调节。 */
+.portfolio-shell,
+.archive-shell,
+.crt-boot {
+  text-shadow:
+    0 0 calc(var(--crt-text-bloom-radius, 5) * 0.25px)
+    rgb(from var(--crt-text-bloom-color, currentColor) r g b / min(1, var(--crt-text-bloom-alpha, 0.32) * 2.2)),
+    0 0 calc(var(--crt-text-bloom-radius, 5) * 1px)
+    rgb(from var(--crt-text-bloom-color, currentColor) r g b / var(--crt-text-bloom-alpha, 0.32)),
+    0 0 calc(var(--crt-text-bloom-radius, 5) * 3px)
+    rgb(from var(--crt-text-bloom-color, currentColor) r g b / calc(var(--crt-text-bloom-alpha, 0.32) * 0.45));
 }

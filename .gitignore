@@ -44,3 +44,6 @@ vite.config.d.ts
 _videos_original/
 _*_backup/
 _inbox/
+
+# Local screenshot tooling (playwright-core, not a project dependency)
+tmp/

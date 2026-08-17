@@ -1,0 +1,23 @@
+.portfolio-dither-background {
+  position: fixed;
+  inset: var(--crt-bezel, 0px);
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: var(--crt-screen-radius, 0px);
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+@media (max-width: 720px) {
+  .portfolio-dither-background {
+    opacity: 0.8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-dither-background {
+    opacity: 0.8;
+  }
+}
