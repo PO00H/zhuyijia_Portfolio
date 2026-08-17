@@ -38,13 +38,3 @@ a:focus-visible {
   background: var(--site-primary, #28b6c3);
   color: white;
 }
-
-/* Loading state for images */
-img {
-  opacity: 1;
-  transition: opacity 0.3s ease;
-}
-
-img[loading] {
-  opacity: 0;
-}
