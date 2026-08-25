@@ -988,7 +988,6 @@
 
 .portfolio-featured-copy h3,
 .portfolio-system-copy h3,
-.portfolio-experience-layout h3,
 .portfolio-relevant-copy h3 {
   margin: 1.75rem 0 0;
   font-family: 'Inter', sans-serif;
@@ -1000,7 +999,6 @@
 
 .portfolio-featured-copy > p,
 .portfolio-system-copy > p,
-.portfolio-experience-secondary > p,
 .portfolio-relevant-copy > p {
   margin: 1.25rem 0 0;
   color: var(--valiente-gray);
@@ -1445,57 +1443,6 @@
   text-align: center;
 }
 
-.portfolio-experience-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: clamp(2rem, 4vw, 4rem);
-}
-
-.portfolio-experience-primary,
-.portfolio-experience-secondary {
-  padding: clamp(1.75rem, 4vw, 4rem);
-  background: var(--valiente-bg);
-  border: 1px solid rgb(from var(--site-ink) r g b / 0.35);
-}
-
-.portfolio-experience-title-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 2rem;
-}
-
-.portfolio-experience-title-row strong {
-  color: var(--valiente-red);
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(3rem, 6vw, 6rem);
-  font-weight: 400;
-  letter-spacing: -0.07em;
-  line-height: 0.8;
-}
-
-.portfolio-experience-role {
-  margin: 0.8rem 0 0;
-  color: var(--valiente-red);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
-}
-
-.portfolio-evidence-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  margin: 3rem 0 0;
-  background: rgb(from var(--site-ink) r g b / 0.3);
-  border: 1px solid rgb(from var(--site-ink) r g b / 0.3);
-}
-
-.portfolio-evidence-grid > div {
-  padding: 1.5rem;
-  background: var(--valiente-bg);
-}
-
-.portfolio-evidence-grid dt,
 .portfolio-contact-secondary span {
   color: var(--valiente-red);
   font-family: var(--portfolio-pixel-font);
@@ -1505,17 +1452,85 @@
   text-transform: uppercase;
 }
 
-.portfolio-evidence-grid dd {
-  margin: 0.9rem 0 0;
+.portfolio-experience-expanded {
+  padding: clamp(1rem, 2vw, 2rem);
+  background: var(--portfolio-signal-surface);
+}
+
+.portfolio-experience-sub-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.portfolio-experience-sub {
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0;
+}
+
+.portfolio-experience-sub:not(:last-child) {
+  border-bottom: 1px solid rgb(from var(--site-ink) r g b / 0.3);
+}
+
+.portfolio-experience-sub-index {
+  display: inline-block;
+  margin-right: 0.9rem;
+  color: var(--valiente-red);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  vertical-align: 0.35em;
+}
+
+.portfolio-experience-sub h4 {
+  margin: 0 0 0.9rem;
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.portfolio-experience-sub-summary {
+  margin: 1.1rem 0 0;
   color: var(--valiente-gray);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.68rem;
   font-weight: 300;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
-.portfolio-experience-secondary h3 {
-  font-size: clamp(1.8rem, 3vw, 3rem);
+.portfolio-experience-sub .portfolio-project-action {
+  margin-top: 1.4rem;
+}
+
+.portfolio-experience-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  margin: 1.4rem 0 0;
+  padding: 0;
+  list-style: none;
+  background: rgb(from var(--site-ink) r g b / 0.3);
+  border: 1px solid rgb(from var(--site-ink) r g b / 0.3);
+}
+
+.portfolio-experience-metrics li {
+  flex: 1 1 8rem;
+  padding: 1rem 1.25rem;
+  background: var(--valiente-bg);
+}
+
+.portfolio-experience-metrics strong {
+  display: block;
+  color: var(--valiente-red);
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.portfolio-experience-metrics span {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--valiente-gray);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
 }
 
 .portfolio-relevant-grid {
@@ -1882,7 +1897,6 @@
 
   .portfolio-hero-statement,
   .portfolio-featured-card.is-reserved,
-  .portfolio-experience-layout,
   .portfolio-systems-grid,
   .portfolio-system-card {
     grid-template-columns: 1fr;
@@ -2095,14 +2109,6 @@
   }
 
   .portfolio-system-card {
-    grid-template-columns: 1fr;
-  }
-
-  .portfolio-experience-title-row {
-    flex-direction: column-reverse;
-  }
-
-  .portfolio-evidence-grid {
     grid-template-columns: 1fr;
   }
 
@@ -2367,7 +2373,6 @@
 .portfolio-contact-card,
 .portfolio-archive-index > div,
 .portfolio-index-row,
-.portfolio-evidence-grid > div,
 .portfolio-profile-list > div,
 .portfolio-profile-awards li {
   border-color: rgb(from var(--site-ink) r g b / 0.2);
@@ -2470,8 +2475,6 @@
 }
 
 .portfolio-system-card,
-.portfolio-experience-primary,
-.portfolio-experience-secondary,
 .portfolio-profile-block,
 .portfolio-expanded-layout,
 .portfolio-contact-panel,
@@ -2780,15 +2783,12 @@
 }
 
 .portfolio-system-card,
-.portfolio-experience-primary,
-.portfolio-experience-secondary,
 .portfolio-profile-block,
 .portfolio-expanded-layout,
 .portfolio-floating-preview {
   background: var(--portfolio-signal-surface);
 }
 
-.portfolio-evidence-grid > div,
 .portfolio-tajima-textures figure,
 .portfolio-system-media span {
   background: var(--portfolio-signal-surface-raised);
@@ -2796,12 +2796,10 @@
 
 .portfolio-featured-copy > p,
 .portfolio-system-copy > p,
-.portfolio-experience-secondary > p,
 .portfolio-relevant-copy > p {
   font-size: 0.875rem;
 }
 
-.portfolio-evidence-grid dd,
 .portfolio-profile-list dt,
 .portfolio-profile-list dd,
 .portfolio-profile-awards li {
@@ -2836,16 +2834,6 @@
     color: rgba(241, 242, 237, 0.66);
     font-size: 0.875rem;
     line-height: 1.7;
-  }
-
-  .portfolio-experience-layout {
-    grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.7fr);
-    gap: 24px;
-    align-items: start;
-  }
-
-  .portfolio-experience-title-row strong {
-    font-size: clamp(2.5rem, 3.75vw, 3.75rem);
   }
 
   .portfolio-profile-grid {

@@ -917,3 +917,12 @@ CSS 清理（每个选择器均先 grep 核实 0 使用）：`src/index.css` 删
 问题：线上站点（Vercel 托管）点击「完整作品档案」跳转 /archive 返回 404。根因：站点为单页应用，路由由 `src/App.tsx` 在客户端读取 `window.location.pathname` 判断；本地 Vite dev server 对未知路径自动回退 index.html，但 Vercel 静态托管找不到 `/archive` 文件直接返回 404，index.html 根本未下发。
 修复：新增 `vercel.json`，配置 rewrite 规则将 `/archive` 与 `/archive/` 指向 `/index.html`，SPA 接管后正常渲染 ArchivePage。
 检查：`npm run build` 通过；待推送 main 后 Vercel 自动部署生效。
+
+2026-08-26 — 04 实习板块重构 + Meshy 三子项目内容接入 — DONE
+背景：用户提供 Meshy 实习交接资料（00_重点项目介绍.md / 交接文档.md），确认 01 MeshCraft / 02 社区去背 / 03 Muse 三个重点项目可公开（脱敏：隐去仓库名、S3 路径、API 相关信息）。
+内容：04「实习项目经历」由左右双卡片改为复用 `InteractiveProjectIndex` 的纵向点击展开列表（北京格拉菲克斯 — Meshy.ai / 浙江无端科技两行）；`InteractiveProjectIndex` 新增 `hoverPreview` 开关（实习条目无预览素材时关闭悬浮预览与进度光标，03 板块不受影响）；`PortfolioProject` 新增可选字段 `focusLabel`（FOCUS 列自定义文案，实习行显示时间段+岗位）与 `externalLink`（站外链接新标签页打开）。
+01 MeshCraft：新增 `public/embed/meshcraft/` 纯前端仿真 demo——从 `gui.py` 原样提取 v0.3.1 全部 9 Tab 界面（427KB 单文件），`mock-api.js` + Service Worker 拦截全部约 45 个 `/api/*` 端点返回仿真数据（进度轮询会真实跑、任务逐条完成、假余额/假文件列表），model-viewer 与 three.js 本地化到 vendor/，无任何真实网络请求与凭证（真实 AWS 账号名/本地路径已替换），右下角 INTERACTIVE DEMO 标识。04 板块 01 条目「查看项目」开复古窗进入。
+02 去背流水线：新增 `public/embed/meshy-cutout/index.html` 深色终端风流程页：四个大数字（865,921 张 / 99.998% / 8→24张每秒 / 30h→9.5h）、六节点流水线图（S3 拉取 → 白模配对 flood-fill（纯 ASCII 示意图，中文标签外置保证等宽对齐）→ 智能分流 → BiRefNet（附 GitHub 开源链接）→ 逐像素回归验证 → 覆盖上传）+ 性能优化要点。
+03 Muse：纯文字「团队项目 · 本人贡献」条目 + 「官方介绍 ↗」外链（Meshy 公众号文章 https://mp.weixin.qq.com/s/5_q5rATl-RA_KgwrZgbCEQ）。评估过 iframe 嵌入该文章：微信有反爬验证（302 至验证码页）不可行，全文快照涉及转载尺度被用户放弃，维持外链。
+修复：子条目序号从独占左列改为标题内联前缀（grid 两列改单列，正文/指标条/按钮与标题共用左缘）；展开区补 `portfolio-expanded-project` 缺失的内边距（此前内容贴左缘、指标条右侧顶边）；删除展开区与行 FOCUS 重复的时间段标签；子条目分割线只保留内部（:not(:last-child)）。清理死样式：`.portfolio-experience-layout/primary/secondary/title-row/role/evidence-grid` 全套及媒体查询引用。
+检查：`npm run build` 通过；ESLint 触改文件零错误；playwright 截图验收折叠行 FOCUS 文案、Meshy 展开三子条目对齐、MeshCraft demo 首屏与 Tab 切换、去背流程页复古窗打开。
