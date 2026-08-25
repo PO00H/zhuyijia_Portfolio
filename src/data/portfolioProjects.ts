@@ -44,6 +44,10 @@ export interface PortfolioProject {
   enabled: boolean;
   year: string | null;
   summary: string | null;
+  /** 列表行 FOCUS 列的自定义文案（缺省取 tags 前两个）。 */
+  focusLabel?: string;
+  /** 站外参考链接（新标签页打开，不走站内窗口）。 */
+  externalLink?: string;
   assetPaths: string[];
   externalEmbedUrl?: string;
 }
@@ -223,11 +227,70 @@ export const sourcePortfolioProjects: PortfolioProject[] = [
     preview: null,
     detailUrl: null,
     existingContentPath: null,
-    tags: ['Tools Development', 'Blender', 'PBR', 'UV', 'API Integration'],
+    tags: ['Tools Development', 'Pipeline', 'Python', 'API Integration'],
     enabled: true,
     year: '2026',
     summary:
-      '三维美术部门技术美术实习：研发部门工具箱，处理材质、资产与 API 接入，搭建 Blender PBR 与 UV 顶点组合插件，将重复操作整理为可复用工具流程。',
+      '三维美术部门技术美术实习：围绕 3D 资产生产搭建工具与流水线，三个重点项目见下方子条目。',
+    focusLabel: '26.04 — 26.08 · 技术美术实习 / 工具与管线',
+    assetPaths: [],
+  },
+  {
+    id: 'experience-meshcraft',
+    entryKind: 'experience',
+    title: 'MeshCraft — 3D 资产批量生产工具箱',
+    track: 'industry-experience',
+    tier: 'industry',
+    status: 'published',
+    featuredOrder: 1,
+    cover: null,
+    preview: null,
+    detailUrl: '/embed/meshcraft/index.html',
+    existingContentPath: null,
+    tags: ['Python', 'Tools Development', 'Batch Pipeline', 'Blender', 'API Integration'],
+    enabled: true,
+    year: '2026',
+    summary:
+      '自研本地 Web 工具箱：统一接入 5 家图生 3D provider × 3 种生成模式，集成批量生产 / 图像编辑 / 测评 / S3 上传 / 余额监控共 9 个功能页；数据驱动、断点续跑，迭代至 v0.3.1 团队日常在用。',
+    assetPaths: [],
+  },
+  {
+    id: 'experience-cutout',
+    entryKind: 'experience',
+    title: '社区封面图批量去背流水线',
+    track: 'industry-experience',
+    tier: 'industry',
+    status: 'published',
+    featuredOrder: 2,
+    cover: null,
+    preview: null,
+    detailUrl: '/embed/meshy-cutout/index.html',
+    existingContentPath: null,
+    tags: ['Python', 'OpenCV', 'PyTorch / CUDA', 'BiRefNet', 'AWS S3'],
+    enabled: true,
+    year: '2026',
+    summary:
+      '将社区近百万张模型封面图批量去背为透明 PNG：自研「白模配对」方案解决深色前景撞黑底问题，复杂图分流开源模型 BiRefNet；哈希分片多进程提速 3×，成品成功率 99.998%。',
+    assetPaths: [],
+  },
+  {
+    id: 'experience-muse',
+    entryKind: 'experience',
+    title: 'Muse — 内部评测平台（团队协作）',
+    track: 'industry-experience',
+    tier: 'industry',
+    status: 'published',
+    featuredOrder: 3,
+    cover: null,
+    preview: null,
+    detailUrl: null,
+    existingContentPath: null,
+    tags: ['FastAPI', 'HTMX', 'Tailwind', 'Jinja2', 'Security Audit'],
+    enabled: true,
+    year: '2026',
+    summary:
+      '团队线上内部评测平台（3D 模型评测 / PK / 数据看板）。本人负责主页与层级导航系统、PK 书签交互重构，并主导 HTMX 4 全仓兼容审计（修复 8 处隐性故障）与安全审计（修复 5 处越权守卫）。',
+    externalLink: 'https://mp.weixin.qq.com/s/5_q5rATl-RA_KgwrZgbCEQ',
     assetPaths: [],
   },
   {
@@ -247,6 +310,7 @@ export const sourcePortfolioProjects: PortfolioProject[] = [
     year: '2024',
     summary:
       '游戏交互实习：参与交互体验调研、玩家反馈分析、竞品拆解，并为研发团队提供交互逻辑与界面表现的迭代建议。',
+    focusLabel: '24.06 — 24.08 · 游戏交互实习 / 用户体验研究',
     assetPaths: [],
   },
   {

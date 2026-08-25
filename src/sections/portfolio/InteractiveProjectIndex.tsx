@@ -13,6 +13,8 @@ import type { PortfolioProject } from '@/data/portfolioProjects';
 interface InteractiveProjectIndexProps {
   projects: PortfolioProject[];
   renderExpandedProject: (project: PortfolioProject) => ReactNode;
+  /** 无预览素材的列表（如实习经历）关闭悬浮预览与进度光标。 */
+  hoverPreview?: boolean;
 }
 
 function ProjectPreviewMedia({
@@ -57,6 +59,7 @@ function ProjectPreviewMedia({
 export function InteractiveProjectIndex({
   projects,
   renderExpandedProject,
+  hoverPreview = true,
 }: InteractiveProjectIndexProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [intentId, setIntentId] = useState<string | null>(null);
@@ -120,6 +123,7 @@ export function InteractiveProjectIndex({
     event: ReactPointerEvent<HTMLButtonElement>,
     project: PortfolioProject,
   ) => {
+    if (!hoverPreview) return;
     if (event.pointerType !== 'mouse') return;
     clearPreviewTimer();
     setActiveId(null);
@@ -164,6 +168,7 @@ export function InteractiveProjectIndex({
                   if (event.pointerType === 'mouse') positionCursor(event.clientX, event.clientY);
                 }}
                 onFocus={(event) => {
+                  if (!hoverPreview) return;
                   clearPreviewTimer();
                   setIntentId(null);
                   setActiveId(project.id);
@@ -177,7 +182,9 @@ export function InteractiveProjectIndex({
                   <small>{(index + 1).toString().padStart(2, '0')}</small>
                   <strong>{project.title}</strong>
                 </span>
-                <span className="portfolio-index-focus">{project.tags.slice(0, 2).join(' · ')}</span>
+                <span className="portfolio-index-focus">
+                  {project.focusLabel ?? project.tags.slice(0, 2).join(' · ')}
+                </span>
                 <span className="portfolio-index-year">{project.year}</span>
                 <ChevronDown aria-hidden="true" />
               </button>
@@ -195,7 +202,8 @@ export function InteractiveProjectIndex({
         })}
       </div>
 
-      {createPortal(
+      {hoverPreview &&
+        createPortal(
         <>
           <div
             key={intentId ?? 'idle'}
