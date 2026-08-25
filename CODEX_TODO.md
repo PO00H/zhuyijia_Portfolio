@@ -912,3 +912,8 @@ CSS 清理（每个选择器均先 grep 核实 0 使用）：`src/index.css` 删
 附带发现：`72f321d` 简历切换器提交漏了 `src/data/resume.ts`（`ResumeDownload.tsx` 第 3 行 import 它），文件仅存在于工作区，远程 build 必挂——需随本次一并补提交。
 回归：headless 实测 02 区 DEVELOP / ECHOFLASH 封面正常渲染；03 区键盘聚焦词条三个预览封面 opacity 全部恢复 1；390×844 手机端 02 卡片封面正常；Archive 页正常。临时依赖 puppeteer-core 与诊断脚本已清理（tmp/ 本就在 .gitignore）。
 检查：`npm run build`、`git diff --check` 通过；未提交 git。
+
+2026-08-25 — 修复线上 /archive 404 — DONE
+问题：线上站点（Vercel 托管）点击「完整作品档案」跳转 /archive 返回 404。根因：站点为单页应用，路由由 `src/App.tsx` 在客户端读取 `window.location.pathname` 判断；本地 Vite dev server 对未知路径自动回退 index.html，但 Vercel 静态托管找不到 `/archive` 文件直接返回 404，index.html 根本未下发。
+修复：新增 `vercel.json`，配置 rewrite 规则将 `/archive` 与 `/archive/` 指向 `/index.html`，SPA 接管后正常渲染 ArchivePage。
+检查：`npm run build` 通过；待推送 main 后 Vercel 自动部署生效。
