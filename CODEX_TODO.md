@@ -926,3 +926,7 @@ CSS 清理（每个选择器均先 grep 核实 0 使用）：`src/index.css` 删
 03 Muse：纯文字「团队项目 · 本人贡献」条目 + 「官方介绍 ↗」外链（Meshy 公众号文章 https://mp.weixin.qq.com/s/5_q5rATl-RA_KgwrZgbCEQ）。评估过 iframe 嵌入该文章：微信有反爬验证（302 至验证码页）不可行，全文快照涉及转载尺度被用户放弃，维持外链。
 修复：子条目序号从独占左列改为标题内联前缀（grid 两列改单列，正文/指标条/按钮与标题共用左缘）；展开区补 `portfolio-expanded-project` 缺失的内边距（此前内容贴左缘、指标条右侧顶边）；删除展开区与行 FOCUS 重复的时间段标签；子条目分割线只保留内部（:not(:last-child)）。清理死样式：`.portfolio-experience-layout/primary/secondary/title-row/role/evidence-grid` 全套及媒体查询引用。
 检查：`npm run build` 通过；ESLint 触改文件零错误；playwright 截图验收折叠行 FOCUS 文案、Meshy 展开三子条目对齐、MeshCraft demo 首屏与 Tab 切换、去背流程页复古窗打开。
+
+2026-09-10 — 修正 Meshy 实习时间段 — DONE
+修改：`portfolioProjects.ts` 中 `experience-meshy` 的 `focusLabel` 由「26.04 — 26.08」改为「26.03 — 26.06 · 技术美术实习 / 工具与管线」。全库 grep 确认时间段文案仅此一处。
+检查：dev server 实测新文案生效；未改其他内容。
