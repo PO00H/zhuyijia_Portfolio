@@ -232,7 +232,7 @@ export const sourcePortfolioProjects: PortfolioProject[] = [
     year: '2026',
     summary:
       '三维美术部门技术美术实习：围绕 3D 资产生产搭建工具与流水线，三个重点项目见下方子条目。',
-    focusLabel: '26.04 — 26.08 · 技术美术实习 / 工具与管线',
+    focusLabel: '26.03 — 26.06 · 技术美术实习 / 工具与管线',
     assetPaths: [],
   },
   {
